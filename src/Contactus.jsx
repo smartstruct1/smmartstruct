@@ -49,7 +49,7 @@ const OFFICES = [
   {
     city: "Johannesburg",
     country: "South Africa",
-    address: "14 Sandton Drive, Sandton, 2196",
+    address: "Mandela Square, 14 Sandton Drive, Sandton, 2196",
     phone: "+27 11 000 0000",
     email: "za@matrixpetroleum.com",
     tag: "Headquarters",
@@ -57,7 +57,7 @@ const OFFICES = [
   {
     city: "London",
     country: "United Kingdom",
-    address: "22 Cannon Street, London, EC4M 5TE",
+    address: "3 Hardman Square, Manchester, United Kingdom, M3 3EB",
     phone: "+44 20 0000 0000",
     email: "uk@matrixpetroleum.com",
     tag: "EMEA Office",

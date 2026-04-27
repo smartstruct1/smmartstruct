@@ -1894,8 +1894,8 @@ useEffect(() => {
                       className="hero-fit-text"
                       style={{
                         fontFamily: FONTS.flare,
-                fontSize: "clamp(40px,8vw,120px)",
-                fontWeight: 400,
+                        fontSize: "clamp(40px,8vw,120px)",
+                        fontWeight: 600,
                         color: COLORS.f1LimeGreen,
                         textTransform: "uppercase",
                         letterSpacing: "0.02em",
@@ -1921,8 +1921,8 @@ useEffect(() => {
                       style={{
                 
                         fontFamily: FONTS.flare,
-                fontSize: "clamp(40px,8vw,120px)",
-                fontWeight: 400,
+                        fontSize: "clamp(40px,8vw,120px)",
+                        fontWeight: 600,
                         color: COLORS.f1LimeGreen,
                         textTransform: "uppercase",
                         letterSpacing: "0.02em",

@@ -431,7 +431,7 @@ export default function TermsAndConditions() {
         }}
       >
         {/* ── NAV ── */}
-        <nav
+     <nav
           style={{
             position: "fixed",
             top: "0.75rem",
@@ -445,6 +445,7 @@ export default function TermsAndConditions() {
         >
           <div
             style={{
+              position: "relative",
               width: "4.25rem",
               height: "1.5442rem",
               borderRadius: "0.1875rem",
@@ -456,7 +457,9 @@ export default function TermsAndConditions() {
               onClick={() => setMenuOpen((o) => !o)}
               aria-label={menuOpen ? "Close menu" : "Open menu"}
               style={{
+                position: "relative",
                 display: "flex",
+                flexDirection: "column",
                 alignItems: "center",
                 justifyContent: "center",
                 width: "100%",

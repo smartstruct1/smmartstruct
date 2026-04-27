@@ -507,21 +507,43 @@ export default function PrivacyPolicy() {
       }}>
 
         {/* ── NAV ── */}
-        <nav style={{
-          position: "fixed", top: "0.75rem", left: 0, right: 0,
-          zIndex: 10003, display: "flex", justifyContent: "center", pointerEvents: "none",
-        }}>
-          <div style={{
-            width: "4.25rem", height: "1.5442rem",
-            borderRadius: "0.1875rem", boxShadow: f1Shadow, pointerEvents: "auto",
-          }}>
+        <nav
+          style={{
+            position: "fixed",
+            top: "0.75rem",
+            left: 0,
+            right: 0,
+            zIndex: 10003,
+            display: "flex",
+            justifyContent: "center",
+            pointerEvents: "none",
+          }}
+        >
+          <div
+            style={{
+              position: "relative",
+              width: "4.25rem",
+              height: "1.5442rem",
+              borderRadius: "0.1875rem",
+              boxShadow: f1Shadow,
+              pointerEvents: "auto",
+            }}
+          >
             <button
               onClick={() => setMenuOpen((o) => !o)}
               aria-label={menuOpen ? "Close menu" : "Open menu"}
               style={{
-                display: "flex", alignItems: "center", justifyContent: "center",
-                width: "100%", height: "100%", background: COLORS.white,
-                border: "none", borderRadius: "0.1875rem", cursor: "pointer",
+                position: "relative",
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                justifyContent: "center",
+                width: "100%",
+                height: "100%",
+                background: COLORS.white,
+                border: "none",
+                borderRadius: "0.1875rem",
+                cursor: "pointer",
                 transition: `scale 0.3s ${easeSmooth}`,
               }}
               onMouseEnter={(e) => (e.currentTarget.style.scale = "1.05")}
