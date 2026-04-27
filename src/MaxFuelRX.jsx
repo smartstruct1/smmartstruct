@@ -23,7 +23,7 @@ import Droplets2 from "./assets/droplets2.mp4";
 import Droplets3 from "./assets/droplets1.mp4";
 import Theteam from "./assets/the~team.mp4";
 import Cheetah from "./assets/cheetah0.jpg";
-import D3 from "./assets/d3.jpg";
+import D3 from "./assets/D3.jpg";
 import sparkImage from "./assets/spark.png";
 import theme5 from "./assets/Theme5.jpg";
 import FlareFont from "./assets/fonts/02a1216b6c704030-s.p.woff";
