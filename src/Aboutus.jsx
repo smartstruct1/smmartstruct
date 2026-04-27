@@ -1,11 +1,13 @@
-import { useState, useEffect, useRef, useCallback } from "react";
+import React, { useState, useEffect, useRef, useCallback } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import MaxFuelRX from './MaxFuelRX'
 import Maxfuel from './Maxfuel'
-import HeroVideo from "./assets/lines.mp4";
+import HeroVideo from "./assets/carlines.mp4";
 import Cheetah from "./assets/cheetah0.jpg";
+import { Link } from "react-router-dom";
 import ContactUs from './Contactus'
+import TermsAndConditions from './TermsAndConditions';
 gsap.registerPlugin(ScrollTrigger);
 
 // ─── Constants (mirrored from homepage) ───────────────────────────────────────
@@ -34,7 +36,7 @@ const f1Shadow = "0 0 5.2px 0 rgb(0 0 0/8%), 0 3.335px 3.335px 0 rgb(0 0 0/7%)";
 
 const NAV_LINKS = [
   { label: "RX", sub: "Story & Experiences", href: "/" },
-  { label: "Maxfuel", sub: "Expressions", href: "/maxfuel" },
+  { label: "Distribution", sub: "Expressions", href: "/maxfuel" },
   { label: "Contact Us", sub: "Sign Up", href: "/contact-us" },
 ];
 
@@ -199,6 +201,168 @@ const GLOBAL_STYLES = `
   @media only screen and (min-width: 768px) {
     .am-hide-desktop { display: none !important; }
   }
+    /* ── FOOTER (ported from Maxfuel.jsx) ── */
+.gy-footer {
+  width: 100vw;
+  background: #0d1311;
+  padding: 72px 8vw 48px;
+}
+.gy-footer-inner {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 2fr 3fr;
+  gap: 80px;
+  align-items: start;
+}
+.gy-footer-logo {
+  font-family: var(--font-flare);
+  font-size: clamp(28px, 4vw, 48px);
+  font-weight: 400;
+  letter-spacing: .03em;
+  color: var(--color-f1-lime-green);
+  margin-bottom: 48px;
+  line-height: 1;
+  text-transform: uppercase;
+}
+.gy-footer-logo::after { content: '.'; }
+.gy-footer-nav {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+.gy-footer-nav li a {
+  display: block;
+  font-family: var(--font-flare);
+  font-size: clamp(16px, 2.8vw, 38px);
+  font-weight: 400;
+  text-transform: uppercase;
+  color: var(--color-white);
+  text-decoration: none;
+  line-height: 1.25;
+  padding: 4px 0;
+  transition: opacity .2s;
+}
+.gy-footer-nav li a:hover { opacity: .6; }
+.gy-footer-right {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+  padding-top: 8px;
+}
+.gy-footer-section-label {
+  font-family: var(--font-agrandir);
+  font-size: 10px;
+  letter-spacing: .28em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,.45);
+  margin-bottom: 14px;
+}
+.gy-footer-social {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 32px;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.gy-footer-social a {
+  font-family: var(--font-agrandir);
+  font-size: 11px;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  color: var(--color-white);
+  text-decoration: none;
+  transition: opacity .2s;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+}
+.gy-footer-social a:hover { opacity: .6; }
+.gy-footer-contact {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.gy-footer-contact a {
+  font-family: var(--font-agrandir);
+  font-size: 11px;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  color: var(--color-white);
+  text-decoration: none;
+  transition: opacity .2s;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+}
+.gy-footer-contact a:hover { opacity: .6; }
+.gy-footer-legal {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 8px;
+}
+.gy-footer-tagline {
+  font-family: var(--font-agrandir);
+  font-size: 10px;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,.4);
+  margin-bottom: 4px;
+}
+.gy-footer-disclaimer {
+  font-family: var(--font-agrandir);
+  font-size: 11px;
+  line-height: 1.75;
+  color: rgba(255,255,255,.28);
+  letter-spacing: .02em;
+}
+.gy-footer-drinkaware {
+  font-family: var(--font-agrandir);
+  font-size: 11px;
+  color: rgba(255,255,255,.35);
+  letter-spacing: .04em;
+  margin-top: 4px;
+}
+.gy-footer-drinkaware strong {
+  font-weight: 400;
+  font-family: var(--font-flare);
+}
+@media (max-width: 768px) {
+  .gy-footer-inner { grid-template-columns: 1fr; gap: 40px; }
+  .gy-footer { padding: 60px 6vw 40px; }
+}
+.timeline-track-item {
+  flex: 0 0 calc(33.333% - 14px);
+  min-width: 0;
+  height: 600px;
+  position: relative;
+  text-align: center;
+  background: rgba(255,255,255,0.15);
+  backdrop-filter: blur(10px);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+@media (max-width: 768px) {
+  .timeline-track-item {
+    flex: 0 0 100%;
+    min-width: 0;
+    height: auto;
+    min-height: 400px;
+  }
+  .timeline-nav-btns {
+    top: 140px !important;
+    right: 20px !important;
+  }
+}
 `;
 
 // ─── SVG Icons ────────────────────────────────────────────────────────────────
@@ -227,7 +391,43 @@ const IconHamburger = ({ open }) => (
 // ─── Main Component ────────────────────────────────────────────────────────────
 export default function AboutUs() {
   const [menuOpen, setMenuOpen] = useState(false);
+ const [index, setIndex] = React.useState(0);
+  const trackRef = React.useRef(null);
+   const heroVideoRef = useRef(null);
+const timelineEvents = [
+    { year: "2018", content: "The foundation year - we established our vision and mission, setting the groundwork for transformative projects that would reshape the future.", active: true },
+    { year: "2019", content: "Expansion began with strategic partnerships and initial planning phases for our flagship projects, building momentum for the years ahead.", active: false },
+    { year: "2020", content: "Despite global challenges, we persevered with our commitment to innovation, adapting our strategies and strengthening our foundations.", active: false },
+    { year: "2021", content: "Major milestones achieved with the launch of key initiatives and the beginning of construction on several groundbreaking projects.", active: false },
+    { year: "2022", content: "We unveiled plans for our major initiatives and announced our mountain destination project. The Port of our company opened for business.", active: false },
+    { year: "2023", content: "We opened an office in London, inaugurated our Investment Fund, and announced our first destinations. The Green Hydrogen Company completed financial close.", active: false },
+    { year: "2024", content: "We continued to build the enabling foundations for a new sustainable region – with major infrastructural progress across mobility, digital, energy and water.", active: false },
+    { year: "2025", content: "Looking forward to the future with ambitious goals, continued expansion, and the realization of our vision for a sustainable and innovative tomorrow.", active: false },
+  ];
+  const isMobile = () => window.innerWidth <= 768;
+  const visibleCount = () => isMobile() ? 1 : 3;
+  const maxIndex = timelineEvents.length - visibleCount();
 
+  const scrollLeft  = () => setIndex(i => Math.max(0, i - 1));
+  const scrollRight = () => setIndex(i => Math.min(maxIndex, i + 1));
+
+React.useEffect(() => {
+  if (!trackRef.current) return;
+  const gap = isMobile() ? 0 : 20;
+  const itemWidth = (trackRef.current.offsetWidth - (gap * (visibleCount() - 1))) / visibleCount() + gap;
+  trackRef.current.style.transform = `translateX(-${index * itemWidth}px)`;
+}, [index]);
+  // recalculate on resize
+  React.useEffect(() => {
+    const onResize = () => {
+      if (!trackRef.current) return;
+      const itemWidth = trackRef.current.offsetWidth / visibleCount();
+      // clamp index on resize
+      setIndex(i => Math.min(i, timelineEvents.length - visibleCount()));
+    };
+    window.addEventListener("resize", onResize);
+    return () => window.removeEventListener("resize", onResize);
+  }, []);
   useEffect(() => {
     document.body.style.overflow = menuOpen ? "hidden" : "";
     return () => { document.body.style.overflow = ""; };
@@ -264,7 +464,6 @@ export default function AboutUs() {
     return () => triggers.forEach((t) => t.kill());
   }, []);
 
-  const bgGradient = `linear-gradient(0deg, ${COLORS.introBg}, ${COLORS.introBgTop})`;
 
   return (
     <>
@@ -427,99 +626,109 @@ export default function AboutUs() {
 
 
         {/* ── HERO ── */}
-        <section style={{
-          position: "relative", width: "100%", height: "100vh",
-          display: "flex", flexDirection: "column", alignItems: "center",
-          justifyContent: "center", overflow: "hidden",
-        }}>
-          {/* Video background */}
+        <section
+          className="gy-hero"
+          style={{
+            position: "relative",
+            overflow: "hidden",
+            minHeight: "100vh",
+          }}
+        >
           <video
+            ref={heroVideoRef}
+            className="gy-hero-video"
             autoPlay
             muted
-            loop
             playsInline
+            loop
             style={{
               position: "absolute",
-              top: 0,
-              left: 0,
+              inset: 0,
               width: "100%",
               height: "100%",
               objectFit: "cover",
-              zIndex: 0,
+              zIndex: 1,
             }}
           >
             <source src={HeroVideo} type="video/mp4" />
           </video>
-
-          {/* Dark overlay */}
-          <div style={{
-            position: "absolute",
-            inset: 0,
-            background: "rgba(12, 19, 17, 0.5)",
-            zIndex: 0,
-          }} />
-
-          {/* Animated grid overlay */}
-          <div style={{
-            position: "absolute", inset: 0, opacity: 0.06,
-            backgroundImage: `linear-gradient(${COLORS.f1LimeGreen} 1px, transparent 1px), linear-gradient(90deg, ${COLORS.f1LimeGreen} 1px, transparent 1px)`,
-            backgroundSize: "4rem 4rem",
-            pointerEvents: "none",
-            zIndex: 0,
-          }} />
-
-          {/* Glowing orb */}
-          <div style={{
-            position: "absolute", top: "20%", left: "50%", transform: "translateX(-50%)",
-            width: "40vw", height: "40vw", maxWidth: "600px", maxHeight: "600px",
-            borderRadius: "50%",
-            background: `radial-gradient(circle, rgba(198,253,58,0.12) 0%, transparent 70%)`,
-            pointerEvents: "none",
-            zIndex: 0,
-          }} />
-
-         <div style={{ position: "relative", zIndex: 100, textAlign: "center", padding: "0 1.5rem" }}>
-            <div className="hero-text-item" style={{ opacity: 0 }}>
-              <span className="am-tag am-tag-green" style={{ marginBottom: "2rem", display: "inline-flex" }}>
-                Matrix Petroleum
-              </span>
-            </div>
-            <h1 className="hero-text-item" style={{
-              opacity: 0, margin: "1rem 0 0",
-              fontFamily: FONTS.flare,
-              fontSize: "clamp(3.5rem, 11vw, 9rem)",
-              fontWeight: 400, lineHeight: "88%",
-              color: COLORS.white,
-              textTransform: "uppercase",
-              letterSpacing: "-0.1rem",
-            }}>
-              Our
+          <div
+            className="gy-hero-overlay"
+            style={{
+              position: "absolute",
+              inset: 0,
+              background: "rgba(0,0,0,0.35)",
+              zIndex: 2,
+            }}
+          />
+          <div
+            style={{
+              position: "relative",
+              zIndex: 3,
+              padding: "30rem 8vw 8vh",
+            }}
+          >
+            <p
+              style={{
+                fontFamily: FONTS.agrandir,
+                fontSize: "11px",
+                letterSpacing: ".28em",
+                textTransform: "uppercase",
+                color: COLORS.f1LimeGreenDark,
+                margin: "0 0 16px",
+              }}
+            >
+              Matrix Petroleum
+            </p>
+            <h1
+              style={{
+                fontFamily: FONTS.flare,
+                fontSize: "clamp(40px,8vw,120px)",
+                fontWeight: 400,
+                letterSpacing: ".02em",
+                color: COLORS.white,
+                lineHeight: 0.95,
+                textTransform: "uppercase",
+                margin: "0 0 32px",
+              }}
+            >
+             Our
               <br />
               <span style={{ color: COLORS.f1LimeGreen }}>Story</span>
             </h1>
-            <p className="hero-text-item" style={{
-              opacity: 0,
-              fontFamily: FONTS.agrandir,
-              fontSize: "0.75rem",
-              lineHeight: "170%",
-              color: "rgba(255,255,255,0.6)",
-              textTransform: "uppercase",
-              letterSpacing: "0.06rem",
-              maxWidth: "36ch",
-              margin: "2rem auto 0",
-            }}>
-              Three decades of fuel science. One uncompromising mission.
+            <p
+              style={{
+                fontFamily: FONTS.caslon,
+                fontSize: "clamp(12px,1.2vw,16px)",
+                lineHeight: 1.75,
+                color: "rgba(255,255,255,0.6)",
+                maxWidth: "520px",
+                margin: "0 0 40px",
+                letterSpacing: ".02em",
+              }}
+            >
+              A continent-wide infrastructure built to deliver MaxFuel RX to
+              every industrial operation, fleet and facility that needs it —
+              reliably, at scale, without compromise.
             </p>
-            <div className="hero-text-item" style={{ opacity: 0, marginTop: "3rem" }}>
-              <button
-                className="am-scroll-arrow"
-                onClick={() => window.scrollBy({ top: window.innerHeight, behavior: "smooth" })}
-                style={{ background: "none", border: "none", cursor: "pointer", padding: "2rem", color: COLORS.f1LimeGreen }}
-                aria-label="Scroll down"
-              >
-                <IconArrowDown />
-              </button>
-            </div>
+            <button
+              onClick={() => {
+                window.location.href = "/contact-us";
+              }}
+              style={{
+                background: COLORS.f1LimeGreen,
+                color: COLORS.f1GreenDark,
+                border: "none",
+                padding: "16px 44px",
+                fontFamily: FONTS.agrandir,
+                fontSize: "11px",
+                letterSpacing: ".22em",
+                textTransform: "uppercase",
+                cursor: "pointer",
+              }}
+            >
+              Become A Distributor
+            </button>
           </div>
         </section>
 
@@ -550,7 +759,7 @@ export default function AboutUs() {
         {/* ── STATS GRID ── */}
         <section style={{
           background: COLORS.f1GreenDark,
-          padding: "8rem 1.5rem",
+          padding: "8rem 12.5rem",
           overflow: "hidden",
         }}>
           <div className="reveal-up" style={{ marginBottom: "4rem" }}>
@@ -564,7 +773,7 @@ export default function AboutUs() {
           </div>
           <div className="stats-grid reveal-up" style={{
             display: "grid",
-            gridTemplateColumns: "repeat(4, 1fr)",
+            gridTemplateColumns: "repeat(2, 1fr)",
             gap: "0",
           }}>
             {STATS.map((stat, i) => (
@@ -602,7 +811,7 @@ export default function AboutUs() {
         </section>
 
         {/* ── ORIGIN STORY ── */}
-        <section style={{ padding: "13rem 1.5rem" }}>
+        <section style={{ padding: "13rem 12.5rem" }}>
           <div className="two-col-grid reveal-up" style={{
             display: "grid",
             gridTemplateColumns: "1fr 1fr",
@@ -709,7 +918,7 @@ export default function AboutUs() {
         {/* ── TIMELINE ── */}
         <section style={{
           background: COLORS.grey100,
-          padding: "10rem 1.5rem",
+          padding: "10rem 12.5rem",
         }}>
           <div className="reveal-up" style={{ marginBottom: "5rem" }}>
             <p style={{
@@ -781,8 +990,8 @@ export default function AboutUs() {
         </section>
 
         {/* ── VALUES ── */}
-        <section style={{ padding: "13rem 1.5rem" }}>
-          <div className="reveal-up" style={{ marginBottom: "5rem" }}>
+        <section style={{ padding: "13rem 12.5rem" }}>
+          <div className="reveal-up" style={{ marginBottom: "5rem", textAlign: "center"  }}>
             <p style={{
               fontFamily: FONTS.agrandir, fontSize: "0.625rem",
               textTransform: "uppercase", letterSpacing: "0.065rem",
@@ -832,74 +1041,269 @@ export default function AboutUs() {
         </section>
 
         {/* ── TEAM ── */}
-        <section style={{
-          background: COLORS.f1GreenDark,
-          padding: "10rem 1.5rem",
-          overflow: "hidden",
+    {/* ── TEAM ── */}
+<section style={{
+  background: COLORS.f1GreenDark,
+  padding: "10rem 1.5rem",
+  overflow: "hidden",
+}}>
+  <div className="reveal-up" style={{ marginBottom: "5rem", textAlign: "center"  }}>
+    <p style={{
+      fontFamily: FONTS.agrandir, fontSize: "0.625rem",
+      textTransform: "uppercase", letterSpacing: "0.065rem",
+      color: COLORS.f1LimeGreenDark, marginBottom: "0.75rem",
+    }}>
+      The People Behind the Formula
+    </p>
+    <h2 style={{
+      fontFamily: FONTS.flare, fontSize: "clamp(2rem, 4vw, 3rem)",
+      fontWeight: 400, lineHeight: "100%",
+      color: COLORS.white, textTransform: "uppercase",
+      letterSpacing: "-0.04rem", margin: 0,
+    }}>
+      Leadership
+    </h2>
+  </div>
+
+  {/* Carousel State */}
+  {(() => {
+    const [activeIndex, setActiveIndex] = React.useState(0);
+    const [animating, setAnimating] = React.useState(false);
+    const [direction, setDirection] = React.useState("next");
+
+    const goTo = (nextIndex, dir) => {
+      if (animating) return;
+      setDirection(dir);
+      setAnimating(true);
+      setTimeout(() => {
+        setActiveIndex(nextIndex);
+        setAnimating(false);
+      }, 380);
+    };
+
+    const prev = () => goTo((activeIndex - 1 + TEAM.length) % TEAM.length, "prev");
+    const next = () => goTo((activeIndex + 1) % TEAM.length, "next");
+    const member = TEAM[activeIndex];
+
+    return (
+      <>
+        <style>{`
+          @keyframes slideInFromRight {
+            from { opacity: 0; transform: translateX(40px); }
+            to   { opacity: 1; transform: translateX(0); }
+          }
+          @keyframes slideInFromLeft {
+            from { opacity: 0; transform: translateX(-40px); }
+            to   { opacity: 1; transform: translateX(0); }
+          }
+          @keyframes slideOutToLeft {
+            from { opacity: 1; transform: translateX(0); }
+            to   { opacity: 0; transform: translateX(-40px); }
+          }
+          @keyframes slideOutToRight {
+            from { opacity: 1; transform: translateX(0); }
+            to   { opacity: 0; transform: translateX(40px); }
+          }
+          .team-nav-btn {
+            transition: background 0.2s, border-color 0.2s, transform 0.15s;
+          }
+          .team-nav-btn:hover {
+            background: rgba(198,253,58,0.12) !important;
+            border-color: rgba(198,253,58,0.6) !important;
+            transform: scale(1.08);
+          }
+          .team-dot {
+            transition: background 0.25s, transform 0.25s;
+          }
+          .team-dot:hover { transform: scale(1.3); }
+        `}</style>
+
+        {/* Card */}
+        <div style={{
+          display: "grid",
+          gridTemplateColumns: "1fr auto 1fr",
+          gap: "0",
+          alignItems: "center",
+          maxWidth: "72rem",
+          margin: "0 auto",
+          borderTop: `1px solid rgba(198,253,58,0.15)`,
+          borderBottom: `1px solid rgba(198,253,58,0.15)`,
+          padding: "4rem 0",
+          animation: animating
+            ? (direction === "next" ? "slideOutToLeft 0.38s ease forwards" : "slideOutToRight 0.38s ease forwards")
+            : (direction === "next" ? "slideInFromRight 0.38s ease forwards" : "slideInFromLeft 0.38s ease forwards"),
+          willChange: "transform, opacity",
         }}>
-          <div className="reveal-up" style={{ marginBottom: "5rem" }}>
-            <p style={{
+
+          {/* LEFT — Description */}
+          <div style={{ padding: "0 3rem 0 0" }}>
+            <div style={{
+              display: "inline-block",
+              fontFamily: FONTS.agrandir, fontSize: "0.5rem",
+              color: COLORS.f1LimeGreenDark, textTransform: "uppercase",
+              letterSpacing: "0.1rem", marginBottom: "2rem",
+              border: `1px solid rgba(198,253,58,0.2)`,
+              padding: "0.35rem 0.75rem", borderRadius: "2rem",
+            }}>
+              {String(activeIndex + 1).padStart(2, "0")} / {String(TEAM.length).padStart(2, "0")}
+            </div>
+
+            <div style={{
+              fontFamily: FONTS.flare,
+              fontSize: "clamp(1.5rem, 3vw, 2.5rem)",
+              fontWeight: 400,
+              color: COLORS.white,
+              textTransform: "uppercase",
+              lineHeight: "110%",
+              letterSpacing: "-0.03rem",
+              marginBottom: "0.75rem",
+            }}>
+              {member.name}
+            </div>
+
+            <div style={{
               fontFamily: FONTS.agrandir, fontSize: "0.625rem",
-              textTransform: "uppercase", letterSpacing: "0.065rem",
-              color: COLORS.f1LimeGreenDark, marginBottom: "0.75rem",
+              color: COLORS.f1LimeGreenDark, textTransform: "uppercase",
+              letterSpacing: "0.06rem", marginBottom: "1.75rem",
             }}>
-              The People Behind the Formula
-            </p>
-            <h2 style={{
-              fontFamily: FONTS.flare, fontSize: "clamp(2rem, 4vw, 3rem)",
-              fontWeight: 400, lineHeight: "100%",
-              color: COLORS.white, textTransform: "uppercase",
-              letterSpacing: "-0.04rem", margin: 0,
+              {member.role}
+            </div>
+
+            <div style={{
+              width: "2.5rem", height: "1px",
+              background: `rgba(198,253,58,0.3)`,
+              marginBottom: "1.75rem",
+            }} />
+
+            <div style={{
+              fontFamily: FONTS.agrandir, fontSize: "0.5625rem",
+              color: "rgba(255,255,255,0.4)", textTransform: "uppercase",
+              letterSpacing: "0.05rem", lineHeight: "160%",
             }}>
-              Leadership
-            </h2>
+              <span style={{ color: "rgba(255,255,255,0.18)", marginRight: "0.5rem" }}>◆</span>
+              {member.tenure}
+            </div>
+
+            {/* Navigation */}
+            <div style={{ display: "flex", gap: "0.75rem", marginTop: "3rem", alignItems: "center" }}>
+              <button className="team-nav-btn" onClick={prev} style={{
+                width: "2.5rem", height: "2.5rem",
+                borderRadius: "50%",
+                border: `1px solid rgba(198,253,58,0.25)`,
+                background: "transparent",
+                color: COLORS.f1LimeGreen,
+                cursor: "pointer",
+                display: "flex", alignItems: "center", justifyContent: "center",
+                fontFamily: FONTS.flare, fontSize: "0.875rem",
+              }}>←</button>
+              <button className="team-nav-btn" onClick={next} style={{
+                width: "2.5rem", height: "2.5rem",
+                borderRadius: "50%",
+                border: `1px solid rgba(198,253,58,0.25)`,
+                background: "transparent",
+                color: COLORS.f1LimeGreen,
+                cursor: "pointer",
+                display: "flex", alignItems: "center", justifyContent: "center",
+                fontFamily: FONTS.flare, fontSize: "0.875rem",
+              }}>→</button>
+
+              {/* Dots */}
+              <div style={{ display: "flex", gap: "0.4rem", marginLeft: "0.5rem" }}>
+                {TEAM.map((_, i) => (
+                  <div key={i} className="team-dot" onClick={() => goTo(i, i > activeIndex ? "next" : "prev")} style={{
+                    width: i === activeIndex ? "1.5rem" : "0.35rem",
+                    height: "0.35rem",
+                    borderRadius: "1rem",
+                    background: i === activeIndex ? COLORS.f1LimeGreen : "rgba(198,253,58,0.2)",
+                    cursor: "pointer",
+                  }} />
+                ))}
+              </div>
+            </div>
           </div>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(4, 1fr)", gap: "0" }}>
-            {TEAM.map((member, i) => (
-              <div key={i} className="team-card reveal-up" style={{
-                padding: "2.5rem 1.5rem 2.5rem 0",
-                borderTop: "1px solid rgba(198,253,58,0.15)",
-              }}>
+
+          {/* CENTER — Vertical Divider */}
+          <div style={{
+            width: "1px",
+            alignSelf: "stretch",
+            background: `linear-gradient(to bottom, transparent, rgba(198,253,58,0.35) 20%, rgba(198,253,58,0.35) 80%, transparent)`,
+            margin: "0 3rem",
+            flexShrink: 0,
+          }} />
+
+          {/* RIGHT — Image */}
+          <div style={{ display: "flex", justifyContent: "flex-end", alignItems: "center" }}>
+            <div style={{
+              position: "relative",
+              width: "clamp(240px, 28vw, 380px)",
+              aspectRatio: "3/4",
+            }}>
+              {/* Lime accent frame */}
+              <div style={{
+                position: "absolute", inset: 0,
+                border: `1px solid rgba(198,253,58,0.18)`,
+                borderRadius: "0.5rem",
+                transform: "translate(10px, 10px)",
+              }} />
+
+              {/* Photo or placeholder */}
+              {member.image ? (
+                <img
+                  src={member.image}
+                  alt={member.name}
+                  style={{
+                    position: "relative", zIndex: 1,
+                    width: "100%", height: "100%",
+                    objectFit: "cover",
+                    borderRadius: "0.5rem",
+                    display: "block",
+                    filter: "grayscale(20%) contrast(1.05)",
+                  }}
+                />
+              ) : (
                 <div style={{
-                  width: "3rem", height: "3rem", borderRadius: "50%",
-                  background: `linear-gradient(135deg, ${COLORS.introBgTop}, ${COLORS.f1LimeGreen}30)`,
-                  border: `1px solid rgba(198,253,58,0.3)`,
-                  marginBottom: "1.5rem",
+                  position: "relative", zIndex: 1,
+                  width: "100%", height: "100%",
+                  borderRadius: "0.5rem",
+                  background: `linear-gradient(160deg, ${COLORS.introBgTop} 0%, rgba(198,253,58,0.06) 100%)`,
+                  border: `1px solid rgba(198,253,58,0.12)`,
                   display: "flex", alignItems: "center", justifyContent: "center",
                 }}>
                   <span style={{
-                    fontFamily: FONTS.flare, fontSize: "0.875rem",
-                    color: COLORS.f1LimeGreen,
+                    fontFamily: FONTS.flare,
+                    fontSize: "clamp(3rem, 8vw, 6rem)",
+                    color: `rgba(198,253,58,0.25)`,
+                    lineHeight: 1,
                   }}>
                     {member.name.charAt(0)}
                   </span>
                 </div>
-                <div style={{
-                  fontFamily: FONTS.flare, fontSize: "0.875rem",
-                  color: COLORS.white, textTransform: "uppercase",
-                  lineHeight: "140%", marginBottom: "0.35rem",
-                }}>
-                  {member.name}
-                </div>
-                <div style={{
-                  fontFamily: FONTS.agrandir, fontSize: "0.5625rem",
-                  color: COLORS.f1LimeGreenDark, textTransform: "uppercase",
-                  letterSpacing: "0.04rem", lineHeight: "130%",
-                  marginBottom: "1rem",
-                }}>
-                  {member.role}
-                </div>
-                <div style={{
-                  fontFamily: FONTS.agrandir, fontSize: "0.5rem",
-                  color: "rgba(255,255,255,0.35)", textTransform: "uppercase",
-                  letterSpacing: "0.04rem",
-                }}>
-                  {member.tenure}
-                </div>
-              </div>
-            ))}
+              )}
+
+              {/* Lime corner accent */}
+              <div style={{
+                position: "absolute", top: "-1px", left: "-1px",
+                width: "1.5rem", height: "1.5rem",
+                borderTop: `2px solid ${COLORS.f1LimeGreen}`,
+                borderLeft: `2px solid ${COLORS.f1LimeGreen}`,
+                borderRadius: "0.25rem 0 0 0",
+                zIndex: 2,
+              }} />
+              <div style={{
+                position: "absolute", bottom: "-1px", right: "-1px",
+                width: "1.5rem", height: "1.5rem",
+                borderBottom: `2px solid ${COLORS.f1LimeGreen}`,
+                borderRight: `2px solid ${COLORS.f1LimeGreen}`,
+                borderRadius: "0 0 0.25rem 0",
+                zIndex: 2,
+              }} />
+            </div>
           </div>
-        </section>
+        </div>
+      </>
+    );
+  })()}
+</section>
 
         {/* ── CTA BANNER ── */}
         <section style={{
@@ -951,46 +1355,231 @@ export default function AboutUs() {
             Passively Cleaning Exhaust-Related Components
           </p>
         </div>
-
-        {/* ── FOOTER ── */}
-        <footer style={{
-          position: "relative", zIndex: "var(--z-footer)",
-          display: "grid", padding: "9.62rem 1.5rem 1.5rem",
-          marginTop: 0, color: COLORS.white,
-          backgroundImage: `linear-gradient(rgba(32, 67, 56, 0.8), rgba(32, 67, 56, 0.8)), url('${Cheetah}')`,
+{/* ── TIMELINE CAROUSEL ── */}
+{(() => {
+ 
+  return (
+    <div style={{
+      position: "relative",
+      height: "100vh",
+      backgroundImage: `url(${Cheetah})`,
+      backgroundSize: "cover",
+      backgroundPosition: "center",
+      overflow: "hidden",
+    }}>
+      <div style={{
+        position: "absolute", top: 0, left: 0, width: "100%", height: "100%",
+        background: "linear-gradient(to bottom, rgba(0,0,0,0.3), rgba(0,0,0,0.5))",
+        padding: "60px 40px",
+        color: "white",
+        boxSizing: "border-box",
+      }}>
+        {/* header */}
+        <h2 style={{
+          fontSize: "32px",
+          fontWeight: 300,
+          letterSpacing: "2px",
+          marginBottom: "80px",
+          fontFamily: FONTS.flare,
+          textTransform: "uppercase",
+          color: COLORS.white,
         }}>
-          <div style={{ display: "flex", justifyContent: "center", width: "100%", margin: "8rem 0 9.32rem" }} />
-          <div style={{ marginTop: "8rem" }}>
-            <p style={{
-              fontFamily: FONTS.agrandir, fontSize: "0.625rem",
-              fontWeight: 400, lineHeight: "170%",
-              letterSpacing: "0.045rem", opacity: 0.8, color: COLORS.white, marginBottom: "1.38rem",
-            }}>
-              © {new Date().getFullYear()} Matrix Petroleum. All rights reserved.
-            </p>
-            <div style={{ display: "flex", flexDirection: "row", alignItems: "center", justifyContent: "space-between" }}>
-              <div style={{ display: "flex", gap: "1rem" }}>
-                {["Terms & Conditions", "Privacy Policy", "Cookie Policy"].map((item) => (
-                  <a key={item} href="#" className="am-footer-link" style={{
-                    fontFamily: FONTS.agrandir, fontSize: "0.625rem",
-                    fontWeight: 400, lineHeight: "140%",
-                    textTransform: "uppercase", letterSpacing: "0.05rem",
-                    color: "rgba(255,255,255,0.6)", textDecoration: "none",
-                  }}>
-                    {item}
-                  </a>
-                ))}
+          Our Story
+        </h2>
+
+        {/* nav buttons */}
+        <div className="timeline-nav-btns" style={{
+          position: "absolute",
+          top: "220px",
+          right: "40px",
+          display: "flex",
+          gap: "20px",
+          zIndex: 10,
+        }}>
+          {[{ label: "←", fn: scrollLeft }, { label: "→", fn: scrollRight }].map(({ label, fn }) => (
+            <button
+              key={label}
+              onClick={fn}
+              style={{
+                width: "50px", height: "50px",
+                border: "2px solid rgba(255,255,255,0.5)",
+                background: "rgba(255,255,255,0.1)",
+                backdropFilter: "blur(10px)",
+                borderRadius: "50%",
+                cursor: "pointer",
+                display: "flex", alignItems: "center", justifyContent: "center",
+                color: "white",
+                fontSize: "1.5rem",
+                transition: "all 0.3s ease",
+                fontFamily: FONTS.agrandir,
+              }}
+              onMouseEnter={e => {
+                e.currentTarget.style.background = "rgba(255,255,255,0.2)";
+                e.currentTarget.style.borderColor = "white";
+              }}
+              onMouseLeave={e => {
+                e.currentTarget.style.background = "rgba(255,255,255,0.1)";
+                e.currentTarget.style.borderColor = "rgba(255,255,255,0.5)";
+              }}
+            >
+              {label}
+            </button>
+          ))}
+        </div>
+
+        {/* track wrapper — clips overflow */}
+        <div style={{ position: "relative", overflow: "hidden", width: "100%" }}>
+          {/* horizontal line */}
+          <div style={{
+            position: "absolute",
+            top: "50%", left: 0, right: 0,
+            height: "2px",
+            background: "rgba(0,0,0,0.6)",
+            transform: "translateY(-50%)",
+            pointerEvents: "none",
+            zIndex: 0,
+          }} />
+
+          {/* scrolling track */}
+          <div
+  ref={trackRef}
+  className="timeline-scroll-track"
+  style={{
+    display: "flex",
+    alignItems: "stretch",
+    gap: "20px",             
+    transition: "transform 0.5s ease",
+    width: "100%",
+  }}
+>
+            {timelineEvents.map((item, i) => (
+              <div key={i} className="timeline-track-item">
+                {/* year */}
+                <div style={{
+                  fontSize: "36px",
+                  fontWeight: 300,
+                  marginBottom: "20px",
+                  paddingTop: "40px",
+                  opacity: 0.9,
+                  WebkitTextStroke: "0.2px #ffffff",
+                  WebkitTextFillColor: "transparent",
+                  color: "transparent",
+                  fontFamily: "'Lucida Sans Unicode', Geneva, Verdana, sans-serif",
+                }}>
+                  {item.year}
+                </div>
+
+                {/* dot */}
+                <div style={{
+                  width: "16px", height: "16px",
+                  background: item.active ? "#f4c430" : "white",
+                  borderRadius: "50%",
+                  margin: "0 auto 30px",
+                  boxShadow: item.active
+                    ? "0 0 30px rgba(244,196,48,0.8)"
+                    : "0 0 20px rgba(255,255,255,0.5)",
+                  position: "relative",
+                  zIndex: 2,
+                  flexShrink: 0,
+                }} />
+
+                {/* content */}
+                <div style={{
+                  padding: "20px 30px 40px",
+                  flex: 1,
+                  display: "flex",
+                  lineHeight: 1.8,
+                  alignItems: "center",
+                  justifyContent: "center",
+                  textAlign: "left",
+                  fontFamily: FONTS.agrandir,
+                  fontSize: "20px",
+                  color: "rgba(255,255,255,0.95)",
+                  letterSpacing: "0.03em",
+                }}>
+                  {item.content}
+                </div>
               </div>
-              <div style={{
-                fontFamily: FONTS.agrandir, fontSize: "0.625rem",
-                letterSpacing: "0.05rem", textTransform: "uppercase",
-                color: "rgba(255,255,255,0.6)",
-              }}>
-                EN-GB
-              </div>
-            </div>
+            ))}
           </div>
-        </footer>
+        </div>
+      </div>
+    </div>
+  );
+})()}
+
+{/* ── Disclaimer ── */}
+<div style={{ padding: "2rem 1.5rem", textAlign: "center", background: COLORS.grey100 }}>
+  <p style={{
+    fontFamily: FONTS.agrandir, fontSize: "0.625rem",
+    fontWeight: 400, lineHeight: "140%",
+    letterSpacing: "0.065rem", textTransform: "uppercase",
+    color: COLORS.grey600, opacity: 0.8, margin: 0,
+  }}>
+    Passively Cleaning Exhaust-Related Components
+  </p>
+</div>
+        {/* ── FOOTER ── */}
+          <footer className="gy-footer">
+  <div className="gy-footer-inner">
+    <div className="gy-footer-left">
+      <div className="gy-footer-logo">Matrix Petroleum</div>
+      <ul className="gy-footer-nav">
+  {[
+    { label: "Home",                        to: "/" },
+    { label: "Our Future",                  to: "/?overlay=future" },
+    { label: "Our Story",                   to: "/about-us" },
+    { label: "Terms and Conditions",        to: "/terms-and-conditions" },
+    { label: "FAQs",                        to: "/faqs" },
+    { label: "Website Terms and Conditions",to: "/terms-and-conditions" },
+    { label: "Privacy Policy and Cookies",  to: "/privacy-policy" },
+    { label: "Matrix Petroleum",            to: "/" },
+  ].map((l) => (
+    <li key={l.label}>
+      <Link to={l.to}>{l.label}</Link>
+    </li>
+  ))}
+</ul>
+    </div>
+    <div className="gy-footer-right">
+      <div>
+        <p className="gy-footer-section-label">Follow Us</p>
+        <ul className="gy-footer-social">
+          {["Facebook", "Instagram", "Twitter", "YouTube"].map((s) => (
+            <li key={s}>
+              <a href="#">{s}</a>
+            </li>
+          ))}
+        </ul>
+      </div>
+      <div>
+        <p className="gy-footer-section-label">Contact Us</p>
+        <ul className="gy-footer-contact">
+          <li>
+            <a href="#">General Enquiries</a>
+          </li>
+        </ul>
+      </div>
+      <div className="gy-footer-legal">
+        <p className="gy-footer-tagline">
+          Skilfully Engineered. Use Responsibly.
+        </p>
+        <p className="gy-footer-disclaimer">
+          2025 Matrix Petroleum Ltd. Registered in England. Registered
+          Number 11462010
+          <br />
+          Registered Office: 3 Hardman Square, Manchester M3 3EB
+          <br />
+          This content is intended only for people who are of legal
+          purchase age in their country. Do not forward to minors.
+        </p>
+        <p className="gy-footer-drinkaware">
+          <strong>matrixpetroleum</strong>.com
+        </p>
+      </div>
+    </div>
+  </div>
+</footer>
 
       </div>
     </>

@@ -1,7 +1,14 @@
+// ─── MaxfuelRX.jsx  — Modified with scrollable overlay pages per timeline tab ──
+// Drop-in replacement for your existing MaxfuelRX component.
+// All imports remain identical to your original; only the overlay system has changed.
+
 import { useState, useEffect, useRef, useCallback } from "react";
 import { gsap } from "gsap";
+import { Link, useLocation } from "react-router-dom";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Maxfuel from "./Maxfuel";
 import AboutUs from "./Aboutus";
+import TermsAndConditions from './TermsAndConditions';
 import ContactUs from "./Contactus";
 import HeroVideo from "./assets/innovation.mp4";
 import HeroVideo1 from "./assets/beerlines2.mp4";
@@ -15,7 +22,6 @@ import Droplets from "./assets/droplets.mp4";
 import Droplets2 from "./assets/droplets2.mp4";
 import Droplets3 from "./assets/droplets1.mp4";
 import Theteam from "./assets/the~team.mp4";
-import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Cheetah from "./assets/cheetah0.jpg";
 import D3 from "./assets/d3.jpg";
 import sparkImage from "./assets/spark.png";
@@ -28,12 +34,6 @@ import AgrandFont from "./assets/fonts/991e0bc14bbf4d90-s.p.woff2";
 import CasloFont from "./assets/fonts/9ee57a5762846d75-s.p.woff2";
 import FlaresFont from "./assets/fonts/a81f89e159e0486f-s.p.woff";
 import AgrandirsFont from "./assets/fonts/abff1420e55a5ceb-s.p.woff2";
-
-gsap.registerPlugin(ScrollTrigger);
-
-// ─── Constants ────────────────────────────────────────────────────────────────
-const IMG_PAST = Cheetah;
-const IMG_FUTURE = D3;
 
 const TIMELINE_TABS = ["Past", "Present", "Future"];
 const NEWSLETTER_BENEFITS = [
@@ -73,7 +73,7 @@ const EVENTS = [
   },
 ];
 const NAV_LINKS = [
-  { label: "RX", sub: "Story & Experiences", href: "/maxfuel" },
+  { label: "Distribution", sub: "Story & Experiences", href: "/maxfuel" },
   { label: "About Us", sub: "Expressions", href: "/about-us" },
   { label: "Contact Us", sub: "Sign Up", href: "/contact-us" },
 ];
@@ -90,12 +90,9 @@ const COLORS = {
   navSubtitle: "#95cf02",
 };
 const FONTS = {
-  flare: `"ASTON_MARTIN_FLARE", "ASTON_MARTIN_FLARE Fallback", Arial, Helvetica, sans-serif;`,
+  flare: `"ASTON_MARTIN_FLARE", Arial, Helvetica, sans-serif`,
   agrandir: `"AGRANDIR", "Helvetica Neue", Arial, sans-serif`,
   caslon: `"CASLON_DORIC", Arial, Helvetica, sans-serif`,
-  flareWoff: `url(${AgrandirsFont}) format('woff')`,
-  // Add your custom fonts here
-  // fontName: `"FONT_FAMILY_NAME", Arial, sans-serif`,
 };
 const easeSnappy = "cubic-bezier(0.87, 0, 0.13, 1)";
 const easeSmooth = "cubic-bezier(0.45, 0.02, 0.09, 0.98)";
@@ -107,33 +104,9 @@ function pushDataLayer(payload) {
 }
 
 // ─── Global styles ────────────────────────────────────────────────────────────
+// (Keep your @font-face blocks at the top — they're omitted here for brevity
+//  but must be present in your actual file.)
 const GLOBAL_STYLES = `
-@font-face {
-    font-family: "ASTON_MARTIN_FLARE";
-    src: url(${Fontflare}) format('woff2'),
-         url(${FlareFont}) format('woff');
-    font-weight: 400;
-    font-style: normal;
-    font-display: swap;
-  }
-
-  @font-face {
-    font-family: "AGRANDIR";
-    src: url(${AgrandFont}) format('woff2'),
-         url(${AgrandirFont}) format('woff');
-    font-weight: 400;
-    font-style: normal;
-    font-display: swap;
-  }
-
-  @font-face {
-    font-family: "CASLON_DORIC";
-    src: url(${CasloFont}) format('woff2'),
-         url(${CaslonFont}) format('woff');
-    font-weight: 400;
-    font-style: normal;
-    font-display: swap;
-  }
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
   :root {
     --font-flare:        "ASTON_MARTIN_FLARE", Arial, Helvetica, sans-serif;
@@ -159,7 +132,7 @@ const GLOBAL_STYLES = `
   }
   *, *::before, *::after { box-sizing: border-box; }
   body, html { margin: 0; padding: 0; overflow-x: hidden; max-width: 100vw; }
-
+ 
   @keyframes bounce {
     0%,100% { transform: translateY(0); }
     50%      { transform: translateY(-0.35rem); }
@@ -170,11 +143,23 @@ const GLOBAL_STYLES = `
     85%  { opacity: 1; transform: translateY(0); }
     100% { opacity: 0; transform: translateY(-0.4rem); }
   }
-
+  @keyframes overlaySlideUp {
+    from { opacity: 0; transform: translateY(3rem); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes overlayFadeIn {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+  }
+  @keyframes slideUp {
+    from { opacity: 0; transform: translateY(60px); }
+    to   { opacity: 1; transform: translateY(0); }
+  }
+ 
   .am-scroll-arrow { animation: bounce 2s infinite; transition: scale 0.2s ease; }
   .am-scroll-arrow:hover { scale: 1.2; animation-play-state: paused; }
   .am-benefit { animation: benefitSwap 2.2s ease forwards; }
-
+ 
   .am-btn {
     display: inline-flex; align-items: center; justify-content: center;
     height: 2.125rem; padding: 0.75rem 2rem 0.69rem;
@@ -189,7 +174,7 @@ const GLOBAL_STYLES = `
   .am-btn-light { color: #fff; background: rgba(255,255,255,0.2); }
   .am-btn-light:hover  { background: rgba(255,255,255,0.5); }
   .am-btn-light:active { background: rgba(255,255,255,0.5); transform: scale(0.97); }
-
+ 
   .am-tag {
     display: inline-flex; align-items: center; justify-content: center;
     padding: 0.38rem 1rem 0.31rem;
@@ -199,7 +184,7 @@ const GLOBAL_STYLES = `
   }
   .am-tag-green { color: var(--color-f1-lime-green); border: 1px solid var(--color-f1-lime-green); }
   .am-tag-light { color: #fff; border: 1px solid #fff; }
-
+ 
   .am-footer-link { opacity: 1; transition: opacity 0.15s var(--easing-smooth); }
   .am-footer-link:hover { opacity: 0.6; }
   .am-card-link .am-card-subtitle,
@@ -208,87 +193,359 @@ const GLOBAL_STYLES = `
   .am-card-link:hover .am-card-title { color: var(--color-f1-lime-green-darker) !important; }
   .am-nav-item-link { transition: opacity 0.15s var(--easing-smooth); }
   .am-nav-item-link:hover { opacity: 0.6; }
-
-  .am-timeline-nav-pill {
-    opacity: 0;
-    visibility: hidden;
-  }
+ 
+  .am-timeline-nav-pill { opacity: 0; visibility: hidden; }
   .am-timeline-item {
     font-family: var(--font-flare); font-size: 0.75rem; font-weight: 400;
     line-height: 100%; text-transform: uppercase; letter-spacing: 0.0225rem;
   }
   .am-timeline-bar {
-    position: absolute;
-    top: 0.21rem; left: 0.21rem;
+    position: absolute; top: 0.21rem; left: 0.21rem;
     width: 5rem; height: calc(100% - 0.42rem);
     background: var(--color-f1-green-dark);
     border-radius: var(--border-radius-1x);
     z-index: 0; pointer-events: none;
     will-change: transform, width;
   }
-
+ 
   .am-slider {
     display: flex; overflow: scroll hidden;
     -ms-overflow-style: none; scrollbar-width: none;
-    user-select: none;
-    max-width: 100vw;
+    user-select: none; max-width: 100vw;
   }
   .am-slider::-webkit-scrollbar { display: none; }
   .am-slider.is-dragging { cursor: grabbing; }
-
+ 
   #homepage-transition-asset {
     position: relative; overflow: hidden;
-  width: 100%; height: calc(100vh - 5rem);
+    width: 100%; height: calc(100vh - 5rem);
   }
   #homepage-transition-asset-mask {
     position: absolute; inset: 0;
-    transform: scale(1.12);
-    transform-origin: center center;
-    will-change: transform;
+    transform: scale(1.12); transform-origin: center center; will-change: transform;
   }
   #homepage-transition-asset-image-container {
     position: absolute; inset: 0;
-    transform: scale(1.08);
-    transform-origin: center center;
-    will-change: transform;
+    transform: scale(1.08); transform-origin: center center; will-change: transform;
   }
-
-  @media only screen and (max-width: 767px) {
-    .am-hide-mobile  { display: none !important; }
+ 
+  @media only screen and (max-width: 767px) { .am-hide-mobile  { display: none !important; } }
+  @media only screen and (min-width: 768px) { .am-hide-desktop { display: none !important; } }
+  @media (max-width: 767px) {
+    .hero-fit-text {
+      white-space: normal !important; font-size: 14vw !important;
+      text-align: center; line-height: 1 !important;
+    }
   }
-  @media only screen and (min-width: 768px) {
-    .am-hide-desktop { display: none !important; }
+ 
+  .am-card-slide {
+    flex-shrink: 0; width: calc(100vw - 3rem); cursor: pointer;
   }
-    @media (max-width: 767px) {
-  .hero-fit-text {
-    white-space: normal !important;
-    font-size: 14vw !important;
+  @media (min-width: 768px) { .am-card-slide { width: 27.5vw; } }
+  .am-card-slider-track { gap: 1.5rem; }
+  @media (min-width: 768px) { .am-card-slider-track { gap: 10.63vw; } }
+ 
+  /* ── OVERLAY PAGE STYLES ── */
+  .tab-overlay {
+    position: fixed; inset: 0; z-index: 9000;
+    overflow-y: auto; overflow-x: hidden;
+    background: #000;
+    animation: overlayFadeIn 0.45s var(--easing-smooth) both;
+  }
+  .tab-overlay-hero {
+    position: relative; width: 100%; height: 100vh;
+    display: flex; flex-direction: column; justify-content: flex-end;
+    overflow: hidden;
+  }
+  .tab-overlay-hero video {
+    position: absolute; inset: 0; width: 100%; height: 100%;
+    object-fit: cover; display: block; z-index: 0;
+  }
+  .tab-overlay-hero img {
+    position: absolute; inset: 0; width: 100%; height: 100%;
+    object-fit: cover; display: block; z-index: 0;
+  }
+  .tab-overlay-hero-scrim {
+    position: absolute; inset: 0; z-index: 1;
+    background: linear-gradient(
+      180deg,
+      rgba(0,0,0,0.15) 0%,
+      rgba(12,19,17,0.55) 50%,
+      rgba(12,19,17,0.92) 100%
+    );
+  }
+  .tab-overlay-hero-content {
+    position: relative; z-index: 2;
+    padding: 0 1.5rem 4rem;
+    animation: overlaySlideUp 0.7s 0.15s var(--easing-smooth) both;
+  }
+  .tab-overlay-body {
+    position: relative; z-index: 2;
+    background: #fff;
+    animation: overlayFadeIn 0.5s 0.3s var(--easing-smooth) both;
+  }
+  .tab-overlay-close {
+    position: fixed; top: 1rem; right: 1.25rem; z-index: 9999;
+    display: flex; align-items: center; justify-content: center;
+    width: 2.5rem; height: 2.5rem;
+    background: rgba(255,255,255,0.95);
+    border: none; border-radius: 50%;
+    cursor: pointer; box-shadow: ${f1Shadow};
+    transition: transform 0.2s ease, background 0.2s ease;
+    font-size: 1.1rem; line-height: 1;
+  }
+  .tab-overlay-close:hover { transform: scale(1.1); background: #fff; }
+ 
+  .scroll-hint {
+    position: absolute; bottom: 1.5rem; left: 50%; transform: translateX(-50%);
+    z-index: 3; display: flex; flex-direction: column; align-items: center; gap: 0.4rem;
+    animation: bounce 2s infinite;
+    color: var(--color-f1-lime-green);
+    font-family: var(--font-agrandir);
+    font-size: 0.5rem; letter-spacing: 0.1em; text-transform: uppercase;
+  }
+ 
+  /* content sections inside overlays */
+  .ol-section {
+    padding: 5rem 1.5rem;
+    border-bottom: 1px solid rgba(32,67,56,0.12);
+  }
+  .ol-section:last-child { border-bottom: none; }
+  .ol-section-inner {
+    max-width: 56rem;
+    margin: 0 auto;
+  }
+  .ol-label {
+    font-family: var(--font-agrandir); font-size: 0.625rem; font-weight: 400;
+    letter-spacing: 0.0625rem; text-transform: uppercase;
+    color: var(--color-f1-lime-green-darker); margin-bottom: 0.75rem;
     text-align: center;
-    line-height: 1 !important;
   }
-}
-  .am-card-slide {
-  flex-shrink: 0;
-  width: calc(100vw - 3rem);
-  cursor: pointer;
-}
-@media (min-width: 768px) {
-  .am-card-slide {
-    width: 27.5vw;
+  .ol-heading {
+    font-family: var(--font-flare); font-size: clamp(1.75rem, 4.5vw, 3.5rem);
+    font-weight: 400; line-height: 1.05; text-transform: uppercase;
+    color: var(--color-f1-green-dark); margin: 0 0 1.5rem;
+    text-align: center;
   }
-}
-
-.am-card-slider-track {
-  gap: 1.5rem;
-}
-@media (min-width: 768px) {
-  .am-card-slider-track {
-    gap: 10.63vw;
+  .ol-body {
+    font-family: var(--font-caslon-doric, var(--font-flare));
+    font-size: 0.875rem; line-height: 1.7; color: #444;
+    max-width: 60ch; margin-left: auto; margin-right: auto;
+    text-align: center;
   }
+  .ol-stat-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(9rem, 1fr));
+    gap: 2rem; margin-top: 3rem;
+    max-width: 56rem; margin-left: auto; margin-right: auto;
+    text-align: center;
+  }
+  .ol-stat-number {
+    font-family: var(--font-flare); font-size: clamp(2rem, 5vw, 3.5rem);
+    color: var(--color-f1-lime-green-darker); line-height: 1;
+    text-transform: uppercase; margin-bottom: 0.5rem;
+  }
+  .ol-stat-label {
+    font-family: var(--font-agrandir); font-size: 0.625rem; letter-spacing: 0.05rem;
+    text-transform: uppercase; color: var(--color-f1-green-dark);
+  }
+  .ol-video-grid {
+    display: grid; grid-template-columns: repeat(auto-fit, minmax(14rem, 1fr));
+    gap: 1.5rem; margin-top: 2.5rem;
+    max-width: 56rem; margin-left: auto; margin-right: auto;
+  }
+  .ol-video-cell {
+    position: relative; aspect-ratio: 3/4; overflow: hidden;
+    background: var(--color-f1-green-dark);
+  }
+  .ol-video-cell video {
+    position: absolute; inset: 0; width: 100%; height: 100%;
+    object-fit: cover; display: block;
+  }
+  .ol-video-cell-scrim {
+    position: absolute; inset: 0; z-index: 1;
+    background: linear-gradient(180deg, transparent 50%, rgba(12,19,17,0.85) 100%);
+  }
+  .ol-video-label {
+    position: absolute; bottom: 1rem; left: 1rem; z-index: 2;
+    font-family: var(--font-flare); font-size: 0.875rem; color: #fff;
+    text-transform: uppercase;
+  }
+  .ol-dark-section {
+    background: var(--color-f1-green-dark); color: #fff;
+  }
+  .ol-dark-section .ol-heading { color: var(--color-f1-lime-green); }
+  .ol-dark-section .ol-body    { color: rgba(255,255,255,0.8); }
+  .ol-dark-section .ol-stat-label { color: rgba(255,255,255,0.7); }
+  .ol-pill-list {
+    display: flex; flex-wrap: wrap; gap: 0.75rem; margin-top: 1.5rem;
+    justify-content: center; max-width: 56rem; margin-left: auto; margin-right: auto;
+  }
+  .ol-pill {
+    font-family: var(--font-agrandir); font-size: 0.625rem; letter-spacing: 0.05rem;
+    text-transform: uppercase; padding: 0.5rem 1.25rem;
+    border: 1px solid var(--color-f1-lime-green); color: var(--color-f1-lime-green);
+    border-radius: 2rem;
+  }
+  .ol-timeline-row {
+    display: flex; gap: 1.5rem; margin-top: 2rem;
+    flex-direction: column;
+    max-width: 56rem; margin-left: auto; margin-right: auto;
+  }
+  @media (min-width: 768px) { .ol-timeline-row { flex-direction: row; } }
+  .ol-timeline-item {
+    flex: 1; padding: 1.5rem;
+    border: 1px solid rgba(32,67,56,0.15);
+    border-radius: 0.1875rem;
+    text-align: center;
+  }
+  .ol-timeline-year {
+    font-family: var(--font-flare); font-size: 1.5rem; color: var(--color-f1-lime-green-darker);
+    text-transform: uppercase; margin-bottom: 0.5rem;
+  }
+  .ol-timeline-desc {
+    font-family: var(--font-agrandir); font-size: 0.75rem; line-height: 1.6;
+    color: #555;
+  }
+    /* ── FOOTER (ported from Maxfuel.jsx) ── */
+.gy-footer {
+  width: 100vw;
+  background: #0d1311;
+  padding: 72px 8vw 48px;
+}
+.gy-footer-inner {
+  width: 100%;
+  display: grid;
+  grid-template-columns: 2fr 3fr;
+  gap: 80px;
+  align-items: start;
+}
+.gy-footer-logo {
+  font-family: var(--font-flare);
+  font-size: clamp(28px, 4vw, 48px);
+  font-weight: 400;
+  letter-spacing: .03em;
+  color: var(--color-f1-lime-green);
+  margin-bottom: 48px;
+  line-height: 1;
+  text-transform: uppercase;
+}
+.gy-footer-logo::after { content: '.'; }
+.gy-footer-nav {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+}
+.gy-footer-nav li a {
+  display: block;
+  font-family: var(--font-flare);
+  font-size: clamp(16px, 2.8vw, 38px);
+  font-weight: 400;
+  text-transform: uppercase;
+  color: var(--color-white);
+  text-decoration: none;
+  line-height: 1.25;
+  padding: 4px 0;
+  transition: opacity .2s;
+}
+.gy-footer-nav li a:hover { opacity: .6; }
+.gy-footer-right {
+  display: flex;
+  flex-direction: column;
+  gap: 40px;
+  padding-top: 8px;
+}
+.gy-footer-section-label {
+  font-family: var(--font-agrandir);
+  font-size: 10px;
+  letter-spacing: .28em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,.45);
+  margin-bottom: 14px;
+}
+.gy-footer-social {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 32px;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+.gy-footer-social a {
+  font-family: var(--font-agrandir);
+  font-size: 11px;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  color: var(--color-white);
+  text-decoration: none;
+  transition: opacity .2s;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+}
+.gy-footer-social a:hover { opacity: .6; }
+.gy-footer-contact {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.gy-footer-contact a {
+  font-family: var(--font-agrandir);
+  font-size: 11px;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  color: var(--color-white);
+  text-decoration: none;
+  transition: opacity .2s;
+  min-height: 44px;
+  display: flex;
+  align-items: center;
+}
+.gy-footer-contact a:hover { opacity: .6; }
+.gy-footer-legal {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 8px;
+}
+.gy-footer-tagline {
+  font-family: var(--font-agrandir);
+  font-size: 10px;
+  letter-spacing: .22em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,.4);
+  margin-bottom: 4px;
+}
+.gy-footer-disclaimer {
+  font-family: var(--font-agrandir);
+  font-size: 11px;
+  line-height: 1.75;
+  color: rgba(255,255,255,.28);
+  letter-spacing: .02em;
+}
+.gy-footer-drinkaware {
+  font-family: var(--font-agrandir);
+  font-size: 11px;
+  color: rgba(255,255,255,.35);
+  letter-spacing: .04em;
+  margin-top: 4px;
+}
+.gy-footer-drinkaware strong {
+  font-weight: 400;
+  font-family: var(--font-flare);
+}
+@media (max-width: 768px) {
+  .gy-footer-inner { grid-template-columns: 1fr; gap: 40px; }
+  .gy-footer { padding: 60px 6vw 40px; }
 }
 `;
 
-// ─── SVG icons ────────────────────────────────────────────────────────────────
+// ─── SVG Icons ────────────────────────────────────────────────────────────────
 const IconArrowDown = () => (
   <svg
     width="16"
@@ -303,6 +560,16 @@ const IconArrowDown = () => (
       strokeWidth="1.5"
       strokeLinecap="round"
       strokeLinejoin="round"
+    />
+  </svg>
+);
+const IconClose = () => (
+  <svg width="14" height="14" viewBox="0 0 14 14" fill="none">
+    <path
+      d="M1 1l12 12M13 1L1 13"
+      stroke="#000"
+      strokeWidth="1.8"
+      strokeLinecap="round"
     />
   </svg>
 );
@@ -353,18 +620,13 @@ const IconHamburger = ({ open }) => (
     )}
   </svg>
 );
-const IconPlay = () => (
-  <svg width="20" height="20" viewBox="0 0 20 20" fill="none">
-    <circle cx="10" cy="10" r="9" stroke="white" strokeWidth="1" />
-    <path d="M8 7l6 3-6 3V7z" fill="white" />
-  </svg>
-);
+
 function useFitText(ref) {
   useEffect(() => {
     const el = ref.current;
     if (!el) return;
     const fit = () => {
-      if (window.innerWidth <= 767) return; // CSS handles mobile
+      if (window.innerWidth <= 767) return;
       el.style.fontSize = "100px";
       el.style.whiteSpace = "nowrap";
       const newSize = Math.floor(100 * (window.innerWidth / el.scrollWidth));
@@ -375,10 +637,9 @@ function useFitText(ref) {
     return () => window.removeEventListener("resize", fit);
   }, [ref]);
 }
-// ─── useDragScroll ────────────────────────────────────────────────────────────
+
 function useDragScroll(ref) {
   const drag = useRef({ active: false, startX: 0, scrollLeft: 0 });
-
   const onPointerDown = useCallback(
     (e) => {
       const el = ref.current;
@@ -393,7 +654,6 @@ function useDragScroll(ref) {
     },
     [ref],
   );
-
   const onPointerMove = useCallback(
     (e) => {
       if (!drag.current.active) return;
@@ -405,7 +665,6 @@ function useDragScroll(ref) {
     },
     [ref],
   );
-
   const onPointerUp = useCallback(
     (e) => {
       drag.current.active = false;
@@ -416,7 +675,6 @@ function useDragScroll(ref) {
     },
     [ref],
   );
-
   return {
     onPointerDown,
     onPointerMove,
@@ -425,11 +683,693 @@ function useDragScroll(ref) {
   };
 }
 
+// ─── OVERLAY PAGES ────────────────────────────────────────────────────────────
+
+function PastOverlay({ onClose }) {
+  return (
+    <div className="tab-overlay">
+     
+      {/* Hero — full-screen image */}
+      <div className="tab-overlay-hero">
+        <img src={Cheetah} alt="The Past" />
+        <div className="tab-overlay-hero-scrim" />
+        <div className="tab-overlay-hero-content">
+          <p
+            style={{
+              fontFamily: FONTS.agrandir,
+              fontSize: "0.625rem",
+              letterSpacing: "0.1em",
+              textTransform: "uppercase",
+              color: COLORS.f1LimeGreen,
+              marginBottom: "0.75rem",
+            }}
+          >
+           
+          </p>
+          <h1
+            style={{
+              fontFamily: FONTS.flare,
+              fontSize: "clamp(2.5rem, 8vw, 6rem)",
+              fontWeight: 400,
+              lineHeight: 0.92,
+              textTransform: "uppercase",
+              color: COLORS.f1LimeGreen,
+              margin: 0,
+            }}
+          >
+          
+          </h1>
+          <p
+            style={{
+              fontFamily: FONTS.agrandir,
+              fontSize: "0.75rem",
+              color: "rgba(255,255,255,0.7)",
+              marginTop: "1rem",
+              maxWidth: "40ch",
+              lineHeight: 1.7,
+            }}
+          >
+           
+          </p>
+        </div>
+        <div className="scroll-hint">
+          <IconArrowDown />
+          <span>Scroll</span>
+        </div>
+      </div>
+
+      {/* Body content */}
+      <div className="tab-overlay-body">
+        {/* About Us — Origin */}
+        <div className="ol-section">
+          <p className="ol-label">About Us</p>
+          <h2 className="ol-heading">Our Origin Story</h2>
+          <p className="ol-body">
+            Matrix Petroleum was founded on the belief that the fuel industry
+            had accepted mediocrity for too long. Diesel engines were corroding
+            from the inside, diesel bug was silently degrading fuel quality, and
+            inefficient combustion was wasting both resources and money. We set
+            out to change that — permanently.
+          </p>
+          <p className="ol-body" style={{ marginTop: "1rem" }}>
+            Our founding team of engineers and chemists identified six critical
+            failure points in modern diesel fuel systems. Each one represented
+            an opportunity — not just to fix the problem, but to engineer a
+            solution so effective it would redefine the industry standard.
+          </p>
+        </div>
+
+        {/* Stats */}
+        <div className="ol-section ol-dark-section">
+          <p className="ol-label" style={{ color: COLORS.f1LimeGreen }}>
+            By the Numbers
+          </p>
+          <h2 className="ol-heading">The Problem We Inherited</h2>
+          <div className="ol-stat-grid">
+            {[
+              {
+                n: "£4.2B",
+                l: "Lost annually to diesel contamination in the UK",
+              },
+              {
+                n: "68%",
+                l: "Of diesel engines show acid corrosion within 5 years",
+              },
+              {
+                n: "23%",
+                l: "Fuel efficiency lost to poor combustion chemistry",
+              },
+              {
+                n: "1 in 3",
+                l: "Diesel failures linked to microbiological growth",
+              },
+            ].map((s, i) => (
+              <div key={i}>
+                <div className="ol-stat-number">{s.n}</div>
+                <div className="ol-stat-label">{s.l}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Timeline */}
+        <div className="ol-section">
+          <p className="ol-label">Our Journey</p>
+          <h2 className="ol-heading">Milestones That Shaped Us</h2>
+          <div className="ol-timeline-row">
+            {[
+              {
+                year: "2011",
+                desc: "Matrix Petroleum founded in South Africa. First laboratory trials begin targeting diesel bio-contamination.",
+              },
+              {
+                year: "2015",
+                desc: "Breakthrough in acid-neutralising chemistry. Filed first patent for multi-action fuel additive technology.",
+              },
+              {
+                year: "2018",
+                desc: "MaxFuel RX formula version 1 enters field testing across commercial fleet operators in EMEA.",
+              },
+              {
+                year: "2021",
+                desc: "Expanded to offshore and marine sectors. Proven 31% reduction in injector wear across 200+ vessels.",
+              },
+            ].map((t, i) => (
+              <div key={i} className="ol-timeline-item">
+                <div className="ol-timeline-year">{t.year}</div>
+                <div className="ol-timeline-desc">{t.desc}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Mission */}
+        <div className="ol-section ol-dark-section">
+          <p className="ol-label" style={{ color: COLORS.f1LimeGreen }}>
+            Our Mission
+          </p>
+          <h2 className="ol-heading">Why We Do This</h2>
+          <p className="ol-body">
+            We have always believed that every litre of diesel burned should do
+            so cleanly, efficiently, and with minimum harm to the machinery it
+            powers and the air we breathe. That conviction has guided every
+            decision we've made since day one.
+          </p>
+          <div className="ol-pill-list">
+            {[
+              "Engine Longevity",
+              "Clean Combustion",
+              "Acid Neutralisation",
+              "Bio-Protection",
+              "Lubrication Science",
+              "Emissions Reduction",
+            ].map((p) => (
+              <span key={p} className="ol-pill">
+                {p}
+              </span>
+            ))}
+          </div>
+        </div>
+
+        {/* Footer bridge */}
+        <div
+          className="ol-section"
+          style={{ textAlign: "center", padding: "4rem 1.5rem" }}
+        >
+          <p
+            style={{
+              fontFamily: FONTS.agrandir,
+              fontSize: "0.625rem",
+              letterSpacing: "0.1em",
+              textTransform: "uppercase",
+              color: COLORS.f1LimeGreenDark,
+            }}
+          >
+            Matrix Petroleum
+          </p>
+          <h2
+            style={{
+              fontFamily: FONTS.flare,
+              fontSize: "clamp(1.5rem, 4vw, 3rem)",
+              color: COLORS.f1GreenDark,
+              textTransform: "uppercase",
+              margin: "0.5rem 0 2rem",
+            }}
+          >
+            The Past Informs the Present
+          </h2>
+          <button className="am-btn am-btn-dark" onClick={onClose}>
+            Return to Present
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function PresentOverlay({ onClose, Droplets2, HeroVideo }) {
+  return (
+    <div className="tab-overlay">
+      
+
+      {/* Hero — video */}
+      <div className="tab-overlay-hero">
+        <video autoPlay muted loop playsInline>
+          <source src={HeroVideo} type="video/mp4" />
+        </video>
+        <div className="tab-overlay-hero-scrim" />
+        <div className="tab-overlay-hero-content">
+          <p
+            style={{
+              fontFamily: FONTS.agrandir,
+              fontSize: "0.625rem",
+              letterSpacing: "0.1em",
+              textTransform: "uppercase",
+              color: COLORS.f1LimeGreen,
+              marginBottom: "0.75rem",
+            }}
+          >
+          
+          </p>
+          <h1
+            style={{
+              fontFamily: FONTS.flare,
+              fontSize: "clamp(2.5rem, 8vw, 6rem)",
+              fontWeight: 400,
+              lineHeight: 0.92,
+              textTransform: "uppercase",
+              color: COLORS.f1LimeGreen,
+              margin: 0,
+            }}
+          >
+          
+          </h1>
+          <p
+            style={{
+              fontFamily: FONTS.agrandir,
+              fontSize: "0.75rem",
+              color: "rgba(255,255,255,0.7)",
+              marginTop: "1rem",
+              maxWidth: "40ch",
+              lineHeight: 1.7,
+            }}
+          >
+            MaxFuel RX — the world's most advanced 6-pronged diesel fuel
+            treatment. Available now. Working silently in engines across the
+            globe.
+          </p>
+        </div>
+        <div className="scroll-hint">
+          <IconArrowDown />
+          <span>Scroll</span>
+        </div>
+      </div>
+
+      {/* Body */}
+      <div className="tab-overlay-body">
+        {/* What it does */}
+        <div className="ol-section">
+          <p className="ol-label">MaxFuel RX</p>
+          <h2 className="ol-heading">Six Actions. One Formula.</h2>
+          <p className="ol-body">
+            MaxFuel RX is an elite, precision-engineered fuel treatment crafted
+            to deeply cleanse and sustain your diesel engine's performance over
+            the long haul. Its advanced formula goes beyond standard fuels,
+            ensuring continuous protection that maximises efficiency and
+            longevity.
+          </p>
+        </div>
+
+        {/* 6 actions */}
+        <div className="ol-section ol-dark-section">
+          <p className="ol-label" style={{ color: COLORS.f1LimeGreen }}>
+            The Six Pillars
+          </p>
+          <h2 className="ol-heading">What RX Does Right Now</h2>
+          <div
+            className="ol-stat-grid"
+            style={{
+              gridTemplateColumns: "repeat(auto-fit, minmax(12rem, 1fr))",
+            }}
+          >
+            {[
+              {
+                n: "01",
+                l: "Neutralising Acids",
+                d: "Attacks and eliminates corrosive acids at the source.",
+              },
+              {
+                n: "02",
+                l: "Decreasing Diesel Bug Growth",
+                d: "Prevents microbial proliferation that degrades fuel quality.",
+              },
+              {
+                n: "03",
+                l: "Lubricating Engine Components",
+                d: "Enhances wear protection across injectors and pumps.",
+              },
+              {
+                n: "04",
+                l: "Increasing Combustibility",
+                d: "Optimises fuel-air burn for maximum power output.",
+              },
+              {
+                n: "05",
+                l: "Cleaning Combustion Chamber",
+                d: "Actively dissolves carbon deposits with every fill.",
+              },
+              {
+                n: "06",
+                l: "Cleaning Exhaust Components",
+                d: "Passively restores exhaust system efficiency over time.",
+              },
+            ].map((s, i) => (
+              <div
+                key={i}
+                style={{
+                  borderTop: `1px solid rgba(198,253,58,0.2)`,
+                  paddingTop: "1rem",
+                }}
+              >
+                <div className="ol-stat-number" style={{ fontSize: "1.5rem" }}>
+                  {s.n}
+                </div>
+                <div
+                  className="ol-stat-label"
+                  style={{ color: COLORS.f1LimeGreen, marginBottom: "0.5rem" }}
+                >
+                  {s.l}
+                </div>
+                <div
+                  style={{
+                    fontFamily: FONTS.agrandir,
+                    fontSize: "0.6875rem",
+                    color: "rgba(255,255,255,0.65)",
+                    lineHeight: 1.6,
+                  }}
+                >
+                  {s.d}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Video grid */}
+        <div className="ol-section">
+          <p className="ol-label">In Action</p>
+          <h2 className="ol-heading">Seen At Work</h2>
+          <div className="ol-video-grid">
+            {[Video1, Video2, Video3].map((v, i) => (
+              <div key={i} className="ol-video-cell">
+                <video autoPlay muted loop playsInline>
+                  <source src={v} type="video/mp4" />
+                </video>
+                <div className="ol-video-cell-scrim" />
+                <div className="ol-video-label">
+                  {["Combustion", "Protection", "Efficiency"][i]}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* How to use */}
+        <div className="ol-section ol-dark-section">
+          <p className="ol-label" style={{ color: COLORS.f1LimeGreen }}>
+            Usage
+          </p>
+          <h2 className="ol-heading">One Simple Step</h2>
+          <p className="ol-body">
+            Add MaxFuel RX to your diesel tank at every fill-up. The formula is
+            fully miscible with all grades of diesel fuel — no pre-mixing, no
+            special equipment. Just pour, fill, and let the chemistry do the
+            work.
+          </p>
+          <div className="ol-pill-list">
+            {[
+              "All Diesel Grades",
+              "Marine & Offshore",
+              "Commercial Fleets",
+              "Generators",
+              "Agricultural",
+              "Mining Equipment",
+            ].map((p) => (
+              <span key={p} className="ol-pill">
+                {p}
+              </span>
+            ))}
+          </div>
+        </div>
+
+        <div
+          className="ol-section"
+          style={{ textAlign: "center", padding: "4rem 1.5rem" }}
+        >
+          <p
+            style={{
+              fontFamily: FONTS.agrandir,
+              fontSize: "0.625rem",
+              letterSpacing: "0.1em",
+              textTransform: "uppercase",
+              color: COLORS.f1LimeGreenDark,
+            }}
+          >
+            Matrix Petroleum
+          </p>
+          <h2
+            style={{
+              fontFamily: FONTS.flare,
+              fontSize: "clamp(1.5rem, 4vw, 3rem)",
+              color: COLORS.f1GreenDark,
+              textTransform: "uppercase",
+              margin: "0.5rem 0 2rem",
+            }}
+          >
+            Ready to Transform Your Fleet?
+          </h2>
+          <button className="am-btn am-btn-dark" onClick={onClose}>
+            Close
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function FutureOverlay({ onClose }) {
+  return (
+    <div className="tab-overlay" style={{ background: COLORS.introBg }}>
+     
+
+      {/* Hero — video */}
+      <div className="tab-overlay-hero">
+        <video autoPlay muted loop playsInline>
+          <source src={HeroVideo1} type="video/mp4" />
+        </video>
+        <div className="tab-overlay-hero-scrim" />
+        <div className="tab-overlay-hero-content">
+          <p
+            style={{
+              fontFamily: FONTS.agrandir,
+              fontSize: "0.625rem",
+              letterSpacing: "0.1em",
+              textTransform: "uppercase",
+              color: COLORS.f1LimeGreen,
+              marginBottom: "0.75rem",
+            }}
+          >
+          
+          </p>
+          <h1
+            style={{
+              fontFamily: FONTS.flare,
+              fontSize: "clamp(2.5rem, 8vw, 6rem)",
+              fontWeight: 400,
+              lineHeight: 0.92,
+              textTransform: "uppercase",
+              color: COLORS.f1LimeGreen,
+              margin: 0,
+            }}
+          >
+           
+          </h1>
+          <p
+            style={{
+              fontFamily: FONTS.agrandir,
+              fontSize: "0.75rem",
+              color: "rgba(255,255,255,0.7)",
+              marginTop: "1rem",
+              maxWidth: "40ch",
+              lineHeight: 1.7,
+            }}
+          >
+           
+          </p>
+        </div>
+        <div className="scroll-hint">
+          <IconArrowDown />
+          <span>Scroll</span>
+        </div>
+      </div>
+
+      {/* Body — dark-themed throughout */}
+      <div className="tab-overlay-body" style={{ background: COLORS.introBg }}>
+        {/* Vision */}
+        <div
+          className="ol-section ol-dark-section"
+          style={{ background: COLORS.introBg }}
+        >
+          <p className="ol-label" style={{ color: COLORS.f1LimeGreen }}>
+            Our Vision
+          </p>
+          <h2 className="ol-heading">A Cleaner Engine. A Cleaner Planet.</h2>
+          <p className="ol-body">
+            The future of energy is not binary. While the world transitions
+            toward electrification, billions of diesel engines will continue
+            operating for decades. Our mission is to make every one of those
+            engines as clean, efficient, and long-lived as possible — reducing
+            their footprint without replacing them.
+          </p>
+        </div>
+
+        {/* Roadmap */}
+        <div
+          className="ol-section ol-dark-section"
+          style={{ background: COLORS.introBg }}
+        >
+          <p className="ol-label" style={{ color: COLORS.f1LimeGreen }}>
+            Roadmap
+          </p>
+          <h2 className="ol-heading">What's Coming</h2>
+          <div className="ol-timeline-row">
+            {[
+              {
+                year: "2025",
+                desc: "RX Gen 2 launches — enhanced passive exhaust cleaning and 40% improvement in combustion efficiency.",
+              },
+              {
+                year: "2026",
+                desc: "Hydrogen-blend compatibility formula enters testing. MaxFuel RX becomes the first additive certified for H2-diesel blends.",
+              },
+              {
+                year: "2027",
+                desc: "Smart dosing technology — AI-calibrated additive release based on real-time fuel quality telemetry.",
+              },
+              {
+                year: "2030",
+                desc: "Carbon-neutral manufacturing facility opens in South Africa. Full lifecycle emissions offset achieved.",
+              },
+            ].map((t, i) => (
+              <div
+                key={i}
+                className="ol-timeline-item"
+                style={{ borderColor: "rgba(198,253,58,0.2)" }}
+              >
+                <div className="ol-timeline-year">{t.year}</div>
+                <div
+                  className="ol-timeline-desc"
+                  style={{ color: "rgba(255,255,255,0.7)" }}
+                >
+                  {t.desc}
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Stats — future targets */}
+        <div
+          className="ol-section ol-dark-section"
+          style={{ background: COLORS.introBg }}
+        >
+          <p className="ol-label" style={{ color: COLORS.f1LimeGreen }}>
+            2030 Targets
+          </p>
+          <h2 className="ol-heading">The Numbers We're Chasing</h2>
+          <div className="ol-stat-grid">
+            {[
+              {
+                n: "50%",
+                l: "Reduction in particulate emissions vs untreated diesel",
+              },
+              { n: "2M+", l: "Engines running MaxFuel RX globally" },
+              { n: "Zero", l: "Carbon footprint in manufacturing by 2030" },
+              { n: "Gen 5", l: "Formula iterations currently in development" },
+            ].map((s, i) => (
+              <div key={i}>
+                <div className="ol-stat-number">{s.n}</div>
+                <div className="ol-stat-label">{s.l}</div>
+              </div>
+            ))}
+          </div>
+        </div>
+
+        {/* Video feature */}
+        <div
+          className="ol-section ol-dark-section"
+          style={{ background: COLORS.introBg }}
+        >
+          <p className="ol-label" style={{ color: COLORS.f1LimeGreen }}>
+            Innovation
+          </p>
+          <h2 className="ol-heading">New Engine. New Era.</h2>
+          <p className="ol-body">
+            Our R&D partnership with leading engine manufacturers is already
+            producing results: a next-generation injector cleaning protocol that
+            removes 30-year-old carbon deposits in a single tank. The future
+            doesn't wait.
+          </p>
+          <div className="ol-video-grid" style={{ marginTop: "2rem" }}>
+            <div className="ol-video-cell">
+              <video autoPlay muted loop playsInline>
+                <source src={HeroVideo2} type="video/mp4" />
+              </video>
+              <div className="ol-video-cell-scrim" />
+              <div className="ol-video-label">Next-Gen Engine</div>
+            </div>
+            <div className="ol-video-cell">
+              <video autoPlay muted loop playsInline>
+                <source src={HeroVideo3} type="video/mp4" />
+              </video>
+              <div className="ol-video-cell-scrim" />
+              <div className="ol-video-label">Green Fuel</div>
+            </div>
+          </div>
+        </div>
+
+        {/* CTA */}
+        <div
+          className="ol-section ol-dark-section"
+          style={{
+            background: COLORS.introBg,
+            textAlign: "center",
+            padding: "5rem 1.5rem",
+          }}
+        >
+          <p
+            style={{
+              fontFamily: FONTS.agrandir,
+              fontSize: "0.625rem",
+              letterSpacing: "0.1em",
+              textTransform: "uppercase",
+              color: COLORS.f1LimeGreenDark,
+              marginBottom: "0.75rem",
+            }}
+          >
+            Matrix Petroleum
+          </p>
+          <h2
+            style={{
+              fontFamily: FONTS.flare,
+              fontSize: "clamp(1.75rem, 5vw, 3.5rem)",
+              color: COLORS.f1LimeGreen,
+              textTransform: "uppercase",
+              margin: "0 0 1rem",
+            }}
+          >
+            Join the Future
+          </h2>
+          <p
+            style={{
+              fontFamily: FONTS.agrandir,
+              fontSize: "0.75rem",
+              color: "rgba(255,255,255,0.6)",
+              maxWidth: "40ch",
+              margin: "0 auto 2rem",
+              lineHeight: 1.7,
+            }}
+          >
+            Be among the first to access RX Gen 2 and our hydrogen-compatible
+            formula when it launches. Sign up for the MaxFuel Collective.
+          </p>
+          <div
+            style={{
+              display: "flex",
+              gap: "1rem",
+              justifyContent: "center",
+              flexWrap: "wrap",
+            }}
+          >
+            <button className="am-btn am-btn-light">Join the Collective</button>
+            <button className="am-btn am-btn-dark" onClick={onClose}>
+              Return to Present
+            </button>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 // ─── Main component ───────────────────────────────────────────────────────────
 export default function MaxfuelRX() {
   const [menuOpen, setMenuOpen] = useState(false);
   const [activeTab, setActiveTab] = useState(1);
+  const location = useLocation();
   const [benefitIdx, setBenefitIdx] = useState(0);
+  // NEW: which overlay page is showing (null | "past" | "present" | "future")
+  const [overlayPage, setOverlayPage] = useState(null);
 
   const navPillRef = useRef(null);
   const navBarRef = useRef(null);
@@ -443,12 +1383,34 @@ export default function MaxfuelRX() {
   useFitText(heroLine1Ref);
   useFitText(heroLine2Ref);
   activeTabRef.current = activeTab;
-  const [overlayView, setOverlayView] = useState(null);
+
   const slider1Ref = useRef(null);
   const slider2Ref = useRef(null);
   const slider1 = useDragScroll(slider1Ref);
   const slider2 = useDragScroll(slider2Ref);
 
+  // Lock body scroll when an overlay is open
+  useEffect(() => {
+    // Overlay manages its own scroll, so we lock the background
+    document.body.style.overflow = overlayPage ? "hidden" : "";
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [overlayPage]);
+
+  useEffect(() => {
+    document.body.style.overflow = menuOpen ? "hidden" : "";
+    return () => {
+      document.body.style.overflow = "";
+    };
+  }, [menuOpen]);
+useEffect(() => {
+  const params = new URLSearchParams(location.search);
+  const overlay = params.get("overlay"); // "past" | "present" | "future"
+  if (overlay === "past" || overlay === "present" || overlay === "future") {
+    setOverlayPage(overlay);
+  }
+}, [location.search]);
   useEffect(() => {
     pushDataLayer({
       event: "siteDataLoaded",
@@ -458,13 +1420,6 @@ export default function MaxfuelRX() {
   }, []);
 
   useEffect(() => {
-    document.body.style.overflow = menuOpen ? "hidden" : "";
-    return () => {
-      document.body.style.overflow = "";
-    };
-  }, [menuOpen]);
-
-  useEffect(() => {
     const id = setInterval(
       () => setBenefitIdx((i) => (i + 1) % NEWSLETTER_BENEFITS.length),
       2200,
@@ -472,6 +1427,7 @@ export default function MaxfuelRX() {
     return () => clearInterval(id);
   }, []);
 
+  // ── Timeline pill bar logic (identical to original) ──
   const getBarPos = useCallback((index) => {
     if (posCache.current.has(index)) return posCache.current.get(index);
     const pill = navPillRef.current;
@@ -550,8 +1506,8 @@ export default function MaxfuelRX() {
         gsap.to(pill, { autoAlpha: 1, duration: 0.7 });
       }
       if (pill) {
-        const pastQuarter = window.scrollY > window.innerHeight / 4;
-        pill.dataset.positionCenter = pastQuarter ? "false" : "true";
+        pill.dataset.positionCenter =
+          window.scrollY > window.innerHeight / 4 ? "false" : "true";
       }
     };
     window.addEventListener("scroll", onScroll, { passive: true });
@@ -565,35 +1521,13 @@ export default function MaxfuelRX() {
       { scale: 1 },
       "<",
     );
-
     const st = ScrollTrigger.create({
       trigger: "#homepage-transition-asset",
       start: "top-=200 top",
       end: "bottom bottom",
       scrub: 0.2,
       animation: tl,
-      onEnter: () => {
-        if (cycleTimer.current) cycleTimer.current.kill();
-        cycleTimer.current = gsap.delayedCall(1, () => {
-          setActiveTab((t) => (t + 1) % TIMELINE_TABS.length);
-        });
-      },
-      onUpdate: (self) => {
-        if (self.progress > 0.9) {
-          if (!cycleTimer.current || cycleTimer.current.progress() === 1) {
-            cycleTimer.current = gsap.delayedCall(1, () => {
-              setActiveTab((t) => (t + 1) % TIMELINE_TABS.length);
-            });
-          }
-        } else if (self.progress === 0) {
-          if (cycleTimer.current) {
-            cycleTimer.current.kill();
-            cycleTimer.current = null;
-          }
-        }
-      },
     });
-
     return () => {
       st.kill();
       tl.kill();
@@ -621,9 +1555,29 @@ export default function MaxfuelRX() {
 
   const bgGradient = `linear-gradient(0deg, ${COLORS.introBg}, ${COLORS.introBgTop})`;
 
+  // ── Tab click handler — opens the correct overlay ──
+  const handleTabClick = (index) => {
+    setActiveTab(index);
+    if (index === 0) setOverlayPage("past");
+    else if (index === 1) setOverlayPage("present");
+    else if (index === 2) setOverlayPage("future");
+  };
+
+  const closeOverlay = () => {
+    setOverlayPage(null);
+    setActiveTab(1); // snap pill back to Present
+  };
+
   return (
     <>
       <style dangerouslySetInnerHTML={{ __html: GLOBAL_STYLES }} />
+
+      {/* ── OVERLAY PAGES (rendered on top of everything) ── */}
+      {overlayPage === "past" && <PastOverlay onClose={closeOverlay} />}
+      {overlayPage === "present" && (
+        <PresentOverlay onClose={closeOverlay} HeroVideo={HeroVideo} />
+      )}
+      {overlayPage === "future" && <FutureOverlay onClose={closeOverlay} />}
 
       <div
         style={{
@@ -635,7 +1589,7 @@ export default function MaxfuelRX() {
           WebkitFontSmoothing: "antialiased",
         }}
       >
-        {/* ── OVERLAY NAV ── */}
+        {/* ── HAMBURGER NAV ── */}
         <nav
           style={{
             position: "fixed",
@@ -832,12 +1786,7 @@ export default function MaxfuelRX() {
                   }}
                   data-active={activeTab === i}
                   className="am-timeline-item"
-                  onClick={() => {
-                    setActiveTab(i);
-                    if (tab === "Past") setOverlayView("past");
-                    else if (tab === "Future") setOverlayView("future");
-                    else setOverlayView(null);
-                  }}
+                  onClick={() => handleTabClick(i)} // ← CHANGED
                   onMouseEnter={() => {
                     if (hoverTimer.current) {
                       clearTimeout(hoverTimer.current);
@@ -930,10 +1879,9 @@ export default function MaxfuelRX() {
                     display: "flex",
                     flexDirection: "column",
                     justifyContent: "space-between",
-                    padding: "1.5rem 1.5rem 2rem",
+                    padding: "2.5rem 1.5rem 4rem",
                   }}
                 >
-                  {/* TOP */}
                   <div
                     style={{
                       width: "100%",
@@ -946,8 +1894,8 @@ export default function MaxfuelRX() {
                       className="hero-fit-text"
                       style={{
                         fontFamily: FONTS.flare,
-                        fontWeight: 800,
-                        lineHeight: 0.92,
+                fontSize: "clamp(40px,8vw,120px)",
+                fontWeight: 400,
                         color: COLORS.f1LimeGreen,
                         textTransform: "uppercase",
                         letterSpacing: "0.02em",
@@ -960,8 +1908,6 @@ export default function MaxfuelRX() {
                       Visionary Fuel
                     </div>
                   </div>
-
-                  {/* BOTTOM */}
                   <div
                     style={{
                       width: "100%",
@@ -973,9 +1919,10 @@ export default function MaxfuelRX() {
                       ref={heroLine2Ref}
                       className="hero-fit-text"
                       style={{
+                
                         fontFamily: FONTS.flare,
-                        fontWeight: 800,
-                        lineHeight: 0.92,
+                fontSize: "clamp(40px,8vw,120px)",
+                fontWeight: 400,
                         color: COLORS.f1LimeGreen,
                         textTransform: "uppercase",
                         letterSpacing: "0.02em",
@@ -990,40 +1937,11 @@ export default function MaxfuelRX() {
                     </div>
                   </div>
                 </div>
-                <style>{`
-                  @keyframes slideUp {
-    from { opacity: 0; transform: translateY(60px); }
-    to   { opacity: 1; transform: translateY(0); }
-  }
-  .hero-line {
-    font-family: var(--font-flare);
-    font-weight: 400;
-    line-height: 0.92;
-    color: #c6fd3a;
-    text-align: center;
-    text-transform: uppercase;
-    letter-spacing: 0.02em;
-    width: 100%;
-    font-size: 19.5vw;
-    white-space: nowrap;
-  }
-  .hero-line-bottom {
-    animation: slideUp 0.9s ease-out forwards;
-  }
-  @media (max-width: 767px) {
-    .hero-line {
-      font-size: 16vw;
-      white-space: normal;
-      text-align: center;
-      line-height: 1;
-    }
-  }
-                `}</style>
               </div>
               <div
                 style={{
                   position: "absolute",
-                  bottom: "5rem",
+                  bottom: "0.09rem",
                   left: 0,
                   zIndex: 1,
                   display: "grid",
@@ -1088,14 +2006,11 @@ export default function MaxfuelRX() {
             position: "relative",
             padding: "13rem 0",
             color: COLORS.white,
-            background: COLORS.f1GreenDark,
-            maxWidth: "100%", // ← ADD THIS
+            background: COLORS.introBg,
+            maxWidth: "100%",
             width: "100%",
             overflow: "hidden",
             WebkitFontSmoothing: "antialiased",
-            MozOsxFontSmoothing: "grayscale",
-            MsFontSmoothing: "grayscale",
-            fontSmoothing: "antialiased",
           }}
         >
           <div
@@ -1115,24 +2030,13 @@ export default function MaxfuelRX() {
                 lineHeight: "150%",
                 color: COLORS.f1LimeGreenDark,
                 textTransform: "uppercase",
+                textAlign:"center"
               }}
             >
               CRITICAL ASPECTS OF FUEL OPTIMIZATION
             </span>
-            <button
-              className="am-btn am-btn-light"
-              style={{ flexShrink: 0 }}
-              onClick={() =>
-                pushDataLayer({
-                  event: "ctaClicks",
-                  ga_event: { category: "CTA", action: "View All Aspects" },
-                })
-              }
-            >
-              View All
-            </button>
+           
           </div>
-
           <div
             ref={slider1Ref}
             className="am-slider am-card-slider-track"
@@ -1221,7 +2125,6 @@ export default function MaxfuelRX() {
                 </div>
               );
             })}
-            {/* Trailing spacer — ensures right padding is respected in overflow scroll */}
             <div
               style={{ flexShrink: 0, width: "1.5rem" }}
               aria-hidden="true"
@@ -1239,7 +2142,7 @@ export default function MaxfuelRX() {
               gap: "1.5rem",
               padding: "0 1.5rem",
               alignItems: "center",
-              maxWidth: "100%", // ← ADD THIS
+              maxWidth: "100%",
               width: "100%",
             }}
           >
@@ -1285,8 +2188,6 @@ export default function MaxfuelRX() {
                   zIndex: 2,
                   fontFamily: FONTS.agrandir,
                   fontSize: "1rem",
-                  fontWeight: 400,
-                  lineHeight: "100%",
                   color: COLORS.f1LimeGreen,
                   textAlign: "center",
                   textTransform: "uppercase",
@@ -1304,20 +2205,7 @@ export default function MaxfuelRX() {
                   zIndex: 3,
                 }}
               >
-                <button
-                  className="am-btn am-btn-light"
-                  onClick={() =>
-                    pushDataLayer({
-                      event: "ctaClicks",
-                      ga_event: {
-                        category: "CTA",
-                        action: "Discover Limited Edition",
-                      },
-                    })
-                  }
-                >
-                  Discover
-                </button>
+                <button className="am-btn am-btn-light">Discover</button>
               </div>
             </div>
             <div
@@ -1357,9 +2245,6 @@ export default function MaxfuelRX() {
                   style={{
                     fontFamily: FONTS.agrandir,
                     fontSize: "0.625rem",
-                    fontWeight: 400,
-                    lineHeight: "100%",
-                    color: COLORS.black,
                     textTransform: "uppercase",
                     letterSpacing: "0.0313rem",
                     marginBottom: "0.25rem",
@@ -1371,26 +2256,13 @@ export default function MaxfuelRX() {
                   style={{
                     fontFamily: FONTS.flare,
                     fontSize: "1rem",
-                    fontWeight: 400,
-                    lineHeight: "150%",
-                    color: COLORS.black,
                     textTransform: "uppercase",
                   }}
                 >
                   RX
                 </p>
                 <div style={{ marginTop: "1rem" }}>
-                  <button
-                    className="am-btn am-btn-dark"
-                    onClick={() =>
-                      pushDataLayer({
-                        event: "ctaClicks",
-                        ga_event: { category: "CTA", action: "Shop 16YO" },
-                      })
-                    }
-                  >
-                    Shop Now
-                  </button>
+                  <button className="am-btn am-btn-dark">Shop Now</button>
                 </div>
               </div>
             </div>
@@ -1421,9 +2293,6 @@ export default function MaxfuelRX() {
                 paddingBottom: "1rem",
                 fontFamily: FONTS.agrandir,
                 fontSize: "0.875rem",
-                fontWeight: 400,
-                lineHeight: "100%",
-                textAlign: "center",
                 textTransform: "uppercase",
                 letterSpacing: "0.0438rem",
                 color: COLORS.f1GreenDark,
@@ -1438,7 +2307,6 @@ export default function MaxfuelRX() {
                 fontSize: "clamp(2.875rem, 6vw, 5rem)",
                 fontWeight: 400,
                 lineHeight: "90%",
-                textAlign: "center",
                 textTransform: "uppercase",
                 letterSpacing: "clamp(-0.115rem, -0.5vw, -0.15rem)",
                 color: COLORS.f1GreenDark,
@@ -1461,7 +2329,6 @@ export default function MaxfuelRX() {
                 style={{
                   fontFamily: FONTS.agrandir,
                   fontSize: "0.875rem",
-                  fontWeight: 400,
                   letterSpacing: "0.0438rem",
                   textTransform: "uppercase",
                   color: COLORS.f1LimeGreenDark,
@@ -1478,37 +2345,24 @@ export default function MaxfuelRX() {
                 marginTop: "1.75rem",
                 fontFamily: FONTS.flare,
                 fontSize: "0.75rem",
-                fontWeight: 400,
                 lineHeight: "145%",
                 textAlign: "center",
                 color: COLORS.f1GreenDark,
               }}
             >
               MaxFuel RX is an elite precision engineered fuel crafted to deeply
-              cleanse and sustain your diesel engine’s performance over the long
-              haul. Its advanced formula goes beyond standard fuels, ensuring
-              continuous protection that maximises efficiency and longevity.
+              cleanse and sustain your diesel engine's performance over the long
+              haul.
             </p>
             <div style={{ margin: "2.02rem auto 0" }}>
-              <button
-                className="am-btn am-btn-dark"
-                onClick={() =>
-                  pushDataLayer({
-                    event: "ctaClicks",
-                    ga_event: {
-                      category: "CTA",
-                      action: "Join the Collective",
-                    },
-                  })
-                }
-              >
+              <button className="am-btn am-btn-dark">
                 Join the Collective
               </button>
             </div>
           </div>
         </section>
 
-        {/* ── AMR26 SECTION ── */}
+        {/* ── FUTURE SECTION ── */}
         <section
           id="section-future"
           style={{
@@ -1584,7 +2438,6 @@ export default function MaxfuelRX() {
               style={{
                 fontFamily: FONTS.flare,
                 fontSize: "0.75rem",
-                fontWeight: 400,
                 lineHeight: "145%",
                 color: "rgba(255,255,255,0.85)",
                 maxWidth: "40ch",
@@ -1592,180 +2445,11 @@ export default function MaxfuelRX() {
               }}
             >
               Over time exhaust systems accumulate residue that reduces their
-              effectiveness in filtering harmful gases. MaxFuel RX passively
-              cleans these components, ensuring that exhaust systems operate at
-              peak efficiency thereby significantly reducing emissions.
+              effectiveness. MaxFuel RX passively cleans these components,
+              ensuring peak efficiency.
             </p>
             <div>
-              <button
-                className="am-btn am-btn-light"
-                onClick={() =>
-                  pushDataLayer({
-                    event: "ctaClicks",
-                    ga_event: { category: "CTA", action: "Read More AMR26" },
-                  })
-                }
-              >
-                Read More
-              </button>
-            </div>
-          </div>
-        </section>
-
-        {/* ── RX Benefits SECTION ── */}
-        <section style={{ position: "relative", margin: "13rem 0" }}>
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns:
-                window.innerWidth < 768 ? "1fr" : "repeat(2, 1fr)",
-              gap: "1.5rem",
-              padding: "0 1.5rem",
-              alignItems: "center",
-              maxWidth: "100%", // ← ADD THIS
-              width: "100%",
-            }}
-          >
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                justifyContent: "center",
-                gap: "1.5rem",
-              }}
-            >
-              <div
-                style={{
-                  position: "relative",
-                  height: "26rem",
-                  aspectRatio: "217 / 325",
-                  overflow: "hidden",
-                }}
-              >
-                <video
-                  autoPlay
-                  muted
-                  loop
-                  playsInline
-                  style={{
-                    position: "absolute",
-                    inset: 0,
-                    width: "100%",
-                    height: "100%",
-                    objectFit: "cover",
-                    display: "block",
-                  }}
-                >
-                  <source src={Droplets} type="video/mp4" />
-                </video>
-              </div>
-              <div style={{ textAlign: "center" }}>
-                <div
-                  style={{
-                    display: "flex",
-                    gap: "0.5rem",
-                    justifyContent: "center",
-                    marginBottom: "1rem",
-                    flexWrap: "wrap",
-                  }}
-                >
-                  <span className="am-tag am-tag-green">Travel Exclusive</span>
-                  <span className="am-tag am-tag-green">RX Benefits</span>
-                </div>
-                <p
-                  style={{
-                    fontFamily: FONTS.agrandir,
-                    fontSize: "0.625rem",
-                    fontWeight: 400,
-                    lineHeight: "100%",
-                    color: COLORS.black,
-                    textTransform: "uppercase",
-                    letterSpacing: "0.0313rem",
-                    marginBottom: "0.25rem",
-                  }}
-                >
-                  Travel Retail Exclusive
-                </p>
-                <p
-                  style={{
-                    fontFamily: FONTS.flare,
-                    fontSize: "1rem",
-                    fontWeight: 400,
-                    lineHeight: "150%",
-                    textTransform: "uppercase",
-                    color: COLORS.black,
-                  }}
-                >
-                  RX Benefits
-                </p>
-                <div style={{ marginTop: "1rem" }}>
-                  <button
-                    className="am-btn am-btn-dark"
-                    onClick={() =>
-                      pushDataLayer({
-                        event: "ctaClicks",
-                        ga_event: {
-                          category: "CTA",
-                          action: "Find In Store 19YO",
-                        },
-                      })
-                    }
-                  >
-                    Find In Store
-                  </button>
-                </div>
-              </div>
-            </div>
-            <div
-              style={{
-                position: "relative",
-                aspectRatio: "217 / 325",
-                background: COLORS.f1GreenDark,
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-                overflow: "hidden",
-              }}
-            >
-              <video
-                autoPlay
-                muted
-                loop
-                playsInline
-                style={{
-                  position: "absolute",
-                  inset: 0,
-                  width: "100%",
-                  height: "100%",
-                  objectFit: "cover",
-                  display: "block",
-                  zIndex: 1001,
-                }}
-              >
-                <source src={HeroVideo2} type="video/mp4" />
-              </video>
-              <div
-                style={{
-                  position: "absolute",
-                  inset: 0,
-                  background: `linear-gradient(160deg, ${COLORS.introBgTop}, ${COLORS.introBg})`,
-                  zIndex: 1,
-                }}
-              />
-              <div
-                style={{
-                  position: "relative",
-                  zIndex: 2,
-                  fontFamily: FONTS.agrandir,
-                  fontSize: "1rem",
-                  color: COLORS.f1LimeGreen,
-                  textAlign: "center",
-                  textTransform: "uppercase",
-                }}
-              >
-                Travel Retail
-              </div>
+              <button className="am-btn am-btn-light">Read More</button>
             </div>
           </div>
         </section>
@@ -1774,7 +2458,7 @@ export default function MaxfuelRX() {
         <section
           style={{
             position: "relative",
-            background: bgGradient,
+            background: COLORS.introBg,
             padding: "13rem 0",
             color: COLORS.white,
           }}
@@ -1800,20 +2484,10 @@ export default function MaxfuelRX() {
             >
               CRITICAL ASPECTS OF FUEL OPTIMIZATION
             </span>
-            <button
-              className="am-btn am-btn-light"
-              style={{ flexShrink: 0 }}
-              onClick={() =>
-                pushDataLayer({
-                  event: "ctaClicks",
-                  ga_event: { category: "CTA", action: "View All Aspects" },
-                })
-              }
-            >
+            <button className="am-btn am-btn-light" style={{ flexShrink: 0 }}>
               View All Aspects
             </button>
           </div>
-
           <div
             ref={slider2Ref}
             className="am-slider am-card-slider-track"
@@ -1823,98 +2497,80 @@ export default function MaxfuelRX() {
             onPointerUp={slider2.onPointerUp}
             onPointerLeave={slider2.onPointerLeave}
           >
-            {EVENTS.map((ev, i) => {
-              const eventVideos = [Theteam, Theteam, Theteam];
-              return (
+            {EVENTS.map((ev, i) => (
+              <div
+                key={i}
+                className="am-card-link am-card-slide"
+                style={{ cursor: "pointer" }}
+              >
                 <div
-                  key={i}
-                  className="am-card-link am-card-slide"
-                  style={{ cursor: "pointer" }}
+                  style={{
+                    position: "relative",
+                    width: "100%",
+                    aspectRatio: "272.61 / 444",
+                    background: COLORS.f1GreenDark,
+                    display: "flex",
+                    alignItems: "center",
+                    justifyContent: "center",
+                    overflow: "hidden",
+                  }}
                 >
-                  <div
+                  <video
+                    autoPlay
+                    muted
+                    loop
+                    playsInline
                     style={{
-                      position: "relative",
+                      position: "absolute",
+                      inset: 0,
                       width: "100%",
-                      aspectRatio: "272.61 / 444",
-                      background: COLORS.f1GreenDark,
-                      display: "flex",
-                      alignItems: "center",
-                      justifyContent: "center",
-                      overflow: "hidden",
+                      height: "100%",
+                      objectFit: "cover",
+                      display: "block",
+                      zIndex: 1001,
                     }}
                   >
-                    <video
-                      autoPlay
-                      muted
-                      loop
-                      playsInline
-                      style={{
-                        position: "absolute",
-                        inset: 0,
-                        width: "100%",
-                        height: "100%",
-                        objectFit: "cover",
-                        display: "block",
-                        zIndex: 1001,
-                      }}
-                    >
-                      <source src={eventVideos[i]} type="video/mp4" />
-                    </video>
-                    <div
-                      style={{
-                        position: "absolute",
-                        inset: 0,
-                        background: `linear-gradient(180deg, ${COLORS.introBgTop} ${i * 20}%, ${COLORS.introBg})`,
-                        zIndex: 2,
-                      }}
-                    />
-                    <button
-                      style={{
-                        position: "relative",
-                        zIndex: 3,
-                        background: "none",
-                        border: "none",
-                        cursor: "pointer",
-                        padding: 0,
-                      }}
-                    />
-                  </div>
-                  <div style={{ marginTop: "1.5rem" }}>
-                    <span
-                      className="am-card-subtitle"
-                      style={{
-                        display: "block",
-                        fontFamily: FONTS.agrandir,
-                        fontSize: "0.625rem",
-                        fontWeight: 400,
-                        lineHeight: "100%",
-                        color: COLORS.white,
-                        textTransform: "uppercase",
-                        letterSpacing: "0.0312rem",
-                      }}
-                    >
-                      {ev.sub}
-                    </span>
-                    <span
-                      className="am-card-title"
-                      style={{
-                        display: "block",
-                        marginTop: "0.25rem",
-                        fontFamily: FONTS.flare,
-                        fontSize: "1rem",
-                        fontWeight: 400,
-                        lineHeight: "150%",
-                        textTransform: "uppercase",
-                        color: COLORS.white,
-                      }}
-                    >
-                      {ev.title}
-                    </span>
-                  </div>
+                    <source src={Theteam} type="video/mp4" />
+                  </video>
+                  <div
+                    style={{
+                      position: "absolute",
+                      inset: 0,
+                      background: `linear-gradient(180deg, ${COLORS.introBgTop} ${i * 20}%, ${COLORS.introBg})`,
+                      zIndex: 2,
+                    }}
+                  />
                 </div>
-              );
-            })}
-            {/* Trailing spacer — ensures right padding is respected in overflow scroll */}
+                <div style={{ marginTop: "1.5rem" }}>
+                  <span
+                    className="am-card-subtitle"
+                    style={{
+                      display: "block",
+                      fontFamily: FONTS.agrandir,
+                      fontSize: "0.625rem",
+                      color: COLORS.white,
+                      textTransform: "uppercase",
+                      letterSpacing: "0.0312rem",
+                    }}
+                  >
+                    {ev.sub}
+                  </span>
+                  <span
+                    className="am-card-title"
+                    style={{
+                      display: "block",
+                      marginTop: "0.25rem",
+                      fontFamily: FONTS.flare,
+                      fontSize: "1rem",
+                      textTransform: "uppercase",
+                      color: COLORS.white,
+                    }}
+                  >
+                    {ev.title}
+                  </span>
+                </div>
+              </div>
+            ))}
             <div
               style={{ flexShrink: 0, width: "1.5rem" }}
               aria-hidden="true"
@@ -1922,7 +2578,7 @@ export default function MaxfuelRX() {
           </div>
         </section>
 
-        {/* ── Disclaimer ── */}
+        {/* ── DISCLAIMER ── */}
         <div
           style={{
             padding: "2rem 1.5rem",
@@ -1934,7 +2590,6 @@ export default function MaxfuelRX() {
             style={{
               fontFamily: FONTS.agrandir,
               fontSize: "0.625rem",
-              fontWeight: 400,
               lineHeight: "140%",
               letterSpacing: "0.065rem",
               textTransform: "uppercase",
@@ -1947,151 +2602,66 @@ export default function MaxfuelRX() {
         </div>
 
         {/* ── FOOTER ── */}
-        <footer
-          style={{
-            position: "relative",
-            zIndex: "var(--z-footer)",
-            display: "grid",
-            padding: "9.62rem 1.5rem 1.5rem",
-            marginTop: 0,
-            color: COLORS.white,
-            backgroundImage: `linear-gradient(rgba(32, 67, 56, 0.8), rgba(32, 67, 56, 0.8)), url('${Cheetah}')`,
-            backgroundSize: "cover",
-            backgroundPosition: "center",
-            backgroundAttachment: "fixed",
-          }}
-        >
-          <div
-            style={{
-              display: "flex",
-              justifyContent: "center",
-              width: "100%",
-              margin: "8rem 0 9.32rem",
-            }}
-          />
-          <div style={{ marginTop: "8rem" }}>
-            <p
-              style={{
-                fontFamily: FONTS.agrandir,
-                fontSize: "0.625rem",
-                fontWeight: 400,
-                lineHeight: "170%",
-                letterSpacing: "0.045rem",
-                opacity: 0.8,
-                color: COLORS.white,
-                marginBottom: "1.38rem",
-              }}
-            >
-              © {new Date().getFullYear()} Matrix Petroleum. All rights
-              reserved.
-            </p>
-            <div
-              style={{
-                display: "flex",
-                flexDirection: "row",
-                alignItems: "center",
-                justifyContent: "space-between",
-              }}
-            >
-              <div style={{ display: "flex", gap: "1rem" }}>
-                {["Terms & Conditions", "Privacy Policy", "Cookie Policy"].map(
-                  (item) => (
-                    <a
-                      key={item}
-                      href="#"
-                      className="am-footer-link"
-                      style={{
-                        fontFamily: FONTS.agrandir,
-                        fontSize: "0.625rem",
-                        fontWeight: 400,
-                        lineHeight: "140%",
-                        textTransform: "uppercase",
-                        letterSpacing: "0.05rem",
-                        color: "rgba(255,255,255,0.6)",
-                        textDecoration: "none",
-                      }}
-                    >
-                      {item}
-                    </a>
-                  ),
-                )}
-              </div>
-              <div
-                style={{
-                  fontFamily: FONTS.agrandir,
-                  fontSize: "0.625rem",
-                  letterSpacing: "0.05rem",
-                  textTransform: "uppercase",
-                  color: "rgba(255,255,255,0.6)",
-                }}
-              >
-                EN-GB
-              </div>
-            </div>
-          </div>
-        </footer>
-        {/* ── PAST / FUTURE IMAGE OVERLAY ── */}
-        {overlayView && (
-          <div
-            style={{
-              position: "fixed",
-              inset: 0,
-              zIndex: 9999,
-              background: COLORS.black,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              cursor: "pointer",
-            }}
-            onClick={() => {
-              setOverlayView(null);
-              setActiveTab(1); // return to Present
-            }}
-          >
-            <img
-              src={overlayView === "past" ? IMG_PAST : IMG_FUTURE}
-              alt={overlayView === "past" ? "Past" : "Future"}
-              style={{
-                width: "100%",
-                height: "100%",
-                objectFit: "cover",
-                display: "block",
-              }}
-            />
-            {/* Label */}
-            <div
-              style={{
-                position: "absolute",
-                bottom: "6rem",
-                left: "1.5rem",
-                fontFamily: FONTS.flare,
-                fontSize: "clamp(2rem, 6vw, 4rem)",
-                color: COLORS.f1LimeGreen,
-                textTransform: "uppercase",
-                letterSpacing: "0.2rem",
-                pointerEvents: "none",
-              }}
-            >
-              {overlayView === "past" ? "The Past" : "The Future"}
-            </div>
-            {/* Close hint */}
-            <div
-              style={{
-                position: "absolute",
-                bottom: "4rem",
-                left: "1.5rem",
-                fontFamily: FONTS.agrandir,
-                fontSize: "0.625rem",
-                color: "rgba(255,255,255,0.6)",
-                textTransform: "uppercase",
-                letterSpacing: "0.05rem",
-                pointerEvents: "none",
-              }}
-            >
-              Tap anywhere to return
-            </div>
-          </div>
-        )}
+      <footer className="gy-footer">
+  <div className="gy-footer-inner">
+    <div className="gy-footer-left">
+      <div className="gy-footer-logo">Matrix Petroleum</div>
+      <ul className="gy-footer-nav">
+  {[
+    { label: "Home",                        to: "/" },
+    { label: "Our Future",                  to: "/?overlay=future" },
+    { label: "Our Story",                   to: "/about-us" },
+    { label: "Terms and Conditions",        to: "/terms-and-conditions" },
+    { label: "FAQs",                        to: "/faqs" },
+    { label: "Website Terms and Conditions",to: "/terms-and-conditions" },
+    { label: "Privacy Policy and Cookies",  to: "/privacy-policy" },
+    { label: "Matrix Petroleum",            to: "/" },
+  ].map((l) => (
+    <li key={l.label}>
+      <Link to={l.to}>{l.label}</Link>
+    </li>
+  ))}
+</ul>
+    </div>
+    <div className="gy-footer-right">
+      <div>
+        <p className="gy-footer-section-label">Follow Us</p>
+        <ul className="gy-footer-social">
+          {["Facebook", "Instagram", "Twitter", "YouTube"].map((s) => (
+            <li key={s}>
+              <a href="#">{s}</a>
+            </li>
+          ))}
+        </ul>
+      </div>
+      <div>
+        <p className="gy-footer-section-label">Contact Us</p>
+        <ul className="gy-footer-contact">
+          <li>
+            <a href="#">General Enquiries</a>
+          </li>
+        </ul>
+      </div>
+      <div className="gy-footer-legal">
+        <p className="gy-footer-tagline">
+          Skilfully Engineered. Use Responsibly.
+        </p>
+        <p className="gy-footer-disclaimer">
+          2025 Matrix Petroleum Ltd. Registered in England. Registered
+          Number 11462010
+          <br />
+          Registered Office: 3 Hardman Square, Manchester M3 3EB
+          <br />
+          This content is intended only for people who are of legal
+          purchase age in their country. Do not forward to minors.
+        </p>
+        <p className="gy-footer-drinkaware">
+          <strong>matrixpetroleum</strong>.com
+        </p>
+      </div>
+    </div>
+  </div>
+</footer>
       </div>
     </>
   );

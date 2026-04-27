@@ -3,7 +3,8 @@ import MaxFuelRX from './MaxFuelRX'
 import Maxfuel from './Maxfuel'
 import AboutUs from './Aboutus'
 import ContactUs from './Contactus'
-
+import TermsAndConditions from './TermsAndConditions';
+import PrivacyPolicy from './PrivacyPolicy'
 export default function App() {
   return (
     <BrowserRouter>
@@ -21,6 +22,8 @@ export default function App() {
         <Route path="/maxfuel" element={<Maxfuel />} />
         <Route path="/about-us" element={<AboutUs />} />
         <Route path="/contact-us" element={<ContactUs />} />
+        <Route path="/terms-and-conditions" element={<TermsAndConditions />} />
+        <Route path="/privacy-policy" element={<PrivacyPolicy />} />
       </Routes>
     </BrowserRouter>
   )
