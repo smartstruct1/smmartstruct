@@ -574,48 +574,16 @@ const IconClose = () => (
   </svg>
 );
 const IconHamburger = ({ open }) => (
-  <svg width="30" height="14" viewBox="0 0 26 16" fill="none">
+  <svg width="48" height="14" viewBox="0 0 48 16" fill="none">
     {open ? (
       <>
-        <line
-          x1="1"
-          y1="1"
-          x2="25"
-          y2="15"
-          stroke="black"
-          strokeWidth="4.5"
-          strokeLinecap="round"
-        />
-        <line
-          x1="1"
-          y1="15"
-          x2="25"
-          y2="1"
-          stroke="black"
-          strokeWidth="4.5"
-          strokeLinecap="round"
-        />
+        <line x1="1" y1="1" x2="47" y2="15" stroke="black" strokeWidth="4.5" strokeLinecap="round" />
+        <line x1="1" y1="15" x2="47" y2="1" stroke="black" strokeWidth="4.5" strokeLinecap="round" />
       </>
     ) : (
       <>
-        <line
-          x1="1"
-          y1="2"
-          x2="25"
-          y2="2"
-          stroke="black"
-          strokeWidth="2"
-          strokeLinecap="round"
-        />
-        <line
-          x1="1"
-          y1="12"
-          x2="25"
-          y2="12"
-          stroke="black"
-          strokeWidth="2"
-          strokeLinecap="round"
-        />
+        <line x1="1" y1="2" x2="47" y2="2" stroke="black" strokeWidth="2" strokeLinecap="round" />
+        <line x1="1" y1="12" x2="47" y2="12" stroke="black" strokeWidth="2" strokeLinecap="round" />
       </>
     )}
   </svg>
