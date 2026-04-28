@@ -498,204 +498,88 @@ function DistributionSection() {
 
       {/* LAYER 3 — UI overlay: no backgrounds, floats over map */}
       <div
+  style={{
+    position: "absolute",
+    inset: 0,
+    zIndex: 3,
+    display: "flex",
+    flexDirection: "column",
+    padding: "44px 0 48px",
+  }}
+>
+  {/* Tab nav — horizontal scroll on mobile */}
+  <div
+    style={{
+      display: "flex",
+      flexDirection: "row",
+      gap: "0",
+      overflowX: "auto",
+      padding: "0 clamp(20px,4vw,52px)",
+      marginBottom: "auto",
+      WebkitOverflowScrolling: "touch",
+      scrollbarWidth: "none",
+    }}
+  >
+    {DISTRIBUTION_PANELS.map((p, i) => (
+      <button
+        key={p.id}
+        onClick={() => setActiveIdx(i)}
         style={{
-          position: "absolute",
-          inset: 0,
-          zIndex: 3,
-          display: "grid",
-          gridTemplateColumns:
-            "clamp(180px,20vw,260px) 1fr clamp(220px,24vw,320px)",
-          gridTemplateRows: "auto 1fr",
-          padding: "44px 0 48px",
+          background: "none",
+          border: "none",
+          borderBottom: activeIdx === i ? `2px solid ${COLORS.f1LimeGreen}` : "2px solid transparent",
+          padding: "12px 16px",
+          cursor: "pointer",
+          color: activeIdx === i ? COLORS.white : "rgba(255,255,255,0.35)",
+          fontFamily: FONTS.agrandir,
+          fontSize: "clamp(10px,1vw,13px)",
+          letterSpacing: ".22em",
+          textTransform: "uppercase",
+          textAlign: "left",
+          transition: "color .3s ease",
+          whiteSpace: "nowrap",
+          flexShrink: 0,
         }}
       >
-       
-        <div style={{ gridColumn: "2 / 4", gridRow: "1" }} />
+        {p.label}
+      </button>
+    ))}
+  </div>
 
-        {/* Left nav — plain list, no borders */}
-        <div
-          style={{
-            gridColumn: "1",
-            gridRow: "2",
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "center",
-            padding: "0 0 0 clamp(20px,4vw,52px)",
-            gap: "4px",
-          }}
-        >
-          {DISTRIBUTION_PANELS.map((p, i) => (
-            <button
-              key={p.id}
-              onClick={() => setActiveIdx(i)}
-              style={{
-                display: "block",
-                background: "none",
-                border: "none",
-                padding: "12px 0",
-                cursor: "pointer",
-                color:
-                  activeIdx === i ? COLORS.white : "rgba(255,255,255,0.35)",
-                fontFamily: FONTS.agrandir,
-                fontSize: "clamp(11px,1vw,13px)",
-                letterSpacing: ".22em",
-                textTransform: "uppercase",
-                textAlign: "left",
-                transition: "color .3s ease",
-                width: "fit-content",
-              }}
-            >
-              {p.label}
-            </button>
-          ))}
-        </div>
-
-        {/* Centre — map shows through */}
-        <div style={{ gridColumn: "2", gridRow: "2" }} />
-
-        {/* Right — stats + body, no background */}
-        <div
-          style={{
-            gridColumn: "3",
-            gridRow: "2",
-            display: "flex",
-            flexDirection: "column",
-            justifyContent: "center",
-            padding: "0 clamp(20px,4vw,52px) 0 16px",
-          }}
-        >
-          {/* Lime rule */}
-          <div
-            style={{
-              width: "100%",
-              height: "1px",
-              background: COLORS.f1LimeGreen,
-              marginBottom: "28px",
-              opacity: 0.8,
-            }}
-          />
-
-          {/* Stats */}
-          <div
-            style={{
-              display: "grid",
-              gridTemplateColumns: "1fr 1fr",
-              gap: "18px 20px",
-              marginBottom: "28px",
-            }}
-          >
-            {panel.stats.map((s, i) => (
-              <div key={i}>
-                <div
-                  style={{
-                    fontFamily: FONTS.flare,
-                    fontSize: "clamp(22px,2.4vw,38px)",
-                    fontWeight: 400,
-                    color: COLORS.f1LimeGreen,
-                    lineHeight: 1,
-                    letterSpacing: ".02em",
-                  }}
-                >
-                  {s.value}
-                  {s.unit && (
-                    <span
-                      style={{
-                        fontSize: "clamp(10px,1vw,13px)",
-                        marginLeft: "4px",
-                      }}
-                    >
-                      {s.unit}
-                    </span>
-                  )}
-                </div>
-                <div
-                  style={{
-                    fontFamily: FONTS.agrandir,
-                    fontSize: "9px",
-                    letterSpacing: ".2em",
-                    textTransform: "uppercase",
-                    color: "rgba(255,255,255,0.45)",
-                    marginTop: "5px",
-                    lineHeight: 1.4,
-                  }}
-                >
-                  {s.label}
-                </div>
-              </div>
-            ))}
+  {/* Stats + body — bottom of section */}
+  <div
+    style={{
+      marginTop: "auto",
+      padding: "0 clamp(20px,6vw,52px) 0 clamp(20px,6vw,52px)",
+      maxWidth: "480px",
+      alignSelf: "flex-end",
+      width: "100%",
+    }}
+  >
+    <div style={{ width: "100%", height: "1px", background: COLORS.f1LimeGreen, marginBottom: "20px", opacity: 0.8 }} />
+    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "14px 20px", marginBottom: "20px" }}>
+      {panel.stats.map((s, i) => (
+        <div key={i}>
+          <div style={{ fontFamily: FONTS.flare, fontSize: "clamp(20px,2.4vw,38px)", fontWeight: 400, color: COLORS.f1LimeGreen, lineHeight: 1, letterSpacing: ".02em" }}>
+            {s.value}{s.unit && <span style={{ fontSize: "clamp(10px,1vw,13px)", marginLeft: "4px" }}>{s.unit}</span>}
           </div>
-
-          {/* Body or quote */}
-          {panel.quote ? (
-            <>
-              <p
-                style={{
-                  fontFamily: FONTS.caslon,
-                  fontSize: "clamp(11px,0.95vw,13px)",
-                  lineHeight: 1.8,
-                  color: COLORS.white,
-                  letterSpacing: ".02em",
-                  margin: "0 0 14px",
-                }}
-              >
-                {panel.quote.text}
-              </p>
-              <p
-                style={{
-                  fontFamily: FONTS.agrandir,
-                  fontSize: "11px",
-                  color: "rgba(255,255,255,0.55)",
-                  letterSpacing: ".08em",
-                  margin: "0 0 2px",
-                }}
-              >
-                {panel.quote.author}
-              </p>
-              <p
-                style={{
-                  fontFamily: FONTS.agrandir,
-                  fontSize: "11px",
-                  color: "rgba(255,255,255,0.3)",
-                  letterSpacing: ".08em",
-                  margin: 0,
-                }}
-              >
-                {panel.quote.role}
-              </p>
-            </>
-          ) : (
-            <p
-              style={{
-                fontFamily: FONTS.caslon,
-                fontSize: "clamp(11px,0.95vw,13px)",
-                lineHeight: 1.8,
-                color: COLORS.white,
-                letterSpacing: ".02em",
-                margin: 0,
-              }}
-            >
-              {panel.body}
-            </p>
-          )}
-
-          <button
-            style={{
-              background: "none",
-              border: "none",
-              cursor: "pointer",
-              fontFamily: FONTS.agrandir,
-              fontSize: "10px",
-              letterSpacing: ".22em",
-              textTransform: "uppercase",
-              color: "rgba(255,255,255,0.35)",
-              textAlign: "left",
-              padding: "20px 0 0",
-            }}
-          >
-            About Distribution
-          </button>
+          <div style={{ fontFamily: FONTS.agrandir, fontSize: "9px", letterSpacing: ".2em", textTransform: "uppercase", color: "rgba(255,255,255,0.45)", marginTop: "5px", lineHeight: 1.4 }}>
+            {s.label}
+          </div>
         </div>
-      </div>
+      ))}
+    </div>
+    {panel.quote ? (
+      <>
+        <p style={{ fontFamily: FONTS.caslon, fontSize: "clamp(11px,0.95vw,13px)", lineHeight: 1.8, color: COLORS.white, letterSpacing: ".02em", margin: "0 0 14px" }}>{panel.quote.text}</p>
+        <p style={{ fontFamily: FONTS.agrandir, fontSize: "11px", color: "rgba(255,255,255,0.55)", letterSpacing: ".08em", margin: "0 0 2px" }}>{panel.quote.author}</p>
+        <p style={{ fontFamily: FONTS.agrandir, fontSize: "11px", color: "rgba(255,255,255,0.3)", letterSpacing: ".08em", margin: 0 }}>{panel.quote.role}</p>
+      </>
+    ) : (
+      <p style={{ fontFamily: FONTS.caslon, fontSize: "clamp(11px,0.95vw,13px)", lineHeight: 1.8, color: COLORS.white, letterSpacing: ".02em", margin: 0 }}>{panel.body}</p>
+    )}
+  </div>
+</div>
 
       <style>{`
         @keyframes distCloudDrift {
@@ -735,25 +619,23 @@ function ChannelsSection({ visible }) {
         Distribution Channels
       </span>
       <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(2, 1fr)",
-          gap: "0",
-          border: `1px solid rgba(198,253,58,0.15)`,
-        }}
-      >
+  style={{
+    display: "grid",
+    gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
+    gap: "0",
+    border: `1px solid rgba(198,253,58,0.15)`,
+  }}
+>
         {CHANNELS.map((ch, i) => (
-          <div
-            key={ch.key}
-            className={`dist-channel-card gy-reveal${visible ? " in" : ""}`}
-            style={{
-              padding: "48px 40px",
-              borderRight:
-                i % 2 === 0 ? `1px solid rgba(198,253,58,0.12)` : "none",
-              borderBottom: i < 2 ? `1px solid rgba(198,253,58,0.12)` : "none",
-              transitionDelay: `${i * 0.1}s`,
-            }}
-          >
+         <div
+  key={ch.key}
+  className={`dist-channel-card gy-reveal${visible ? " in" : ""}`}
+  style={{
+    padding: "48px 40px",
+    borderBottom: `1px solid rgba(198,253,58,0.12)`,
+    transitionDelay: `${i * 0.1}s`,
+  }}
+>
             <p
               style={{
                 fontFamily: FONTS.agrandir,
@@ -827,23 +709,22 @@ function PartnerTiersSection({ visible }) {
         Partner Tiers
       </span>
       <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(2, 1fr)",
-          gap: "0",
-        }}
-      >
+  style={{
+    display: "grid",
+    gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
+    gap: "0",
+  }}
+>
         {PARTNER_TIERS.map((t, i) => (
           <div
             key={t.tier}
             className={`gy-reveal${visible ? " in" : ""}`}
-            style={{
-              padding: "44px 40px",
-              borderTop: `1px solid rgba(255,255,255,0.08)`,
-              borderRight:
-                i % 2 === 0 ? `1px solid rgba(255,255,255,0.08)` : "none",
-              transitionDelay: `${i * 0.12}s`,
-            }}
+           style={{
+  padding: "44px 40px",
+  borderTop: `1px solid rgba(255,255,255,0.08)`,
+  borderBottom: `1px solid rgba(255,255,255,0.08)`,
+  transitionDelay: `${i * 0.12}s`,
+}}
           >
             <div
               style={{
@@ -957,23 +838,23 @@ function HowItWorksSection({ visible }) {
         Becoming A Distributor
       </span>
       <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(4, 1fr)",
-          gap: "0",
-          borderTop: `1px solid rgba(198,253,58,0.12)`,
-        }}
-      >
-        {steps.map((s, i) => (
-          <div
-            key={s.num}
-            className={`gy-reveal gy-from-left${visible ? " in" : ""}`}
-            style={{
-              padding: "40px 32px 40px",
-              borderRight: i < 3 ? `1px solid rgba(198,253,58,0.12)` : "none",
-              transitionDelay: `${i * 0.12}s`,
-            }}
-          >
+  style={{
+    display: "grid",
+    gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
+    gap: "0",
+    borderTop: `1px solid rgba(198,253,58,0.12)`,
+  }}
+>
+  {steps.map((s, i) => (
+    <div
+      key={s.num}
+      className={`gy-reveal gy-from-left${visible ? " in" : ""}`}
+      style={{
+        padding: "40px 32px",
+        borderBottom: `1px solid rgba(198,253,58,0.12)`,
+        transitionDelay: `${i * 0.12}s`,
+      }}
+    >
             <span
               style={{
                 fontFamily: FONTS.flare,
@@ -1038,21 +919,22 @@ function StatsBanner() {
       }}
     >
       <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: "repeat(4, 1fr)",
-          gap: 0,
-        }}
-      >
-        {stats.map((s, i) => (
-          <div
-            key={i}
-            style={{
-              padding: "48px 20px",
-              borderRight: i < 3 ? "1px solid rgba(0,0,0,0.12)" : "none",
-              textAlign: "center",
-            }}
-          >
+  style={{
+    display: "grid",
+    gridTemplateColumns: "repeat(auto-fit, minmax(140px, 1fr))",
+    gap: 0,
+  }}
+>
+  {stats.map((s, i) => (
+    <div
+      key={i}
+      style={{
+        padding: "36px 16px",
+        borderRight: "1px solid rgba(0,0,0,0.12)",
+        borderBottom: "1px solid rgba(0,0,0,0.12)",
+        textAlign: "center",
+      }}
+    >
             <div
               style={{
                 fontFamily: FONTS.flare,
@@ -1087,22 +969,16 @@ function StatsBanner() {
 // ── IMAGE PANELS ─────────────────────────────────────────────────────────────
 function ImagePanels() {
   return (
-    <section
-      style={{
-        display: "grid",
-        gridTemplateColumns: "1fr 1fr 1fr",
-        height: "480px",
-        background: "#070c1a",
-        overflow: "hidden",
-      }}
-    >
-      <div
-        style={{
-          background: "#0b1a10",
-          position: "relative",
-          overflow: "hidden",
-        }}
-      >
+   <section
+  style={{
+    display: "grid",
+    gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))",
+    minHeight: "480px",
+    background: "#070c1a",
+    overflow: "hidden",
+  }}
+>
+      <div style={{ background: "#0b1a10", position: "relative", overflow: "hidden", minHeight: "260px" }}>
         <img
           src={engineImage}
           alt="Engine"
@@ -1145,6 +1021,7 @@ function ImagePanels() {
           background: "#061209",
           position: "relative",
           overflow: "hidden",
+           minHeight: "260px"
         }}
       >
         <img
@@ -1189,6 +1066,7 @@ function ImagePanels() {
           background: "#0d1e12",
           position: "relative",
           overflow: "hidden",
+           minHeight: "260px"
         }}
       >
         <img
@@ -1239,7 +1117,7 @@ function ContactCTA({ onOpen }) {
       style={{
         width: "100vw",
         background: COLORS.introBg,
-        padding: "100px 8vw",
+        padding: "clamp(60px,10vw,100px) clamp(20px,8vw,8vw)",
         display: "flex",
         flexDirection: "column",
         alignItems: "flex-start",
@@ -1616,6 +1494,18 @@ export default function DistributionPage() {
         @media (prefers-reduced-motion: reduce) {
           *, *::before, *::after { animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
         }
+          @media (max-width: 600px) {
+  .gy-hero > div { padding: 0 6vw 10vh !important; }
+}
+          @media (max-width: 560px) {
+  .gy-form-container {
+    width: 100vw;
+    padding: 60px 24px;
+  }
+  .gy-form-row {
+    grid-template-columns: 1fr;
+  }
+}
       `}</style>
 
       <div className="gy-root">

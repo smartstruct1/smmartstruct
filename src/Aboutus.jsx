@@ -210,7 +210,15 @@ const GLOBAL_STYLES = `
   .value-card:hover {
     border-top-color: var(--color-f1-lime-green-darker);
   }
-
+@media (max-width: 767px) {
+  .team-carousel-grid {
+    grid-template-columns: 1fr !important;
+    gap: 2rem !important;
+    padding: 2rem 1.5rem !important;
+  }
+  .team-divider { display: none !important; }
+  .team-image-wrap { justify-content: center !important; }
+}
   .timeline-dot {
     width: 0.625rem;
     height: 0.625rem;
@@ -390,7 +398,24 @@ const GLOBAL_STYLES = `
   flex-direction: column;
   align-items: center;
 }
-
+@media (max-width: 767px) {
+  .timeline-nav-btns {
+    position: static !important;
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 24px;
+  }
+  .timeline-track-item {
+    flex: 0 0 calc(100% - 0px) !important;
+    height: auto !important;
+    min-height: 320px;
+  }
+}
+  @media (max-width: 767px) {
+  .timeline-scroll-track > div > div:last-child {
+    font-size: 14px !important;
+  }
+}
 @media only screen and (max-width: 767px) {
   .am-hide-mobile  { display: none !important; }
   .stats-grid { grid-template-columns: repeat(2, 1fr) !important; }
@@ -413,7 +438,7 @@ const GLOBAL_STYLES = `
 @media only screen and (min-width: 768px) {
   .am-hide-desktop { display: none !important; }
 }
-}
+
 `;
 
 // ─── SVG Icons ────────────────────────────────────────────────────────────────
@@ -810,7 +835,7 @@ export default function AboutUs() {
             style={{
               position: "relative",
               zIndex: 3,
-              padding: "clamp(8rem, 40vh, 30rem) 6vw 8vh",
+              padding: "clamp(6rem, 25vh, 20rem) 6vw 8vh",
             }}
           >
             <p
@@ -954,8 +979,8 @@ export default function AboutUs() {
                 className="stat-card"
                 style={{
                   padding: "3rem 2rem",
-                  borderLeft:
-                    i > 0 ? `1px solid rgba(198,253,58,0.15)` : "none",
+                 borderLeft: i % 2 !== 0 ? `1px solid rgba(198,253,58,0.15)` : "none",
+borderBottom: i < 2 ? `1px solid rgba(198,253,58,0.15)` : "none",
                 }}
               >
                 <div
@@ -1135,9 +1160,9 @@ export default function AboutUs() {
               {/* floating accent card */}
               <div
                 style={{
-                  position: "absolute",
-                  bottom: "-2rem",
-                  left: "-2rem",
+                 position: "absolute",
+  bottom: "-1rem",
+  left: "-0.5rem",
                   background: COLORS.f1LimeGreen,
                   padding: "1.5rem",
                   borderRadius: "0.1875rem",
@@ -1299,7 +1324,7 @@ export default function AboutUs() {
         </section>
 
         {/* ── VALUES ── */}
-        <section style={{ padding: "13rem 12.5rem" }}>
+        <section style={{ padding: "clamp(6rem, 10vw, 13rem) clamp(1.5rem, 8vw, 12.5rem)" }}>
           <div
             className="reveal-up"
             style={{ marginBottom: "5rem", textAlign: "center" }}
@@ -1888,10 +1913,7 @@ export default function AboutUs() {
         {/* ── TIMELINE CAROUSEL ── */}
         {(() => {
           return (
-            <div
-              style={{
-                position: "relative",
-                height: "100vh",
+           <div style={{ position: "relative", minHeight: "100vh", height: "auto",
                 backgroundImage: `url(${Cheetah})`,
                 backgroundSize: "cover",
                 backgroundPosition: "center",
@@ -1907,7 +1929,7 @@ export default function AboutUs() {
                   height: "100%",
                   background:
                     "linear-gradient(to bottom, rgba(0,0,0,0.3), rgba(0,0,0,0.5))",
-                  padding: "60px 40px",
+                  padding: "clamp(40px, 8vw, 60px) clamp(16px, 5vw, 40px)",
                   color: "white",
                   boxSizing: "border-box",
                 }}
