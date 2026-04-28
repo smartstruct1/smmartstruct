@@ -1,13 +1,13 @@
 import React, { useState, useEffect, useRef, useCallback } from "react";
 import { gsap } from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-import MaxFuelRX from './MaxFuelRX'
-import Maxfuel from './Maxfuel'
+import MaxFuelRX from "./MaxFuelRX";
+import Maxfuel from "./Maxfuel";
 import HeroVideo from "./assets/carlines.mp4";
 import Cheetah from "./assets/cheetah0.jpg";
 import { Link } from "react-router-dom";
-import ContactUs from './Contactus'
-import TermsAndConditions from './TermsAndConditions';
+import ContactUs from "./Contactus";
+import TermsAndConditions from "./TermsAndConditions";
 gsap.registerPlugin(ScrollTrigger);
 
 // ─── Constants (mirrored from homepage) ───────────────────────────────────────
@@ -41,10 +41,26 @@ const NAV_LINKS = [
 ];
 
 const STATS = [
-  { value: "6", label: "Pronged Formula", sub: "Unique approach to fuel optimization" },
-  { value: "30+", label: "Years of Research", sub: "Decades of fuel science expertise" },
-  { value: "98%", label: "Engine Protection", sub: "Proven acid neutralization rate" },
-  { value: "40%", label: "Emission Reduction", sub: "Average exhaust improvement" },
+  {
+    value: "6",
+    label: "Pronged Formula",
+    sub: "Unique approach to fuel optimization",
+  },
+  {
+    value: "30+",
+    label: "Years of Research",
+    sub: "Decades of fuel science expertise",
+  },
+  {
+    value: "98%",
+    label: "Engine Protection",
+    sub: "Proven acid neutralization rate",
+  },
+  {
+    value: "40%",
+    label: "Emission Reduction",
+    sub: "Average exhaust improvement",
+  },
 ];
 
 const VALUES = [
@@ -71,18 +87,42 @@ const VALUES = [
 ];
 
 const TEAM = [
-  { name: "Malvin Chiwanga", role: "Chief Formulation Scientist", tenure: "Founder" },
+  {
+    name: "Malvin Chiwanga",
+    role: "Chief Formulation Scientist",
+    tenure: "Founder",
+  },
   { name: "Martin Singh", role: "Head of R&D", tenure: "12 Years" },
   { name: "Nathan Hill", role: "Director of Engineering", tenure: "9 Years" },
   { name: "Amir Mirza", role: "Environmental Compliance", tenure: "7 Years" },
 ];
 
 const TIMELINE_EVENTS = [
-  { year: "2018", title: "Founded", desc: "Matrix Petroleum established in Johannesburg with a singular focus on diesel fuel chemistry." },
-  { year: "2023", title: "First Formula", desc: "Launch of our proprietary acid-neutralizing compound, the cornerstone of what would become MaxFuel RX." },
-  { year: "2022", title: "Global Expansion", desc: "Operations extended to the United Kingdom and European markets, serving major commercial fleets." },
-  { year: "2023", title: "MaxFuel RX", desc: "The 6-pronged formula officially commercialised and launched to the public after 8 years of refinement." },
-  { year: "2025", title: "South Africa Launch", desc: "MaxFuel RX unveiled at a landmark event in South Africa, marking a new chapter in fuel innovation." },
+  {
+    year: "2018",
+    title: "Founded",
+    desc: "Matrix Petroleum established in Johannesburg with a singular focus on diesel fuel chemistry.",
+  },
+  {
+    year: "2023",
+    title: "First Formula",
+    desc: "Launch of our proprietary acid-neutralizing compound, the cornerstone of what would become MaxFuel RX.",
+  },
+  {
+    year: "2022",
+    title: "Global Expansion",
+    desc: "Operations extended to the United Kingdom and European markets, serving major commercial fleets.",
+  },
+  {
+    year: "2023",
+    title: "MaxFuel RX",
+    desc: "The 6-pronged formula officially commercialised and launched to the public after 8 years of refinement.",
+  },
+  {
+    year: "2025",
+    title: "South Africa Launch",
+    desc: "MaxFuel RX unveiled at a landmark event in South Africa, marking a new chapter in fuel innovation.",
+  },
 ];
 
 // ─── Global styles ─────────────────────────────────────────────────────────────
@@ -351,24 +391,47 @@ const GLOBAL_STYLES = `
   align-items: center;
 }
 
-@media (max-width: 768px) {
-  .timeline-track-item {
-    flex: 0 0 100%;
-    min-width: 0;
-    height: auto;
-    min-height: 400px;
+@media only screen and (max-width: 767px) {
+  .am-hide-mobile  { display: none !important; }
+  .stats-grid { grid-template-columns: repeat(2, 1fr) !important; }
+  .two-col-grid { grid-template-columns: 1fr !important; }
+  .values-grid { grid-template-columns: 1fr !important; }
+  .team-carousel-grid {
+    grid-template-columns: 1fr !important;
+    gap: 2rem !important;
   }
-  .timeline-nav-btns {
-    top: 140px !important;
-    right: 20px !important;
-  }
+  .team-divider { display: none !important; }
+  .team-image-wrap { justify-content: center !important; }
+  .section-pad { padding: 6rem 1.5rem !important; }
+  .section-pad-sm { padding: 4rem 1.5rem !important; }
+  .origin-story-section { padding: 6rem 1.5rem !important; }
+  .timeline-section { padding: 6rem 1.5rem !important; }
+  .values-section { padding: 6rem 1.5rem !important; }
+  .cta-section { padding: 6rem 1.5rem !important; }
+  .stats-section { padding: 5rem 1.5rem !important; }
+}
+@media only screen and (min-width: 768px) {
+  .am-hide-desktop { display: none !important; }
+}
 }
 `;
 
 // ─── SVG Icons ────────────────────────────────────────────────────────────────
 const IconArrowDown = () => (
-  <svg width="16" height="16" viewBox="0 0 16 16" fill="none" style={{ display: "block" }}>
-    <path d="M8 2v12M2 9l6 6 6-6" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round" />
+  <svg
+    width="16"
+    height="16"
+    viewBox="0 0 16 16"
+    fill="none"
+    style={{ display: "block" }}
+  >
+    <path
+      d="M8 2v12M2 9l6 6 6-6"
+      stroke="currentColor"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
   </svg>
 );
 
@@ -376,13 +439,45 @@ const IconHamburger = ({ open }) => (
   <svg width="30" height="14" viewBox="0 0 26 16" zIndex="1004" fill="none">
     {open ? (
       <>
-        <line x1="1" y1="1" x2="25" y2="15" stroke="black" strokeWidth="4.5" strokeLinecap="round" />
-        <line x1="1" y1="15" x2="25" y2="1" stroke="black" strokeWidth="4.5" strokeLinecap="round" />
+        <line
+          x1="1"
+          y1="1"
+          x2="25"
+          y2="15"
+          stroke="black"
+          strokeWidth="4.5"
+          strokeLinecap="round"
+        />
+        <line
+          x1="1"
+          y1="15"
+          x2="25"
+          y2="1"
+          stroke="black"
+          strokeWidth="4.5"
+          strokeLinecap="round"
+        />
       </>
     ) : (
       <>
-        <line x1="1" y1="2" x2="25" y2="2" stroke="black" strokeWidth="2" strokeLinecap="round" />
-        <line x1="1" y1="12" x2="25" y2="12" stroke="black" strokeWidth="2" strokeLinecap="round" />
+        <line
+          x1="1"
+          y1="2"
+          x2="25"
+          y2="2"
+          stroke="black"
+          strokeWidth="2"
+          strokeLinecap="round"
+        />
+        <line
+          x1="1"
+          y1="12"
+          x2="25"
+          y2="12"
+          stroke="black"
+          strokeWidth="2"
+          strokeLinecap="round"
+        />
       </>
     )}
   </svg>
@@ -391,46 +486,91 @@ const IconHamburger = ({ open }) => (
 // ─── Main Component ────────────────────────────────────────────────────────────
 export default function AboutUs() {
   const [menuOpen, setMenuOpen] = useState(false);
- const [index, setIndex] = React.useState(0);
+  const [index, setIndex] = React.useState(0);
   const trackRef = React.useRef(null);
-   const heroVideoRef = useRef(null);
-const timelineEvents = [
-    { year: "2018", content: "The foundation year - we established our vision and mission, setting the groundwork for transformative projects that would reshape the future.", active: true },
-    { year: "2019", content: "Expansion began with strategic partnerships and initial planning phases for our flagship projects, building momentum for the years ahead.", active: false },
-    { year: "2020", content: "Despite global challenges, we persevered with our commitment to innovation, adapting our strategies and strengthening our foundations.", active: false },
-    { year: "2021", content: "Major milestones achieved with the launch of key initiatives and the beginning of construction on several groundbreaking projects.", active: false },
-    { year: "2022", content: "We unveiled plans for our major initiatives and announced our mountain destination project. The Port of our company opened for business.", active: false },
-    { year: "2023", content: "We opened an office in London, inaugurated our Investment Fund, and announced our first destinations. The Green Hydrogen Company completed financial close.", active: false },
-    { year: "2024", content: "We continued to build the enabling foundations for a new sustainable region – with major infrastructural progress across mobility, digital, energy and water.", active: false },
-    { year: "2025", content: "Looking forward to the future with ambitious goals, continued expansion, and the realization of our vision for a sustainable and innovative tomorrow.", active: false },
+  const heroVideoRef = useRef(null);
+  const timelineEvents = [
+    {
+      year: "2018",
+      content:
+        "The foundation year - we established our vision and mission, setting the groundwork for transformative projects that would reshape the future.",
+      active: true,
+    },
+    {
+      year: "2019",
+      content:
+        "Expansion began with strategic partnerships and initial planning phases for our flagship projects, building momentum for the years ahead.",
+      active: false,
+    },
+    {
+      year: "2020",
+      content:
+        "Despite global challenges, we persevered with our commitment to innovation, adapting our strategies and strengthening our foundations.",
+      active: false,
+    },
+    {
+      year: "2021",
+      content:
+        "Major milestones achieved with the launch of key initiatives and the beginning of construction on several groundbreaking projects.",
+      active: false,
+    },
+    {
+      year: "2022",
+      content:
+        "We unveiled plans for our major initiatives and announced our mountain destination project. The Port of our company opened for business.",
+      active: false,
+    },
+    {
+      year: "2023",
+      content:
+        "We opened an office in London, inaugurated our Investment Fund, and announced our first destinations. The Green Hydrogen Company completed financial close.",
+      active: false,
+    },
+    {
+      year: "2024",
+      content:
+        "We continued to build the enabling foundations for a new sustainable region – with major infrastructural progress across mobility, digital, energy and water.",
+      active: false,
+    },
+    {
+      year: "2025",
+      content:
+        "Looking forward to the future with ambitious goals, continued expansion, and the realization of our vision for a sustainable and innovative tomorrow.",
+      active: false,
+    },
   ];
   const isMobile = () => window.innerWidth <= 768;
-  const visibleCount = () => isMobile() ? 1 : 3;
+  const visibleCount = () => (isMobile() ? 1 : 3);
   const maxIndex = timelineEvents.length - visibleCount();
 
-  const scrollLeft  = () => setIndex(i => Math.max(0, i - 1));
-  const scrollRight = () => setIndex(i => Math.min(maxIndex, i + 1));
+  const scrollLeft = () => setIndex((i) => Math.max(0, i - 1));
+  const scrollRight = () => setIndex((i) => Math.min(maxIndex, i + 1));
 
-React.useEffect(() => {
-  if (!trackRef.current) return;
-  const gap = isMobile() ? 0 : 20;
-  const itemWidth = (trackRef.current.offsetWidth - (gap * (visibleCount() - 1))) / visibleCount() + gap;
-  trackRef.current.style.transform = `translateX(-${index * itemWidth}px)`;
-}, [index]);
+  React.useEffect(() => {
+    if (!trackRef.current) return;
+    const gap = isMobile() ? 0 : 20;
+    const itemWidth =
+      (trackRef.current.offsetWidth - gap * (visibleCount() - 1)) /
+        visibleCount() +
+      gap;
+    trackRef.current.style.transform = `translateX(-${index * itemWidth}px)`;
+  }, [index]);
   // recalculate on resize
   React.useEffect(() => {
     const onResize = () => {
       if (!trackRef.current) return;
       const itemWidth = trackRef.current.offsetWidth / visibleCount();
       // clamp index on resize
-      setIndex(i => Math.min(i, timelineEvents.length - visibleCount()));
+      setIndex((i) => Math.min(i, timelineEvents.length - visibleCount()));
     };
     window.addEventListener("resize", onResize);
     return () => window.removeEventListener("resize", onResize);
   }, []);
   useEffect(() => {
     document.body.style.overflow = menuOpen ? "hidden" : "";
-    return () => { document.body.style.overflow = ""; };
+    return () => {
+      document.body.style.overflow = "";
+    };
   }, [menuOpen]);
 
   // Scroll-triggered reveal animations
@@ -458,26 +598,33 @@ React.useEffect(() => {
     gsap.fromTo(
       ".hero-text-item",
       { opacity: 0, y: 40 },
-      { opacity: 1, y: 0, stagger: 0.15, duration: 1.1, ease: "power3.out", delay: 0.3 }
+      {
+        opacity: 1,
+        y: 0,
+        stagger: 0.15,
+        duration: 1.1,
+        ease: "power3.out",
+        delay: 0.3,
+      },
     );
 
     return () => triggers.forEach((t) => t.kill());
   }, []);
 
-
   return (
     <>
       <style dangerouslySetInnerHTML={{ __html: GLOBAL_STYLES }} />
 
-      <div style={{
-        fontFamily: FONTS.caslon,
-        background: COLORS.white,
-        color: COLORS.black,
-        overflowX: "hidden",
-        maxWidth: "100vw",
-        WebkitFontSmoothing: "antialiased",
-      }}>
-
+      <div
+        style={{
+          fontFamily: FONTS.caslon,
+          background: COLORS.white,
+          color: COLORS.black,
+          overflowX: "hidden",
+          maxWidth: "100vw",
+          WebkitFontSmoothing: "antialiased",
+        }}
+      >
         {/* ── OVERLAY NAV ── */}
         <nav
           style={{
@@ -588,7 +735,6 @@ React.useEffect(() => {
                   }}
                   onClick={() => {
                     setMenuOpen(false);
-                   
                   }}
                 >
                   <span
@@ -623,7 +769,6 @@ React.useEffect(() => {
             ))}
           </div>
         </div>
-
 
         {/* ── HERO ── */}
         <section
@@ -665,7 +810,7 @@ React.useEffect(() => {
             style={{
               position: "relative",
               zIndex: 3,
-              padding: "30rem 8vw 8vh",
+              padding: "clamp(8rem, 40vh, 30rem) 6vw 8vh",
             }}
           >
             <p
@@ -692,7 +837,7 @@ React.useEffect(() => {
                 margin: "0 0 32px",
               }}
             >
-             Our
+              Our
               <br />
               <span style={{ color: COLORS.f1LimeGreen }}>Story</span>
             </h1>
@@ -733,76 +878,124 @@ React.useEffect(() => {
         </section>
 
         {/* ── MISSION STATEMENT ── */}
-        <section style={{ padding: "10rem var(--page-margin)", textAlign: "center" }}>
-          <div className="reveal-up" style={{ maxWidth: "55rem", margin: "0 auto" }}>
-            <p style={{
-              fontFamily: FONTS.agrandir, fontSize: "0.625rem", fontWeight: 400,
-              letterSpacing: "0.065rem", textTransform: "uppercase",
-              color: COLORS.f1LimeGreenDark, marginBottom: "1.5rem",
-            }}>
+        <section
+          style={{ padding: "10rem var(--page-margin)", textAlign: "center" }}
+        >
+          <div
+            className="reveal-up"
+            style={{ maxWidth: "55rem", margin: "0 auto" }}
+          >
+            <p
+              style={{
+                fontFamily: FONTS.agrandir,
+                fontSize: "0.625rem",
+                fontWeight: 400,
+                letterSpacing: "0.065rem",
+                textTransform: "uppercase",
+                color: COLORS.f1LimeGreenDark,
+                marginBottom: "1.5rem",
+              }}
+            >
               Our Mission
             </p>
-            <p style={{
-              fontFamily: FONTS.flare,
-              fontSize: "clamp(1.5rem, 3.5vw, 2.5rem)",
-              fontWeight: 400, lineHeight: "130%",
-              color: COLORS.f1GreenDark,
-              textTransform: "uppercase",
-              letterSpacing: "-0.03rem",
-              margin: 0,
-            }}>
-              To engineer fuel solutions that protect engines, reduce emissions, and redefine what is possible in diesel performance — today and for decades to come.
+            <p
+              style={{
+                fontFamily: FONTS.flare,
+                fontSize: "clamp(1.5rem, 3.5vw, 2.5rem)",
+                fontWeight: 400,
+                lineHeight: "130%",
+                color: COLORS.f1GreenDark,
+                textTransform: "uppercase",
+                letterSpacing: "-0.03rem",
+                margin: 0,
+              }}
+            >
+              To engineer fuel solutions that protect engines, reduce emissions,
+              and redefine what is possible in diesel performance — today and
+              for decades to come.
             </p>
           </div>
         </section>
 
         {/* ── STATS GRID ── */}
-        <section style={{
-          background: COLORS.f1GreenDark,
-          padding: "8rem 12.5rem",
-          overflow: "hidden",
-        }}>
+        <section
+          className="stats-section"
+          style={{
+            background: COLORS.f1GreenDark,
+            padding: "8rem 6vw",
+            overflow: "hidden",
+          }}
+        >
           <div className="reveal-up" style={{ marginBottom: "4rem" }}>
-            <p style={{
-              fontFamily: FONTS.agrandir, fontSize: "0.625rem",
-              textTransform: "uppercase", letterSpacing: "0.065rem",
-              color: COLORS.f1LimeGreenDark, margin: 0,
-            }}>
+            <p
+              style={{
+                fontFamily: FONTS.agrandir,
+                fontSize: "0.625rem",
+                textTransform: "uppercase",
+                letterSpacing: "0.065rem",
+                color: COLORS.f1LimeGreenDark,
+                margin: 0,
+              }}
+            >
               By the Numbers
             </p>
           </div>
-          <div className="stats-grid reveal-up" style={{
-            display: "grid",
-            gridTemplateColumns: "repeat(2, 1fr)",
-            gap: "0",
-          }}>
+          <div
+            className="stats-grid reveal-up"
+            style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(2, 1fr)",
+              gap: "0",
+            }}
+          >
             {STATS.map((stat, i) => (
-              <div key={i} className="stat-card" style={{
-                padding: "3rem 2rem",
-                borderLeft: i > 0 ? `1px solid rgba(198,253,58,0.15)` : "none",
-              }}>
-                <div className="stat-value" style={{
-                  fontFamily: FONTS.flare,
-                  fontSize: "clamp(3rem, 5vw, 4.5rem)",
-                  fontWeight: 400, lineHeight: "100%",
-                  color: COLORS.white,
-                  textTransform: "uppercase",
-                  transition: "color 0.3s ease",
-                }}>
+              <div
+                key={i}
+                className="stat-card"
+                style={{
+                  padding: "3rem 2rem",
+                  borderLeft:
+                    i > 0 ? `1px solid rgba(198,253,58,0.15)` : "none",
+                }}
+              >
+                <div
+                  className="stat-value"
+                  style={{
+                    fontFamily: FONTS.flare,
+                    fontSize: "clamp(3rem, 5vw, 4.5rem)",
+                    fontWeight: 400,
+                    lineHeight: "100%",
+                    color: COLORS.white,
+                    textTransform: "uppercase",
+                    transition: "color 0.3s ease",
+                  }}
+                >
                   {stat.value}
                 </div>
-                <div style={{
-                  fontFamily: FONTS.flare, fontSize: "0.75rem",
-                  color: COLORS.f1LimeGreenDark, textTransform: "uppercase",
-                  letterSpacing: "0.05rem", marginTop: "0.75rem", lineHeight: "130%",
-                }}>
+                <div
+                  style={{
+                    fontFamily: FONTS.flare,
+                    fontSize: "0.75rem",
+                    color: COLORS.f1LimeGreenDark,
+                    textTransform: "uppercase",
+                    letterSpacing: "0.05rem",
+                    marginTop: "0.75rem",
+                    lineHeight: "130%",
+                  }}
+                >
                   {stat.label}
                 </div>
-                <div style={{
-                  fontFamily: FONTS.agrandir, fontSize: "0.625rem",
-                  color: "rgba(255,255,255,0.45)", textTransform: "uppercase",
-                  letterSpacing: "0.04rem", marginTop: "0.5rem", lineHeight: "150%",
-                }}>
+                <div
+                  style={{
+                    fontFamily: FONTS.agrandir,
+                    fontSize: "0.625rem",
+                    color: "rgba(255,255,255,0.45)",
+                    textTransform: "uppercase",
+                    letterSpacing: "0.04rem",
+                    marginTop: "0.5rem",
+                    lineHeight: "150%",
+                  }}
+                >
                   {stat.sub}
                 </div>
               </div>
@@ -811,41 +1004,70 @@ React.useEffect(() => {
         </section>
 
         {/* ── ORIGIN STORY ── */}
-        <section style={{ padding: "13rem 12.5rem" }}>
-          <div className="two-col-grid reveal-up" style={{
-            display: "grid",
-            gridTemplateColumns: "1fr 1fr",
-            gap: "6rem",
-            alignItems: "start",
-            maxWidth: "100%",
-          }}>
+        <section
+          className="origin-story-section"
+          style={{ padding: "10rem 6vw" }}
+        >
+          <div
+            className="two-col-grid reveal-up"
+            style={{
+              display: "grid",
+              gridTemplateColumns: "1fr 1fr",
+              gap: "6rem",
+              alignItems: "start",
+              maxWidth: "100%",
+            }}
+          >
             <div>
-              <span className="am-tag am-tag-green" style={{ marginBottom: "2rem", display: "inline-flex" }}>
+              <span
+                className="am-tag am-tag-green"
+                style={{ marginBottom: "2rem", display: "inline-flex" }}
+              >
                 Founded 2018
               </span>
-              <h2 style={{
-                fontFamily: FONTS.flare,
-                fontSize: "clamp(2rem, 4vw, 3.5rem)",
-                fontWeight: 400, lineHeight: "100%",
-                color: COLORS.f1GreenDark,
-                textTransform: "uppercase",
-                letterSpacing: "-0.05rem",
-                margin: "0 0 2.5rem",
-              }}>
+              <h2
+                style={{
+                  fontFamily: FONTS.flare,
+                  fontSize: "clamp(2rem, 4vw, 3.5rem)",
+                  fontWeight: 400,
+                  lineHeight: "100%",
+                  color: COLORS.f1GreenDark,
+                  textTransform: "uppercase",
+                  letterSpacing: "-0.05rem",
+                  margin: "0 0 2.5rem",
+                }}
+              >
                 Born from a need the industry refused to acknowledge
               </h2>
-              <p style={{
-                fontFamily: FONTS.flare, fontSize: "1.75rem",
-                lineHeight: "165%", color: COLORS.grey600, maxWidth: "42ch",
-              }}>
-                In 2018, Malvin Chiwanga observed a persistent, industry-wide problem: diesel engines were failing prematurely, not from mechanical failure, but from the cumulative effects of acid buildup, microbial contamination, and inadequate lubrication within the fuel system itself.
+              <p
+                style={{
+                  fontFamily: FONTS.flare,
+                  fontSize: "1.75rem",
+                  lineHeight: "165%",
+                  color: COLORS.grey600,
+                  maxWidth: "42ch",
+                }}
+              >
+                In 2018, Malvin Chiwanga observed a persistent, industry-wide
+                problem: diesel engines were failing prematurely, not from
+                mechanical failure, but from the cumulative effects of acid
+                buildup, microbial contamination, and inadequate lubrication
+                within the fuel system itself.
               </p>
-              <p style={{
-                fontFamily: FONTS.flare, fontSize: "1.24rem",
-                lineHeight: "165%", color: COLORS.grey600, maxWidth: "42ch",
-                marginTop: "1.25rem",
-              }}>
-                Standard diesel additives addressed symptoms. Malvin Chiwanga set out to solve the root causes — all six of them — simultaneously. Twenty-five years of iteration later, MaxFuel RX was born.
+              <p
+                style={{
+                  fontFamily: FONTS.flare,
+                  fontSize: "1.24rem",
+                  lineHeight: "165%",
+                  color: COLORS.grey600,
+                  maxWidth: "42ch",
+                  marginTop: "1.25rem",
+                }}
+              >
+                Standard diesel additives addressed symptoms. Malvin Chiwanga
+                set out to solve the root causes — all six of them —
+                simultaneously. Twenty-five years of iteration later, MaxFuel RX
+                was born.
               </p>
               <div style={{ marginTop: "2.5rem" }}>
                 <button className="am-btn am-btn-dark">Our Science</button>
@@ -854,60 +1076,97 @@ React.useEffect(() => {
 
             {/* Visual block */}
             <div style={{ position: "relative" }}>
-              <div style={{
-                position: "relative",
-                aspectRatio: "4/5",
-                background: `linear-gradient(135deg, ${COLORS.introBgTop}, ${COLORS.introBg})`,
-                borderRadius: "0.1875rem",
-                overflow: "hidden",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}>
+              <div
+                style={{
+                  position: "relative",
+                  aspectRatio: "4/5",
+                  background: `linear-gradient(135deg, ${COLORS.introBgTop}, ${COLORS.introBg})`,
+                  borderRadius: "0.1875rem",
+                  overflow: "hidden",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                }}
+              >
                 {/* decorative geometry */}
-                <div style={{
-                  position: "absolute", inset: 0,
-                  backgroundImage: `radial-gradient(circle at 30% 70%, rgba(198,253,58,0.15) 0%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(32,67,56,0.8) 0%, transparent 60%)`,
-                }} />
-                <div style={{
-                  position: "relative", zIndex: 1, textAlign: "center", padding: "2rem",
-                }}>
-                  <div style={{
-                    fontFamily: FONTS.flare, fontSize: "clamp(4rem, 10vw, 8rem)",
-                    fontWeight: 400, color: "rgba(198,253,58,0.15)",
-                    textTransform: "uppercase", letterSpacing: "-0.2rem",
-                    lineHeight: "100%", userSelect: "none",
-                  }}>
+                <div
+                  style={{
+                    position: "absolute",
+                    inset: 0,
+                    backgroundImage: `radial-gradient(circle at 30% 70%, rgba(198,253,58,0.15) 0%, transparent 50%), radial-gradient(circle at 80% 20%, rgba(32,67,56,0.8) 0%, transparent 60%)`,
+                  }}
+                />
+                <div
+                  style={{
+                    position: "relative",
+                    zIndex: 1,
+                    textAlign: "center",
+                    padding: "2rem",
+                  }}
+                >
+                  <div
+                    style={{
+                      fontFamily: FONTS.flare,
+                      fontSize: "clamp(4rem, 10vw, 8rem)",
+                      fontWeight: 400,
+                      color: "rgba(198,253,58,0.15)",
+                      textTransform: "uppercase",
+                      letterSpacing: "-0.2rem",
+                      lineHeight: "100%",
+                      userSelect: "none",
+                    }}
+                  >
                     2018
                   </div>
-                  <div style={{
-                    fontFamily: FONTS.agrandir, fontSize: "0.625rem",
-                    color: COLORS.f1LimeGreen, textTransform: "uppercase",
-                    letterSpacing: "0.065rem", marginTop: "1rem",
-                  }}>
+                  <div
+                    style={{
+                      fontFamily: FONTS.agrandir,
+                      fontSize: "0.625rem",
+                      color: COLORS.f1LimeGreen,
+                      textTransform: "uppercase",
+                      letterSpacing: "0.065rem",
+                      marginTop: "1rem",
+                    }}
+                  >
                     Johannesburg, South Africa
                   </div>
                 </div>
               </div>
               {/* floating accent card */}
-              <div style={{
-                position: "absolute", bottom: "-2rem", left: "-2rem",
-                background: COLORS.f1LimeGreen, padding: "1.5rem",
-                borderRadius: "0.1875rem", maxWidth: "14rem",
-                boxShadow: "0 8px 32px rgba(0,0,0,0.15)",
-              }}>
-                <div style={{
-                  fontFamily: FONTS.flare, fontSize: "1.25rem",
-                  color: COLORS.f1GreenDark, textTransform: "uppercase",
-                  lineHeight: "120%",
-                }}>
+              <div
+                style={{
+                  position: "absolute",
+                  bottom: "-2rem",
+                  left: "-2rem",
+                  background: COLORS.f1LimeGreen,
+                  padding: "1.5rem",
+                  borderRadius: "0.1875rem",
+                  maxWidth: "14rem",
+                  boxShadow: "0 8px 32px rgba(0,0,0,0.15)",
+                }}
+              >
+                <div
+                  style={{
+                    fontFamily: FONTS.flare,
+                    fontSize: "1.25rem",
+                    color: COLORS.f1GreenDark,
+                    textTransform: "uppercase",
+                    lineHeight: "120%",
+                  }}
+                >
                   30+ Years
                 </div>
-                <div style={{
-                  fontFamily: FONTS.agrandir, fontSize: "0.5rem",
-                  color: COLORS.f1GreenDark, textTransform: "uppercase",
-                  letterSpacing: "0.055rem", marginTop: "0.35rem", opacity: 0.7,
-                }}>
+                <div
+                  style={{
+                    fontFamily: FONTS.agrandir,
+                    fontSize: "0.5rem",
+                    color: COLORS.f1GreenDark,
+                    textTransform: "uppercase",
+                    letterSpacing: "0.055rem",
+                    marginTop: "0.35rem",
+                    opacity: 0.7,
+                  }}
+                >
                   of unbroken research
                 </div>
               </div>
@@ -916,70 +1175,120 @@ React.useEffect(() => {
         </section>
 
         {/* ── TIMELINE ── */}
-        <section style={{
-          background: COLORS.grey100,
-          padding: "10rem 12.5rem",
-        }}>
+        <section
+          className="timeline-section"
+          style={{
+            background: COLORS.grey100,
+            padding: "10rem 6vw",
+          }}
+        >
           <div className="reveal-up" style={{ marginBottom: "5rem" }}>
-            <p style={{
-              fontFamily: FONTS.agrandir, fontSize: "0.625rem",
-              textTransform: "uppercase", letterSpacing: "0.065rem",
-              color: COLORS.f1LimeGreenDark, marginBottom: "0.75rem",
-            }}>
+            <p
+              style={{
+                fontFamily: FONTS.agrandir,
+                fontSize: "0.625rem",
+                textTransform: "uppercase",
+                letterSpacing: "0.065rem",
+                color: COLORS.f1LimeGreenDark,
+                marginBottom: "0.75rem",
+              }}
+            >
               Our History
             </p>
-            <h2 style={{
-              fontFamily: FONTS.flare, fontSize: "clamp(2rem, 4vw, 3rem)",
-              fontWeight: 400, lineHeight: "100%",
-              color: COLORS.f1GreenDark, textTransform: "uppercase",
-              letterSpacing: "-0.04rem", margin: 0,
-            }}>
+            <h2
+              style={{
+                fontFamily: FONTS.flare,
+                fontSize: "clamp(2rem, 4vw, 3rem)",
+                fontWeight: 400,
+                lineHeight: "100%",
+                color: COLORS.f1GreenDark,
+                textTransform: "uppercase",
+                letterSpacing: "-0.04rem",
+                margin: 0,
+              }}
+            >
               Milestones
             </h2>
           </div>
           <div style={{ position: "relative", maxWidth: "48rem" }}>
             {/* Vertical line */}
-            <div style={{
-              position: "absolute", top: 0, left: "calc(5rem + 0.25rem)",
-              width: "1px", height: "100%",
-              background: `linear-gradient(to bottom, ${COLORS.f1GreenDark}30, ${COLORS.f1GreenDark}30)`,
-              pointerEvents: "none",
-            }} />
+            <div
+              style={{
+                position: "absolute",
+                top: 0,
+                left: "calc(5rem + 0.25rem)",
+                width: "1px",
+                height: "100%",
+                background: `linear-gradient(to bottom, ${COLORS.f1GreenDark}30, ${COLORS.f1GreenDark}30)`,
+                pointerEvents: "none",
+              }}
+            />
             {TIMELINE_EVENTS.map((event, i) => (
-              <div key={i} className="timeline-item reveal-up" style={{
-                display: "flex", gap: "2rem", alignItems: "flex-start",
-                paddingBottom: i < TIMELINE_EVENTS.length - 1 ? "3.5rem" : 0,
-              }}>
-                <div style={{
-                  width: "5rem", flexShrink: 0, textAlign: "right",
-                  paddingTop: "0.1rem",
-                }}>
-                  <span style={{
-                    fontFamily: FONTS.flare, fontSize: "0.75rem",
-                    color: COLORS.f1GreenDark, textTransform: "uppercase",
-                    letterSpacing: "0.03rem", opacity: 0.5,
-                  }}>
+              <div
+                key={i}
+                className="timeline-item reveal-up"
+                style={{
+                  display: "flex",
+                  gap: "2rem",
+                  alignItems: "flex-start",
+                  paddingBottom: i < TIMELINE_EVENTS.length - 1 ? "3.5rem" : 0,
+                }}
+              >
+                <div
+                  style={{
+                    width: "5rem",
+                    flexShrink: 0,
+                    textAlign: "right",
+                    paddingTop: "0.1rem",
+                  }}
+                >
+                  <span
+                    style={{
+                      fontFamily: FONTS.flare,
+                      fontSize: "0.75rem",
+                      color: COLORS.f1GreenDark,
+                      textTransform: "uppercase",
+                      letterSpacing: "0.03rem",
+                      opacity: 0.5,
+                    }}
+                  >
                     {event.year}
                   </span>
                 </div>
-                <div style={{ display: "flex", alignItems: "flex-start", gap: "1.5rem", flex: 1 }}>
+                <div
+                  style={{
+                    display: "flex",
+                    alignItems: "flex-start",
+                    gap: "1.5rem",
+                    flex: 1,
+                  }}
+                >
                   <div style={{ paddingTop: "0.25rem" }}>
                     <div className="timeline-dot" />
                   </div>
                   <div>
-                    <div style={{
-                      fontFamily: FONTS.flare, fontSize: "0.875rem",
-                      color: COLORS.f1GreenDark, textTransform: "uppercase",
-                      letterSpacing: "0.02rem", lineHeight: "140%",
-                      marginBottom: "0.4rem",
-                    }}>
+                    <div
+                      style={{
+                        fontFamily: FONTS.flare,
+                        fontSize: "0.875rem",
+                        color: COLORS.f1GreenDark,
+                        textTransform: "uppercase",
+                        letterSpacing: "0.02rem",
+                        lineHeight: "140%",
+                        marginBottom: "0.4rem",
+                      }}
+                    >
                       {event.title}
                     </div>
-                    <div style={{
-                      fontFamily: FONTS.agrandir, fontSize: "1.625rem",
-                      color: COLORS.grey600, lineHeight: "160%",
-                      letterSpacing: "0.02rem",
-                    }}>
+                    <div
+                      style={{
+                        fontFamily: FONTS.agrandir,
+                        fontSize: "1.625rem",
+                        color: COLORS.grey600,
+                        lineHeight: "160%",
+                        letterSpacing: "0.02rem",
+                      }}
+                    >
                       {event.desc}
                     </div>
                   </div>
@@ -991,48 +1300,89 @@ React.useEffect(() => {
 
         {/* ── VALUES ── */}
         <section style={{ padding: "13rem 12.5rem" }}>
-          <div className="reveal-up" style={{ marginBottom: "5rem", textAlign: "center"  }}>
-            <p style={{
-              fontFamily: FONTS.agrandir, fontSize: "0.625rem",
-              textTransform: "uppercase", letterSpacing: "0.065rem",
-              color: COLORS.f1LimeGreenDark, marginBottom: "0.75rem",
-            }}>
+          <div
+            className="reveal-up"
+            style={{ marginBottom: "5rem", textAlign: "center" }}
+          >
+            <p
+              style={{
+                fontFamily: FONTS.agrandir,
+                fontSize: "0.625rem",
+                textTransform: "uppercase",
+                letterSpacing: "0.065rem",
+                color: COLORS.f1LimeGreenDark,
+                marginBottom: "0.75rem",
+              }}
+            >
               What We Stand For
             </p>
-            <h2 style={{
-              fontFamily: FONTS.flare, fontSize: "clamp(2rem, 4vw, 3rem)",
-              fontWeight: 400, lineHeight: "100%",
-              color: COLORS.f1GreenDark, textTransform: "uppercase",
-              letterSpacing: "-0.04rem", margin: 0,
-            }}>
+            <h2
+              style={{
+                fontFamily: FONTS.flare,
+                fontSize: "clamp(2rem, 4vw, 3rem)",
+                fontWeight: 400,
+                lineHeight: "100%",
+                color: COLORS.f1GreenDark,
+                textTransform: "uppercase",
+                letterSpacing: "-0.04rem",
+                margin: 0,
+              }}
+            >
               Our Values
             </h2>
           </div>
-          <div style={{ display: "grid", gridTemplateColumns: "repeat(2, 1fr)", gap: "0 4rem" }}>
+          <div
+            className="values-grid"
+            style={{
+              display: "grid",
+              gridTemplateColumns: "repeat(2, 1fr)",
+              gap: "0 4rem",
+            }}
+          >
             {VALUES.map((v, i) => (
-              <div key={i} className="value-card reveal-up" style={{
-                padding: "2.5rem 0",
-              }}>
-                <div style={{
-                  fontFamily: FONTS.flare, fontSize: "12px",
-                  color: COLORS.f1LimeGreenDark, textTransform: "uppercase",
-                  letterSpacing: "0.05rem", marginBottom: "1rem",
-                }}>
+              <div
+                key={i}
+                className="value-card reveal-up"
+                style={{
+                  padding: "2.5rem 0",
+                }}
+              >
+                <div
+                  style={{
+                    fontFamily: FONTS.flare,
+                    fontSize: "12px",
+                    color: COLORS.f1LimeGreenDark,
+                    textTransform: "uppercase",
+                    letterSpacing: "0.05rem",
+                    marginBottom: "1rem",
+                  }}
+                >
                   {v.number}
                 </div>
-                <h3 style={{
-                  fontFamily: FONTS.flare, fontSize: "1rem",
-                  fontWeight: 400, lineHeight: "140%",
-                  color: COLORS.f1GreenDark, textTransform: "uppercase",
-                  letterSpacing: "0.01rem", margin: "0 0 1rem",
-                }}>
+                <h3
+                  style={{
+                    fontFamily: FONTS.flare,
+                    fontSize: "1rem",
+                    fontWeight: 400,
+                    lineHeight: "140%",
+                    color: COLORS.f1GreenDark,
+                    textTransform: "uppercase",
+                    letterSpacing: "0.01rem",
+                    margin: "0 0 1rem",
+                  }}
+                >
                   {v.title}
                 </h3>
-                <p style={{
-                  fontFamily: FONTS.agrandir, fontSize: "1.625rem",
-                  lineHeight: "175%", color: COLORS.grey600,
-                  letterSpacing: "0.02rem", margin: 0,
-                }}>
+                <p
+                  style={{
+                    fontFamily: FONTS.agrandir,
+                    fontSize: "1.625rem",
+                    lineHeight: "175%",
+                    color: COLORS.grey600,
+                    letterSpacing: "0.02rem",
+                    margin: 0,
+                  }}
+                >
                   {v.body}
                 </p>
               </div>
@@ -1041,53 +1391,70 @@ React.useEffect(() => {
         </section>
 
         {/* ── TEAM ── */}
-    {/* ── TEAM ── */}
-<section style={{
-  background: COLORS.f1GreenDark,
-  padding: "10rem 1.5rem",
-  overflow: "hidden",
-}}>
-  <div className="reveal-up" style={{ marginBottom: "5rem", textAlign: "center"  }}>
-    <p style={{
-      fontFamily: FONTS.agrandir, fontSize: "0.625rem",
-      textTransform: "uppercase", letterSpacing: "0.065rem",
-      color: COLORS.f1LimeGreenDark, marginBottom: "0.75rem",
-    }}>
-      The People Behind the Formula
-    </p>
-    <h2 style={{
-      fontFamily: FONTS.flare, fontSize: "clamp(2rem, 4vw, 3rem)",
-      fontWeight: 400, lineHeight: "100%",
-      color: COLORS.white, textTransform: "uppercase",
-      letterSpacing: "-0.04rem", margin: 0,
-    }}>
-      Leadership
-    </h2>
-  </div>
+        {/* ── TEAM ── */}
+        <section
+          style={{
+            background: COLORS.f1GreenDark,
+            padding: "10rem 1.5rem",
+            overflow: "hidden",
+          }}
+        >
+          <div
+            className="reveal-up"
+            style={{ marginBottom: "5rem", textAlign: "center" }}
+          >
+            <p
+              style={{
+                fontFamily: FONTS.agrandir,
+                fontSize: "0.625rem",
+                textTransform: "uppercase",
+                letterSpacing: "0.065rem",
+                color: COLORS.f1LimeGreenDark,
+                marginBottom: "0.75rem",
+              }}
+            >
+              The People Behind the Formula
+            </p>
+            <h2
+              style={{
+                fontFamily: FONTS.flare,
+                fontSize: "clamp(2rem, 4vw, 3rem)",
+                fontWeight: 400,
+                lineHeight: "100%",
+                color: COLORS.white,
+                textTransform: "uppercase",
+                letterSpacing: "-0.04rem",
+                margin: 0,
+              }}
+            >
+              Leadership
+            </h2>
+          </div>
 
-  {/* Carousel State */}
-  {(() => {
-    const [activeIndex, setActiveIndex] = React.useState(0);
-    const [animating, setAnimating] = React.useState(false);
-    const [direction, setDirection] = React.useState("next");
+          {/* Carousel State */}
+          {(() => {
+            const [activeIndex, setActiveIndex] = React.useState(0);
+            const [animating, setAnimating] = React.useState(false);
+            const [direction, setDirection] = React.useState("next");
 
-    const goTo = (nextIndex, dir) => {
-      if (animating) return;
-      setDirection(dir);
-      setAnimating(true);
-      setTimeout(() => {
-        setActiveIndex(nextIndex);
-        setAnimating(false);
-      }, 380);
-    };
+            const goTo = (nextIndex, dir) => {
+              if (animating) return;
+              setDirection(dir);
+              setAnimating(true);
+              setTimeout(() => {
+                setActiveIndex(nextIndex);
+                setAnimating(false);
+              }, 380);
+            };
 
-    const prev = () => goTo((activeIndex - 1 + TEAM.length) % TEAM.length, "prev");
-    const next = () => goTo((activeIndex + 1) % TEAM.length, "next");
-    const member = TEAM[activeIndex];
+            const prev = () =>
+              goTo((activeIndex - 1 + TEAM.length) % TEAM.length, "prev");
+            const next = () => goTo((activeIndex + 1) % TEAM.length, "next");
+            const member = TEAM[activeIndex];
 
-    return (
-      <>
-        <style>{`
+            return (
+              <>
+                <style>{`
           @keyframes slideInFromRight {
             from { opacity: 0; transform: translateX(40px); }
             to   { opacity: 1; transform: translateX(0); }
@@ -1118,469 +1485,693 @@ React.useEffect(() => {
           .team-dot:hover { transform: scale(1.3); }
         `}</style>
 
-        {/* Card */}
-        <div style={{
-          display: "grid",
-          gridTemplateColumns: "1fr auto 1fr",
-          gap: "0",
-          alignItems: "center",
-          maxWidth: "72rem",
-          margin: "0 auto",
-          borderTop: `1px solid rgba(198,253,58,0.15)`,
-          borderBottom: `1px solid rgba(198,253,58,0.15)`,
-          padding: "4rem 0",
-          animation: animating
-            ? (direction === "next" ? "slideOutToLeft 0.38s ease forwards" : "slideOutToRight 0.38s ease forwards")
-            : (direction === "next" ? "slideInFromRight 0.38s ease forwards" : "slideInFromLeft 0.38s ease forwards"),
-          willChange: "transform, opacity",
-        }}>
-
-          {/* LEFT — Description */}
-          <div style={{ padding: "0 3rem 0 0" }}>
-            <div style={{
-              display: "inline-block",
-              fontFamily: FONTS.agrandir, fontSize: "0.5rem",
-              color: COLORS.f1LimeGreenDark, textTransform: "uppercase",
-              letterSpacing: "0.1rem", marginBottom: "2rem",
-              border: `1px solid rgba(198,253,58,0.2)`,
-              padding: "0.35rem 0.75rem", borderRadius: "2rem",
-            }}>
-              {String(activeIndex + 1).padStart(2, "0")} / {String(TEAM.length).padStart(2, "0")}
-            </div>
-
-            <div style={{
-              fontFamily: FONTS.flare,
-              fontSize: "clamp(1.5rem, 3vw, 2.5rem)",
-              fontWeight: 400,
-              color: COLORS.white,
-              textTransform: "uppercase",
-              lineHeight: "110%",
-              letterSpacing: "-0.03rem",
-              marginBottom: "0.75rem",
-            }}>
-              {member.name}
-            </div>
-
-            <div style={{
-              fontFamily: FONTS.agrandir, fontSize: "0.625rem",
-              color: COLORS.f1LimeGreenDark, textTransform: "uppercase",
-              letterSpacing: "0.06rem", marginBottom: "1.75rem",
-            }}>
-              {member.role}
-            </div>
-
-            <div style={{
-              width: "2.5rem", height: "1px",
-              background: `rgba(198,253,58,0.3)`,
-              marginBottom: "1.75rem",
-            }} />
-
-            <div style={{
-              fontFamily: FONTS.agrandir, fontSize: "0.5625rem",
-              color: "rgba(255,255,255,0.4)", textTransform: "uppercase",
-              letterSpacing: "0.05rem", lineHeight: "160%",
-            }}>
-              <span style={{ color: "rgba(255,255,255,0.18)", marginRight: "0.5rem" }}>◆</span>
-              {member.tenure}
-            </div>
-
-            {/* Navigation */}
-            <div style={{ display: "flex", gap: "0.75rem", marginTop: "3rem", alignItems: "center" }}>
-              <button className="team-nav-btn" onClick={prev} style={{
-                width: "2.5rem", height: "2.5rem",
-                borderRadius: "50%",
-                border: `1px solid rgba(198,253,58,0.25)`,
-                background: "transparent",
-                color: COLORS.f1LimeGreen,
-                cursor: "pointer",
-                display: "flex", alignItems: "center", justifyContent: "center",
-                fontFamily: FONTS.flare, fontSize: "0.875rem",
-              }}>←</button>
-              <button className="team-nav-btn" onClick={next} style={{
-                width: "2.5rem", height: "2.5rem",
-                borderRadius: "50%",
-                border: `1px solid rgba(198,253,58,0.25)`,
-                background: "transparent",
-                color: COLORS.f1LimeGreen,
-                cursor: "pointer",
-                display: "flex", alignItems: "center", justifyContent: "center",
-                fontFamily: FONTS.flare, fontSize: "0.875rem",
-              }}>→</button>
-
-              {/* Dots */}
-              <div style={{ display: "flex", gap: "0.4rem", marginLeft: "0.5rem" }}>
-                {TEAM.map((_, i) => (
-                  <div key={i} className="team-dot" onClick={() => goTo(i, i > activeIndex ? "next" : "prev")} style={{
-                    width: i === activeIndex ? "1.5rem" : "0.35rem",
-                    height: "0.35rem",
-                    borderRadius: "1rem",
-                    background: i === activeIndex ? COLORS.f1LimeGreen : "rgba(198,253,58,0.2)",
-                    cursor: "pointer",
-                  }} />
-                ))}
-              </div>
-            </div>
-          </div>
-
-          {/* CENTER — Vertical Divider */}
-          <div style={{
-            width: "1px",
-            alignSelf: "stretch",
-            background: `linear-gradient(to bottom, transparent, rgba(198,253,58,0.35) 20%, rgba(198,253,58,0.35) 80%, transparent)`,
-            margin: "0 3rem",
-            flexShrink: 0,
-          }} />
-
-          {/* RIGHT — Image */}
-          <div style={{ display: "flex", justifyContent: "flex-end", alignItems: "center" }}>
-            <div style={{
-              position: "relative",
-              width: "clamp(240px, 28vw, 380px)",
-              aspectRatio: "3/4",
-            }}>
-              {/* Lime accent frame */}
-              <div style={{
-                position: "absolute", inset: 0,
-                border: `1px solid rgba(198,253,58,0.18)`,
-                borderRadius: "0.5rem",
-                transform: "translate(10px, 10px)",
-              }} />
-
-              {/* Photo or placeholder */}
-              {member.image ? (
-                <img
-                  src={member.image}
-                  alt={member.name}
+                {/* Card */}
+                <div
+                  className="team-carousel-grid"
                   style={{
-                    position: "relative", zIndex: 1,
-                    width: "100%", height: "100%",
-                    objectFit: "cover",
-                    borderRadius: "0.5rem",
-                    display: "block",
-                    filter: "grayscale(20%) contrast(1.05)",
+                    display: "grid",
+                    gridTemplateColumns: "1fr auto 1fr",
+                    gap: "0",
+                    alignItems: "center",
+                    maxWidth: "72rem",
+                    margin: "0 auto",
+                    borderTop: `1px solid rgba(198,253,58,0.15)`,
+                    borderBottom: `1px solid rgba(198,253,58,0.15)`,
+                    padding: "4rem 0",
+                    animation: animating
+                      ? direction === "next"
+                        ? "slideOutToLeft 0.38s ease forwards"
+                        : "slideOutToRight 0.38s ease forwards"
+                      : direction === "next"
+                        ? "slideInFromRight 0.38s ease forwards"
+                        : "slideInFromLeft 0.38s ease forwards",
+                    willChange: "transform, opacity",
                   }}
-                />
-              ) : (
-                <div style={{
-                  position: "relative", zIndex: 1,
-                  width: "100%", height: "100%",
-                  borderRadius: "0.5rem",
-                  background: `linear-gradient(160deg, ${COLORS.introBgTop} 0%, rgba(198,253,58,0.06) 100%)`,
-                  border: `1px solid rgba(198,253,58,0.12)`,
-                  display: "flex", alignItems: "center", justifyContent: "center",
-                }}>
-                  <span style={{
-                    fontFamily: FONTS.flare,
-                    fontSize: "clamp(3rem, 8vw, 6rem)",
-                    color: `rgba(198,253,58,0.25)`,
-                    lineHeight: 1,
-                  }}>
-                    {member.name.charAt(0)}
-                  </span>
-                </div>
-              )}
+                >
+                  {/* LEFT — Description */}
+                  <div style={{ padding: "0 3rem 0 0" }}>
+                    <div
+                      style={{
+                        display: "inline-block",
+                        fontFamily: FONTS.agrandir,
+                        fontSize: "0.5rem",
+                        color: COLORS.f1LimeGreenDark,
+                        textTransform: "uppercase",
+                        letterSpacing: "0.1rem",
+                        marginBottom: "2rem",
+                        border: `1px solid rgba(198,253,58,0.2)`,
+                        padding: "0.35rem 0.75rem",
+                        borderRadius: "2rem",
+                      }}
+                    >
+                      {String(activeIndex + 1).padStart(2, "0")} /{" "}
+                      {String(TEAM.length).padStart(2, "0")}
+                    </div>
 
-              {/* Lime corner accent */}
-              <div style={{
-                position: "absolute", top: "-1px", left: "-1px",
-                width: "1.5rem", height: "1.5rem",
-                borderTop: `2px solid ${COLORS.f1LimeGreen}`,
-                borderLeft: `2px solid ${COLORS.f1LimeGreen}`,
-                borderRadius: "0.25rem 0 0 0",
-                zIndex: 2,
-              }} />
-              <div style={{
-                position: "absolute", bottom: "-1px", right: "-1px",
-                width: "1.5rem", height: "1.5rem",
-                borderBottom: `2px solid ${COLORS.f1LimeGreen}`,
-                borderRight: `2px solid ${COLORS.f1LimeGreen}`,
-                borderRadius: "0 0 0.25rem 0",
-                zIndex: 2,
-              }} />
-            </div>
-          </div>
-        </div>
-      </>
-    );
-  })()}
-</section>
+                    <div
+                      style={{
+                        fontFamily: FONTS.flare,
+                        fontSize: "clamp(1.5rem, 3vw, 2.5rem)",
+                        fontWeight: 400,
+                        color: COLORS.white,
+                        textTransform: "uppercase",
+                        lineHeight: "110%",
+                        letterSpacing: "-0.03rem",
+                        marginBottom: "0.75rem",
+                      }}
+                    >
+                      {member.name}
+                    </div>
+
+                    <div
+                      style={{
+                        fontFamily: FONTS.agrandir,
+                        fontSize: "0.625rem",
+                        color: COLORS.f1LimeGreenDark,
+                        textTransform: "uppercase",
+                        letterSpacing: "0.06rem",
+                        marginBottom: "1.75rem",
+                      }}
+                    >
+                      {member.role}
+                    </div>
+
+                    <div
+                      style={{
+                        width: "2.5rem",
+                        height: "1px",
+                        background: `rgba(198,253,58,0.3)`,
+                        marginBottom: "1.75rem",
+                      }}
+                    />
+
+                    <div
+                      style={{
+                        fontFamily: FONTS.agrandir,
+                        fontSize: "0.5625rem",
+                        color: "rgba(255,255,255,0.4)",
+                        textTransform: "uppercase",
+                        letterSpacing: "0.05rem",
+                        lineHeight: "160%",
+                      }}
+                    >
+                      <span
+                        style={{
+                          color: "rgba(255,255,255,0.18)",
+                          marginRight: "0.5rem",
+                        }}
+                      >
+                        ◆
+                      </span>
+                      {member.tenure}
+                    </div>
+
+                    {/* Navigation */}
+                    <div
+                      style={{
+                        display: "flex",
+                        gap: "0.75rem",
+                        marginTop: "3rem",
+                        alignItems: "center",
+                      }}
+                    >
+                      <button
+                        className="team-nav-btn"
+                        onClick={prev}
+                        style={{
+                          width: "2.5rem",
+                          height: "2.5rem",
+                          borderRadius: "50%",
+                          border: `1px solid rgba(198,253,58,0.25)`,
+                          background: "transparent",
+                          color: COLORS.f1LimeGreen,
+                          cursor: "pointer",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          fontFamily: FONTS.flare,
+                          fontSize: "0.875rem",
+                        }}
+                      >
+                        ←
+                      </button>
+                      <button
+                        className="team-nav-btn"
+                        onClick={next}
+                        style={{
+                          width: "2.5rem",
+                          height: "2.5rem",
+                          borderRadius: "50%",
+                          border: `1px solid rgba(198,253,58,0.25)`,
+                          background: "transparent",
+                          color: COLORS.f1LimeGreen,
+                          cursor: "pointer",
+                          display: "flex",
+                          alignItems: "center",
+                          justifyContent: "center",
+                          fontFamily: FONTS.flare,
+                          fontSize: "0.875rem",
+                        }}
+                      >
+                        →
+                      </button>
+
+                      {/* Dots */}
+                      <div
+                        style={{
+                          display: "flex",
+                          gap: "0.4rem",
+                          marginLeft: "0.5rem",
+                        }}
+                      >
+                        {TEAM.map((_, i) => (
+                          <div
+                            key={i}
+                            className="team-dot"
+                            onClick={() =>
+                              goTo(i, i > activeIndex ? "next" : "prev")
+                            }
+                            style={{
+                              width: i === activeIndex ? "1.5rem" : "0.35rem",
+                              height: "0.35rem",
+                              borderRadius: "1rem",
+                              background:
+                                i === activeIndex
+                                  ? COLORS.f1LimeGreen
+                                  : "rgba(198,253,58,0.2)",
+                              cursor: "pointer",
+                            }}
+                          />
+                        ))}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* CENTER — Vertical Divider */}
+                  <div
+                    className="team-divider"
+                    style={{
+                      width: "1px",
+                      alignSelf: "stretch",
+                      background: `linear-gradient(to bottom, transparent, rgba(198,253,58,0.35) 20%, rgba(198,253,58,0.35) 80%, transparent)`,
+                      margin: "0 3rem",
+                      flexShrink: 0,
+                    }}
+                  />
+
+                  {/* RIGHT — Image */}
+                  <div
+                    className="team-image-wrap"
+                    style={{
+                      display: "flex",
+                      justifyContent: "flex-end",
+                      alignItems: "center",
+                    }}
+                  >
+                    <div
+                      style={{
+                        position: "relative",
+                        width: "clamp(240px, 28vw, 380px)",
+                        aspectRatio: "3/4",
+                      }}
+                    >
+                      {/* Lime accent frame */}
+                      <div
+                        style={{
+                          position: "absolute",
+                          inset: 0,
+                          border: `1px solid rgba(198,253,58,0.18)`,
+                          borderRadius: "0.5rem",
+                          transform: "translate(10px, 10px)",
+                        }}
+                      />
+
+                      {/* Photo or placeholder */}
+                      {member.image ? (
+                        <img
+                          src={member.image}
+                          alt={member.name}
+                          style={{
+                            position: "relative",
+                            zIndex: 1,
+                            width: "100%",
+                            height: "100%",
+                            objectFit: "cover",
+                            borderRadius: "0.5rem",
+                            display: "block",
+                            filter: "grayscale(20%) contrast(1.05)",
+                          }}
+                        />
+                      ) : (
+                        <div
+                          style={{
+                            position: "relative",
+                            zIndex: 1,
+                            width: "100%",
+                            height: "100%",
+                            borderRadius: "0.5rem",
+                            background: `linear-gradient(160deg, ${COLORS.introBgTop} 0%, rgba(198,253,58,0.06) 100%)`,
+                            border: `1px solid rgba(198,253,58,0.12)`,
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                          }}
+                        >
+                          <span
+                            style={{
+                              fontFamily: FONTS.flare,
+                              fontSize: "clamp(3rem, 8vw, 6rem)",
+                              color: `rgba(198,253,58,0.25)`,
+                              lineHeight: 1,
+                            }}
+                          >
+                            {member.name.charAt(0)}
+                          </span>
+                        </div>
+                      )}
+
+                      {/* Lime corner accent */}
+                      <div
+                        style={{
+                          position: "absolute",
+                          top: "-1px",
+                          left: "-1px",
+                          width: "1.5rem",
+                          height: "1.5rem",
+                          borderTop: `2px solid ${COLORS.f1LimeGreen}`,
+                          borderLeft: `2px solid ${COLORS.f1LimeGreen}`,
+                          borderRadius: "0.25rem 0 0 0",
+                          zIndex: 2,
+                        }}
+                      />
+                      <div
+                        style={{
+                          position: "absolute",
+                          bottom: "-1px",
+                          right: "-1px",
+                          width: "1.5rem",
+                          height: "1.5rem",
+                          borderBottom: `2px solid ${COLORS.f1LimeGreen}`,
+                          borderRight: `2px solid ${COLORS.f1LimeGreen}`,
+                          borderRadius: "0 0 0.25rem 0",
+                          zIndex: 2,
+                        }}
+                      />
+                    </div>
+                  </div>
+                </div>
+              </>
+            );
+          })()}
+        </section>
 
         {/* ── CTA BANNER ── */}
-        <section style={{
-          position: "relative",
-          padding: "12rem 1.5rem",
-          textAlign: "center",
-          overflow: "hidden",
-        }}>
-          <div style={{
-            position: "absolute", inset: 0,
-            background: `radial-gradient(ellipse at 50% 50%, rgba(198,253,58,0.06) 0%, transparent 70%)`,
-            pointerEvents: "none",
-          }} />
-          <div className="reveal-up" style={{ position: "relative", zIndex: 1 }}>
-            <h2 style={{
-              fontFamily: FONTS.flare,
-              fontSize: "clamp(2.5rem, 8vw, 6rem)",
-              fontWeight: 400, lineHeight: "90%",
-              color: COLORS.f1GreenDark, textTransform: "uppercase",
-              letterSpacing: "-0.1rem", margin: "0 0 1.5rem",
-            }}>
+        <section
+          className="cta-section"
+          style={{
+            position: "relative",
+            padding: "12rem 1.5rem",
+            textAlign: "center",
+            overflow: "hidden",
+          }}
+        >
+          <div
+            style={{
+              position: "absolute",
+              inset: 0,
+              background: `radial-gradient(ellipse at 50% 50%, rgba(198,253,58,0.06) 0%, transparent 70%)`,
+              pointerEvents: "none",
+            }}
+          />
+          <div
+            className="reveal-up"
+            style={{ position: "relative", zIndex: 1 }}
+          >
+            <h2
+              style={{
+                fontFamily: FONTS.flare,
+                fontSize: "clamp(2.5rem, 8vw, 6rem)",
+                fontWeight: 400,
+                lineHeight: "90%",
+                color: COLORS.f1GreenDark,
+                textTransform: "uppercase",
+                letterSpacing: "-0.1rem",
+                margin: "0 0 1.5rem",
+              }}
+            >
               Ready to
               <br />
-              <span style={{ color: COLORS.f1LimeGreenDark }}>Experience It</span>
+              <span style={{ color: COLORS.f1LimeGreenDark }}>
+                Experience It
+              </span>
             </h2>
-            <p style={{
-              fontFamily: FONTS.agrandir, fontSize: "0.625rem",
-              textTransform: "uppercase", letterSpacing: "0.05rem",
-              color: COLORS.grey600, maxWidth: "40ch", margin: "0 auto 2.5rem",
-              lineHeight: "170%",
-            }}>
-              Join thousands of engineers and fleet operators who have made MaxFuel RX the cornerstone of their fuel management strategy.
+            <p
+              style={{
+                fontFamily: FONTS.agrandir,
+                fontSize: "0.625rem",
+                textTransform: "uppercase",
+                letterSpacing: "0.05rem",
+                color: COLORS.grey600,
+                maxWidth: "40ch",
+                margin: "0 auto 2.5rem",
+                lineHeight: "170%",
+              }}
+            >
+              Join thousands of engineers and fleet operators who have made
+              MaxFuel RX the cornerstone of their fuel management strategy.
             </p>
-            <div style={{ display: "flex", gap: "1rem", justifyContent: "center", flexWrap: "wrap" }}>
-              <button className="am-btn am-btn-dark">Discover MaxFuel RX</button>
-              <button className="am-btn am-btn-green" style={{ color: COLORS.black }}>Contact Us</button>
+            <div
+              style={{
+                display: "flex",
+                gap: "1rem",
+                justifyContent: "center",
+                flexWrap: "wrap",
+              }}
+            >
+              <button className="am-btn am-btn-dark">
+                Discover MaxFuel RX
+              </button>
+              <button
+                className="am-btn am-btn-green"
+                style={{ color: COLORS.black }}
+              >
+                Contact Us
+              </button>
             </div>
           </div>
         </section>
 
         {/* ── Disclaimer ── */}
-        <div style={{ padding: "2rem 1.5rem", textAlign: "center", background: COLORS.grey100 }}>
-          <p style={{
-            fontFamily: FONTS.agrandir, fontSize: "0.625rem",
-            fontWeight: 400, lineHeight: "140%",
-            letterSpacing: "0.065rem", textTransform: "uppercase",
-            color: COLORS.grey600, opacity: 0.8, margin: 0,
-          }}>
+        <div
+          style={{
+            padding: "2rem 1.5rem",
+            textAlign: "center",
+            background: COLORS.grey100,
+          }}
+        >
+          <p
+            style={{
+              fontFamily: FONTS.agrandir,
+              fontSize: "0.625rem",
+              fontWeight: 400,
+              lineHeight: "140%",
+              letterSpacing: "0.065rem",
+              textTransform: "uppercase",
+              color: COLORS.grey600,
+              opacity: 0.8,
+              margin: 0,
+            }}
+          >
             Passively Cleaning Exhaust-Related Components
           </p>
         </div>
-{/* ── TIMELINE CAROUSEL ── */}
-{(() => {
- 
-  return (
-    <div style={{
-      position: "relative",
-      height: "100vh",
-      backgroundImage: `url(${Cheetah})`,
-      backgroundSize: "cover",
-      backgroundPosition: "center",
-      overflow: "hidden",
-    }}>
-      <div style={{
-        position: "absolute", top: 0, left: 0, width: "100%", height: "100%",
-        background: "linear-gradient(to bottom, rgba(0,0,0,0.3), rgba(0,0,0,0.5))",
-        padding: "60px 40px",
-        color: "white",
-        boxSizing: "border-box",
-      }}>
-        {/* header */}
-        <h2 style={{
-          fontSize: "32px",
-          fontWeight: 300,
-          letterSpacing: "2px",
-          marginBottom: "80px",
-          fontFamily: FONTS.flare,
-          textTransform: "uppercase",
-          color: COLORS.white,
-        }}>
-          Our Story
-        </h2>
-
-        {/* nav buttons */}
-        <div className="timeline-nav-btns" style={{
-          position: "absolute",
-          top: "220px",
-          right: "40px",
-          display: "flex",
-          gap: "20px",
-          zIndex: 10,
-        }}>
-          {[{ label: "←", fn: scrollLeft }, { label: "→", fn: scrollRight }].map(({ label, fn }) => (
-            <button
-              key={label}
-              onClick={fn}
+        {/* ── TIMELINE CAROUSEL ── */}
+        {(() => {
+          return (
+            <div
               style={{
-                width: "50px", height: "50px",
-                border: "2px solid rgba(255,255,255,0.5)",
-                background: "rgba(255,255,255,0.1)",
-                backdropFilter: "blur(10px)",
-                borderRadius: "50%",
-                cursor: "pointer",
-                display: "flex", alignItems: "center", justifyContent: "center",
-                color: "white",
-                fontSize: "1.5rem",
-                transition: "all 0.3s ease",
-                fontFamily: FONTS.agrandir,
-              }}
-              onMouseEnter={e => {
-                e.currentTarget.style.background = "rgba(255,255,255,0.2)";
-                e.currentTarget.style.borderColor = "white";
-              }}
-              onMouseLeave={e => {
-                e.currentTarget.style.background = "rgba(255,255,255,0.1)";
-                e.currentTarget.style.borderColor = "rgba(255,255,255,0.5)";
+                position: "relative",
+                height: "100vh",
+                backgroundImage: `url(${Cheetah})`,
+                backgroundSize: "cover",
+                backgroundPosition: "center",
+                overflow: "hidden",
               }}
             >
-              {label}
-            </button>
-          ))}
-        </div>
+              <div
+                style={{
+                  position: "absolute",
+                  top: 0,
+                  left: 0,
+                  width: "100%",
+                  height: "100%",
+                  background:
+                    "linear-gradient(to bottom, rgba(0,0,0,0.3), rgba(0,0,0,0.5))",
+                  padding: "60px 40px",
+                  color: "white",
+                  boxSizing: "border-box",
+                }}
+              >
+                {/* header */}
+                <h2
+                  style={{
+                    fontSize: "32px",
+                    fontWeight: 300,
+                    letterSpacing: "2px",
+                    marginBottom: "80px",
+                    fontFamily: FONTS.flare,
+                    textTransform: "uppercase",
+                    color: COLORS.white,
+                  }}
+                >
+                  Our Story
+                </h2>
 
-        {/* track wrapper — clips overflow */}
-        <div style={{ position: "relative", overflow: "hidden", width: "100%" }}>
-          {/* horizontal line */}
-          <div style={{
-            position: "absolute",
-            top: "50%", left: 0, right: 0,
-            height: "2px",
-            background: "rgba(0,0,0,0.6)",
-            transform: "translateY(-50%)",
-            pointerEvents: "none",
-            zIndex: 0,
-          }} />
-
-          {/* scrolling track */}
-          <div
-  ref={trackRef}
-  className="timeline-scroll-track"
-  style={{
-    display: "flex",
-    alignItems: "stretch",
-    gap: "20px",             
-    transition: "transform 0.5s ease",
-    width: "100%",
-  }}
->
-            {timelineEvents.map((item, i) => (
-              <div key={i} className="timeline-track-item">
-                {/* year */}
-                <div style={{
-                  fontSize: "36px",
-                  fontWeight: 300,
-                  marginBottom: "20px",
-                  paddingTop: "40px",
-                  opacity: 0.9,
-                  WebkitTextStroke: "0.2px #ffffff",
-                  WebkitTextFillColor: "transparent",
-                  color: "transparent",
-                  fontFamily: "'Lucida Sans Unicode', Geneva, Verdana, sans-serif",
-                }}>
-                  {item.year}
+                {/* nav buttons */}
+                <div
+                  className="timeline-nav-btns"
+                  style={{
+                    position: "absolute",
+                    top: "220px",
+                    right: "40px",
+                    display: "flex",
+                    gap: "20px",
+                    zIndex: 10,
+                  }}
+                >
+                  {[
+                    { label: "←", fn: scrollLeft },
+                    { label: "→", fn: scrollRight },
+                  ].map(({ label, fn }) => (
+                    <button
+                      key={label}
+                      onClick={fn}
+                      style={{
+                        width: "50px",
+                        height: "50px",
+                        border: "2px solid rgba(255,255,255,0.5)",
+                        background: "rgba(255,255,255,0.1)",
+                        backdropFilter: "blur(10px)",
+                        borderRadius: "50%",
+                        cursor: "pointer",
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        color: "white",
+                        fontSize: "1.5rem",
+                        transition: "all 0.3s ease",
+                        fontFamily: FONTS.agrandir,
+                      }}
+                      onMouseEnter={(e) => {
+                        e.currentTarget.style.background =
+                          "rgba(255,255,255,0.2)";
+                        e.currentTarget.style.borderColor = "white";
+                      }}
+                      onMouseLeave={(e) => {
+                        e.currentTarget.style.background =
+                          "rgba(255,255,255,0.1)";
+                        e.currentTarget.style.borderColor =
+                          "rgba(255,255,255,0.5)";
+                      }}
+                    >
+                      {label}
+                    </button>
+                  ))}
                 </div>
 
-                {/* dot */}
-                <div style={{
-                  width: "16px", height: "16px",
-                  background: item.active ? "#f4c430" : "white",
-                  borderRadius: "50%",
-                  margin: "0 auto 30px",
-                  boxShadow: item.active
-                    ? "0 0 30px rgba(244,196,48,0.8)"
-                    : "0 0 20px rgba(255,255,255,0.5)",
-                  position: "relative",
-                  zIndex: 2,
-                  flexShrink: 0,
-                }} />
+                {/* track wrapper — clips overflow */}
+                <div
+                  style={{
+                    position: "relative",
+                    overflow: "hidden",
+                    width: "100%",
+                  }}
+                >
+                  {/* horizontal line */}
+                  <div
+                    style={{
+                      position: "absolute",
+                      top: "50%",
+                      left: 0,
+                      right: 0,
+                      height: "2px",
+                      background: "rgba(0,0,0,0.6)",
+                      transform: "translateY(-50%)",
+                      pointerEvents: "none",
+                      zIndex: 0,
+                    }}
+                  />
 
-                {/* content */}
-                <div style={{
-                  padding: "20px 30px 40px",
-                  flex: 1,
-                  display: "flex",
-                  lineHeight: 1.8,
-                  alignItems: "center",
-                  justifyContent: "center",
-                  textAlign: "left",
-                  fontFamily: FONTS.agrandir,
-                  fontSize: "20px",
-                  color: "rgba(255,255,255,0.95)",
-                  letterSpacing: "0.03em",
-                }}>
-                  {item.content}
+                  {/* scrolling track */}
+                  <div
+                    ref={trackRef}
+                    className="timeline-scroll-track"
+                    style={{
+                      display: "flex",
+                      alignItems: "stretch",
+                      gap: "20px",
+                      transition: "transform 0.5s ease",
+                      width: "100%",
+                    }}
+                  >
+                    {timelineEvents.map((item, i) => (
+                      <div key={i} className="timeline-track-item">
+                        {/* year */}
+                        <div
+                          style={{
+                            fontSize: "36px",
+                            fontWeight: 300,
+                            marginBottom: "20px",
+                            paddingTop: "40px",
+                            opacity: 0.9,
+                            WebkitTextStroke: "0.2px #ffffff",
+                            WebkitTextFillColor: "transparent",
+                            color: "transparent",
+                            fontFamily:
+                              "'Lucida Sans Unicode', Geneva, Verdana, sans-serif",
+                          }}
+                        >
+                          {item.year}
+                        </div>
+
+                        {/* dot */}
+                        <div
+                          style={{
+                            width: "16px",
+                            height: "16px",
+                            background: item.active ? "#f4c430" : "white",
+                            borderRadius: "50%",
+                            margin: "0 auto 30px",
+                            boxShadow: item.active
+                              ? "0 0 30px rgba(244,196,48,0.8)"
+                              : "0 0 20px rgba(255,255,255,0.5)",
+                            position: "relative",
+                            zIndex: 2,
+                            flexShrink: 0,
+                          }}
+                        />
+
+                        {/* content */}
+                        <div
+                          style={{
+                            padding: "20px 30px 40px",
+                            flex: 1,
+                            display: "flex",
+                            lineHeight: 1.8,
+                            alignItems: "center",
+                            justifyContent: "center",
+                            textAlign: "left",
+                            fontFamily: FONTS.agrandir,
+                            fontSize: "20px",
+                            color: "rgba(255,255,255,0.95)",
+                            letterSpacing: "0.03em",
+                          }}
+                        >
+                          {item.content}
+                        </div>
+                      </div>
+                    ))}
+                  </div>
                 </div>
               </div>
-            ))}
-          </div>
+            </div>
+          );
+        })()}
+
+        {/* ── Disclaimer ── */}
+        <div
+          style={{
+            padding: "2rem 1.5rem",
+            textAlign: "center",
+            background: COLORS.grey100,
+          }}
+        >
+          <p
+            style={{
+              fontFamily: FONTS.agrandir,
+              fontSize: "0.625rem",
+              fontWeight: 400,
+              lineHeight: "140%",
+              letterSpacing: "0.065rem",
+              textTransform: "uppercase",
+              color: COLORS.grey600,
+              opacity: 0.8,
+              margin: 0,
+            }}
+          >
+            Passively Cleaning Exhaust-Related Components
+          </p>
         </div>
-      </div>
-    </div>
-  );
-})()}
-
-{/* ── Disclaimer ── */}
-<div style={{ padding: "2rem 1.5rem", textAlign: "center", background: COLORS.grey100 }}>
-  <p style={{
-    fontFamily: FONTS.agrandir, fontSize: "0.625rem",
-    fontWeight: 400, lineHeight: "140%",
-    letterSpacing: "0.065rem", textTransform: "uppercase",
-    color: COLORS.grey600, opacity: 0.8, margin: 0,
-  }}>
-    Passively Cleaning Exhaust-Related Components
-  </p>
-</div>
         {/* ── FOOTER ── */}
-          <footer className="gy-footer">
-  <div className="gy-footer-inner">
-    <div className="gy-footer-left">
-      <div className="gy-footer-logo">Matrix Petroleum</div>
-      <ul className="gy-footer-nav">
-  {[
-    { label: "Home",                        to: "/" },
-    { label: "Our Future",                  to: "/?overlay=future" },
-    { label: "Our Story",                   to: "/about-us" },
-    { label: "Terms and Conditions",        to: "/terms-and-conditions" },
-    { label: "FAQs",                        to: "/faqs" },
-    { label: "Website Terms and Conditions",to: "/terms-and-conditions" },
-    { label: "Privacy Policy and Cookies",  to: "/privacy-policy" },
-    { label: "Matrix Petroleum",            to: "/" },
-  ].map((l) => (
-    <li key={l.label}>
-      <Link to={l.to}>{l.label}</Link>
-    </li>
-  ))}
-</ul>
-    </div>
-    <div className="gy-footer-right">
-      <div>
-        <p className="gy-footer-section-label">Follow Us</p>
-        <ul className="gy-footer-social">
-          {["Facebook", "Instagram", "Twitter", "YouTube"].map((s) => (
-            <li key={s}>
-              <a href="#">{s}</a>
-            </li>
-          ))}
-        </ul>
-      </div>
-      <div>
-        <p className="gy-footer-section-label">Contact Us</p>
-        <ul className="gy-footer-contact">
-          <li>
-            <a href="#">General Enquiries</a>
-          </li>
-        </ul>
-      </div>
-      <div className="gy-footer-legal">
-        <p className="gy-footer-tagline">
-          Skilfully Engineered. Use Responsibly.
-        </p>
-        <p className="gy-footer-disclaimer">
-          2025 Matrix Petroleum Ltd. Registered in England. Registered
-          Number 11462010
-          <br />
-          Registered Office: 3 Hardman Square, Manchester M3 3EB
-          <br />
-          This content is intended only for people who are of legal
-          purchase age in their country. Do not forward to minors.
-        </p>
-        <p className="gy-footer-drinkaware">
-          <strong>matrixpetroleum</strong>.com
-        </p>
-      </div>
-    </div>
-  </div>
-</footer>
-
+        <footer className="gy-footer">
+          <div className="gy-footer-inner">
+            <div className="gy-footer-left">
+              <div className="gy-footer-logo">Matrix Petroleum</div>
+              <ul className="gy-footer-nav">
+                {[
+                  { label: "Home", to: "/" },
+                  { label: "Our Future", to: "/?overlay=future" },
+                  { label: "Our Story", to: "/about-us" },
+                  {
+                    label: "Terms and Conditions",
+                    to: "/terms-and-conditions",
+                  },
+                  { label: "FAQs", to: "/faqs" },
+                  {
+                    label: "Website Terms and Conditions",
+                    to: "/terms-and-conditions",
+                  },
+                  {
+                    label: "Privacy Policy and Cookies",
+                    to: "/privacy-policy",
+                  },
+                  { label: "Matrix Petroleum", to: "/" },
+                ].map((l) => (
+                  <li key={l.label}>
+                    <Link to={l.to}>{l.label}</Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div className="gy-footer-right">
+              <div>
+                <p className="gy-footer-section-label">Follow Us</p>
+                <ul className="gy-footer-social">
+                  {["Facebook", "Instagram", "Twitter", "YouTube"].map((s) => (
+                    <li key={s}>
+                      <a href="#">{s}</a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <div>
+                <p className="gy-footer-section-label">Contact Us</p>
+                <ul className="gy-footer-contact">
+                  <li>
+                    <a href="#">General Enquiries</a>
+                  </li>
+                </ul>
+              </div>
+              <div className="gy-footer-legal">
+                <p className="gy-footer-tagline">
+                  Skilfully Engineered. Use Responsibly.
+                </p>
+                <p className="gy-footer-disclaimer">
+                  2025 Matrix Petroleum Ltd. Registered in England. Registered
+                  Number 11462010
+                  <br />
+                  Registered Office: 3 Hardman Square, Manchester M3 3EB
+                  <br />
+                  This content is intended only for people who are of legal
+                  purchase age in their country. Do not forward to minors.
+                </p>
+                <p className="gy-footer-drinkaware">
+                  <strong>matrixpetroleum</strong>.com
+                </p>
+              </div>
+            </div>
+          </div>
+        </footer>
       </div>
     </>
   );
