@@ -211,7 +211,7 @@ const GLOBAL_STYLES = `
     max-height: 0;
     transition: max-height 0.4s cubic-bezier(0.45,0.02,0.09,0.98);
   }
-  .faq-item.open .faq-body { max-height: 12rem; }
+ .faq-item.open .faq-body { max-height: 20rem; }
 
   .success-msg { animation: successPop 0.5s ease forwards; }
 
@@ -297,6 +297,8 @@ const GLOBAL_STYLES = `
   .form-email-row { grid-template-columns: 1fr !important; gap: 1.5rem !important; }
   .form-inner { padding: 2rem 1.25rem !important; }
   .contact-section { padding: 6rem 1.5rem !important; }
+  .contact-sidebar-value { font-size: 1rem !important; }
+  .contact-sidebar-label { font-size: 0.75rem !important; }
   .offices-section { padding: 6rem 1.5rem !important; }
   .faq-section { padding: 6rem 1.5rem !important; }
   .cta-section { padding: 8rem 1.5rem !important; }
@@ -648,7 +650,7 @@ export default function ContactUs() {
             style={{
               position: "relative",
               zIndex: 3,
-              padding: "clamp(8rem, 40vh, 30rem) 6vw 8vh",
+             padding: "clamp(6rem, 25vh, 20rem) 6vw 8vh",
             }}
           >
             <p
@@ -721,7 +723,7 @@ export default function ContactUs() {
         </section>
 
         {/* ── CONTACT FORM + SIDEBAR ── */}
-       <section className="contact-section" style={{ padding: "10rem 8vw" }}>
+    <section className="contact-section" style={{ padding: "clamp(4rem,10vw,10rem) clamp(1.5rem,8vw,8vw)" }}>
           <div
             className="contact-grid reveal-up"
             style={{
@@ -780,6 +782,7 @@ export default function ContactUs() {
                   }}
                 >
                   <div
+                  className="contact-sidebar-label"
                     style={{
                       fontFamily: FONTS.agrandir,
                       fontSize: "1.1rem",
@@ -792,6 +795,7 @@ export default function ContactUs() {
                     {item.label}
                   </div>
                   <div
+                  className="contact-sidebar-value"
                     style={{
                       fontFamily: FONTS.flare,
                       fontSize: "1.5rem",
@@ -1306,7 +1310,7 @@ export default function ContactUs() {
         </section>
 
         {/* ── FAQ ── */}
-        <section className="faq-section" style={{ padding: "10rem 8vw" }}>
+        <section className="faq-section" style={{ padding: "clamp(4rem,10vw,10rem) clamp(1.5rem,8vw,8vw)" }}>
           <div className="reveal-up" style={{ marginBottom: "5rem" }}>
             <p
               style={{
@@ -1390,7 +1394,7 @@ export default function ContactUs() {
   style={{
     position: "relative",
     background: `linear-gradient(to bottom, ${COLORS.introBgTop}, ${COLORS.introBg})`,
-    padding: "12rem 8vw",
+    padding: "clamp(5rem,12vw,12rem) clamp(1.5rem,8vw,8vw)",
             textAlign: "center",
             overflow: "hidden",
           }}
