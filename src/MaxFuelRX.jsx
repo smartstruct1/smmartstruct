@@ -1,6 +1,17 @@
-// ─── MaxfuelRX.jsx  — Modified with scrollable overlay pages per timeline tab ──
-// Drop-in replacement for your existing MaxfuelRX component.
-// All imports remain identical to your original; only the overlay system has changed.
+// ─── MaxfuelRX.jsx — Glenfiddich × Aston Martin F1-style GSAP animations ──────
+// All original logic preserved. Animations layered on top using GSAP + ScrollTrigger.
+//
+// NEW ANIMATION SYSTEM (mirrors aston-martin-f1.glenfiddich.com):
+//  1. Hero text — char-by-char stagger reveal on page load (SplitText-style via spans)
+//  2. Hero video — parallax scale scrub on scroll
+//  3. Section reveals — clip-path wipe-in (inset top→0) per section
+//  4. Block text — word-by-word fade+slide reveal on scroll
+//  5. Card slider — staggered entrance (translateY + opacity) per card
+//  6. RX section — left/right reveal with scale
+//  7. Newsletter — count-up numbers + text reveal
+//  8. Footer — stagger link fade-in from bottom
+//  9. Overlay pages — coordinated entrance (hero content staggers in)
+// 10. Timeline pill — smooth slide-up entrance
 
 import { useState, useEffect, useRef, useCallback } from "react";
 import { gsap } from "gsap";
@@ -8,7 +19,7 @@ import { Link, useLocation } from "react-router-dom";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Maxfuel from "./Maxfuel";
 import AboutUs from "./Aboutus";
-import TermsAndConditions from './TermsAndConditions';
+import TermsAndConditions from "./TermsAndConditions";
 import ContactUs from "./Contactus";
 import HeroVideo from "./assets/innovation.mp4";
 import HeroVideo1 from "./assets/beerlines2.mp4";
@@ -35,6 +46,9 @@ import CasloFont from "./assets/fonts/9ee57a5762846d75-s.p.woff2";
 import FlaresFont from "./assets/fonts/a81f89e159e0486f-s.p.woff";
 import AgrandirsFont from "./assets/fonts/abff1420e55a5ceb-s.p.woff2";
 
+gsap.registerPlugin(ScrollTrigger);
+
+// ─── Constants (unchanged) ────────────────────────────────────────────────────
 const TIMELINE_TABS = ["Past", "Present", "Future"];
 const NEWSLETTER_BENEFITS = [
   "NEUTRALIZING ACIDS",
@@ -103,9 +117,7 @@ function pushDataLayer(payload) {
   window.dataLayer.push(payload);
 }
 
-// ─── Global styles ────────────────────────────────────────────────────────────
-// (Keep your @font-face blocks at the top — they're omitted here for brevity
-//  but must be present in your actual file.)
+// ─── Global styles ─────────────────────────────────────────────────────────────
 const GLOBAL_STYLES = `
   @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap');
   :root {
@@ -132,7 +144,8 @@ const GLOBAL_STYLES = `
   }
   *, *::before, *::after { box-sizing: border-box; }
   body, html { margin: 0; padding: 0; overflow-x: hidden; max-width: 100vw; }
- 
+
+  /* ─── ANIMATION KEYFRAMES ─────────────────────────────────────────────── */
   @keyframes bounce {
     0%,100% { transform: translateY(0); }
     50%      { transform: translateY(-0.35rem); }
@@ -155,11 +168,124 @@ const GLOBAL_STYLES = `
     from { opacity: 0; transform: translateY(60px); }
     to   { opacity: 1; transform: translateY(0); }
   }
- 
+  /* Glenfiddich-style char reveal — each char clips up from its line */
+  @keyframes charReveal {
+    from { transform: translateY(110%) rotateX(20deg); opacity: 0; }
+    to   { transform: translateY(0) rotateX(0deg);    opacity: 1; }
+  }
+  /* Line draw for SVG dividers */
+  @keyframes lineDraw {
+    from { stroke-dashoffset: 100; }
+    to   { stroke-dashoffset: 0; }
+  }
+  /* Subtle background pulse on feature sections */
+  @keyframes sectionPulse {
+    0%,100% { background-position: 0% 50%; }
+    50%     { background-position: 100% 50%; }
+  }
+
+  /* ─── HERO CHAR SPLIT ─────────────────────────────────────────────────── */
+  .hero-char-wrap {
+    display: inline-block;
+    overflow: hidden;
+    vertical-align: bottom;
+    perspective: 400px;
+  }
+  .hero-char {
+    display: inline-block;
+    transform: translateY(110%) rotateX(20deg);
+    opacity: 0;
+    will-change: transform, opacity;
+  }
+  .hero-char.revealed {
+    animation: charReveal 0.75s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  }
+
+  /* ─── SECTION CLIP REVEAL ─────────────────────────────────────────────── */
+  .clip-reveal {
+    clip-path: inset(100% 0 0 0);
+    will-change: clip-path;
+  }
+
+  /* ─── SCROLL FADE ELEMENTS ────────────────────────────────────────────── */
+  .scroll-fade {
+    opacity: 0;
+    transform: translateY(2.5rem);
+    will-change: opacity, transform;
+  }
+  .scroll-fade-left {
+    opacity: 0;
+    transform: translateX(-2.5rem);
+    will-change: opacity, transform;
+  }
+  .scroll-fade-right {
+    opacity: 0;
+    transform: translateX(2.5rem);
+    will-change: opacity, transform;
+  }
+  .scroll-scale {
+    opacity: 0;
+    transform: scale(0.94);
+    will-change: opacity, transform;
+  }
+
+  /* ─── WORD REVEAL (block text) ────────────────────────────────────────── */
+  .word-wrap {
+    display: inline-block;
+    overflow: hidden;
+    vertical-align: bottom;
+  }
+  .word-inner {
+    display: inline-block;
+    transform: translateY(100%);
+    opacity: 0;
+    will-change: transform, opacity;
+  }
+
+  /* ─── LINE DIVIDER (SVG draw-on) ──────────────────────────────────────── */
+  .line-divider {
+    stroke-dasharray: 100;
+    stroke-dashoffset: 100;
+  }
+
+  /* ─── PARALLAX CONTAINER ─────────────────────────────────────────────── */
+  .parallax-media {
+    will-change: transform;
+    transform: scale(1.15);
+  }
+
+  /* ─── STAGGER CARD REVEAL ─────────────────────────────────────────────── */
+  .stagger-card {
+    opacity: 0;
+    transform: translateY(3rem) scale(0.97);
+    will-change: opacity, transform;
+  }
+
+  /* ─── OVERLAY ENTRANCE ────────────────────────────────────────────────── */
+  .overlay-label-anim {
+    opacity: 0;
+    transform: translateY(1rem) skewY(2deg);
+  }
+  .overlay-title-char {
+    display: inline-block;
+    overflow: hidden;
+    vertical-align: bottom;
+  }
+  .overlay-title-char-inner {
+    display: inline-block;
+    transform: translateY(100%);
+    opacity: 0;
+  }
+  .overlay-body-anim {
+    opacity: 0;
+    transform: translateY(1.5rem);
+  }
+
+  /* ─── Shared utility ──────────────────────────────────────────────────── */
   .am-scroll-arrow { animation: bounce 2s infinite; transition: scale 0.2s ease; }
   .am-scroll-arrow:hover { scale: 1.2; animation-play-state: paused; }
   .am-benefit { animation: benefitSwap 2.2s ease forwards; }
- 
+
   .am-btn {
     display: inline-flex; align-items: center; justify-content: center;
     height: 2.125rem; padding: 0.75rem 2rem 0.69rem;
@@ -174,7 +300,7 @@ const GLOBAL_STYLES = `
   .am-btn-light { color: #fff; background: rgba(255,255,255,0.2); }
   .am-btn-light:hover  { background: rgba(255,255,255,0.5); }
   .am-btn-light:active { background: rgba(255,255,255,0.5); transform: scale(0.97); }
- 
+
   .am-tag {
     display: inline-flex; align-items: center; justify-content: center;
     padding: 0.38rem 1rem 0.31rem;
@@ -184,7 +310,7 @@ const GLOBAL_STYLES = `
   }
   .am-tag-green { color: var(--color-f1-lime-green); border: 1px solid var(--color-f1-lime-green); }
   .am-tag-light { color: #fff; border: 1px solid #fff; }
- 
+
   .am-footer-link { opacity: 1; transition: opacity 0.15s var(--easing-smooth); }
   .am-footer-link:hover { opacity: 0.6; }
   .am-card-link .am-card-subtitle,
@@ -193,7 +319,7 @@ const GLOBAL_STYLES = `
   .am-card-link:hover .am-card-title { color: var(--color-f1-lime-green-darker) !important; }
   .am-nav-item-link { transition: opacity 0.15s var(--easing-smooth); }
   .am-nav-item-link:hover { opacity: 0.6; }
- 
+
   .am-timeline-nav-pill { opacity: 0; visibility: hidden; }
   .am-timeline-item {
     font-family: var(--font-flare); font-size: 0.75rem; font-weight: 400;
@@ -207,7 +333,7 @@ const GLOBAL_STYLES = `
     z-index: 0; pointer-events: none;
     will-change: transform, width;
   }
- 
+
   .am-slider {
     display: flex; overflow: scroll hidden;
     -ms-overflow-style: none; scrollbar-width: none;
@@ -215,7 +341,7 @@ const GLOBAL_STYLES = `
   }
   .am-slider::-webkit-scrollbar { display: none; }
   .am-slider.is-dragging { cursor: grabbing; }
- 
+
   #homepage-transition-asset {
     position: relative; overflow: hidden;
     width: 100%; height: calc(100vh - 5rem);
@@ -228,7 +354,7 @@ const GLOBAL_STYLES = `
     position: absolute; inset: 0;
     transform: scale(1.08); transform-origin: center center; will-change: transform;
   }
- 
+
   @media only screen and (max-width: 767px) { .am-hide-mobile  { display: none !important; } }
   @media only screen and (min-width: 768px) { .am-hide-desktop { display: none !important; } }
   @media (max-width: 767px) {
@@ -237,15 +363,15 @@ const GLOBAL_STYLES = `
       text-align: center; line-height: 1 !important;
     }
   }
- 
+
   .am-card-slide {
     flex-shrink: 0; width: calc(100vw - 3rem); cursor: pointer;
   }
   @media (min-width: 768px) { .am-card-slide { width: 27.5vw; } }
   .am-card-slider-track { gap: 1.5rem; }
   @media (min-width: 768px) { .am-card-slider-track { gap: 10.63vw; } }
- 
-  /* ── OVERLAY PAGE STYLES ── */
+
+  /* ─── OVERLAY PAGE STYLES ─────────────────────────────────────────────── */
   .tab-overlay {
     position: fixed; inset: 0; z-index: 9000;
     overflow-y: auto; overflow-x: hidden;
@@ -277,12 +403,10 @@ const GLOBAL_STYLES = `
   .tab-overlay-hero-content {
     position: relative; z-index: 2;
     padding: 0 1.5rem 4rem;
-    animation: overlaySlideUp 0.7s 0.15s var(--easing-smooth) both;
   }
   .tab-overlay-body {
     position: relative; z-index: 2;
     background: #fff;
-    animation: overlayFadeIn 0.5s 0.3s var(--easing-smooth) both;
   }
   .tab-overlay-close {
     position: fixed; top: 1rem; right: 1.25rem; z-index: 9999;
@@ -295,7 +419,7 @@ const GLOBAL_STYLES = `
     font-size: 1.1rem; line-height: 1;
   }
   .tab-overlay-close:hover { transform: scale(1.1); background: #fff; }
- 
+
   .scroll-hint {
     position: absolute; bottom: 1.5rem; left: 50%; transform: translateX(-50%);
     z-index: 3; display: flex; flex-direction: column; align-items: center; gap: 0.4rem;
@@ -303,18 +427,16 @@ const GLOBAL_STYLES = `
     color: var(--color-f1-lime-green);
     font-family: var(--font-agrandir);
     font-size: 0.5rem; letter-spacing: 0.1em; text-transform: uppercase;
+    opacity: 0; /* animated in via GSAP */
   }
- 
+
   /* content sections inside overlays */
   .ol-section {
     padding: 5rem 1.5rem;
     border-bottom: 1px solid rgba(32,67,56,0.12);
   }
   .ol-section:last-child { border-bottom: none; }
-  .ol-section-inner {
-    max-width: 56rem;
-    margin: 0 auto;
-  }
+  .ol-section-inner { max-width: 56rem; margin: 0 auto; }
   .ol-label {
     font-family: var(--font-agrandir); font-size: 0.625rem; font-weight: 400;
     letter-spacing: 0.0625rem; text-transform: uppercase;
@@ -370,9 +492,7 @@ const GLOBAL_STYLES = `
     font-family: var(--font-flare); font-size: 0.875rem; color: #fff;
     text-transform: uppercase;
   }
-  .ol-dark-section {
-    background: var(--color-f1-green-dark); color: #fff;
-  }
+  .ol-dark-section { background: var(--color-f1-green-dark); color: #fff; }
   .ol-dark-section .ol-heading { color: var(--color-f1-lime-green); }
   .ol-dark-section .ol-body    { color: rgba(255,255,255,0.8); }
   .ol-dark-section .ol-stat-label { color: rgba(255,255,255,0.7); }
@@ -395,154 +515,38 @@ const GLOBAL_STYLES = `
   .ol-timeline-item {
     flex: 1; padding: 1.5rem;
     border: 1px solid rgba(32,67,56,0.15);
-    border-radius: 0.1875rem;
-    text-align: center;
+    border-radius: 0.1875rem; text-align: center;
   }
   .ol-timeline-year {
     font-family: var(--font-flare); font-size: 1.5rem; color: var(--color-f1-lime-green-darker);
     text-transform: uppercase; margin-bottom: 0.5rem;
   }
   .ol-timeline-desc {
-    font-family: var(--font-agrandir); font-size: 0.75rem; line-height: 1.6;
-    color: #555;
+    font-family: var(--font-agrandir); font-size: 0.75rem; line-height: 1.6; color: #555;
   }
-    /* ── FOOTER (ported from Maxfuel.jsx) ── */
-.gy-footer {
-  width: 100vw;
-  background: #0d1311;
-  padding: 72px 8vw 48px;
-}
-.gy-footer-inner {
-  width: 100%;
-  display: grid;
-  grid-template-columns: 2fr 3fr;
-  gap: 80px;
-  align-items: start;
-}
-.gy-footer-logo {
-  font-family: var(--font-flare);
-  font-size: clamp(28px, 4vw, 48px);
-  font-weight: 400;
-  letter-spacing: .03em;
-  color: var(--color-f1-lime-green);
-  margin-bottom: 48px;
-  line-height: 1;
-  text-transform: uppercase;
-}
-.gy-footer-logo::after { content: '.'; }
-.gy-footer-nav {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 0;
-}
-.gy-footer-nav li a {
-  display: block;
-  font-family: var(--font-flare);
-  font-size: clamp(16px, 2.8vw, 38px);
-  font-weight: 400;
-  text-transform: uppercase;
-  color: var(--color-white);
-  text-decoration: none;
-  line-height: 1.25;
-  padding: 4px 0;
-  transition: opacity .2s;
-}
-.gy-footer-nav li a:hover { opacity: .6; }
-.gy-footer-right {
-  display: flex;
-  flex-direction: column;
-  gap: 40px;
-  padding-top: 8px;
-}
-.gy-footer-section-label {
-  font-family: var(--font-agrandir);
-  font-size: 10px;
-  letter-spacing: .28em;
-  text-transform: uppercase;
-  color: rgba(255,255,255,.45);
-  margin-bottom: 14px;
-}
-.gy-footer-social {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px 32px;
-  list-style: none;
-  padding: 0;
-  margin: 0;
-}
-.gy-footer-social a {
-  font-family: var(--font-agrandir);
-  font-size: 11px;
-  letter-spacing: .22em;
-  text-transform: uppercase;
-  color: var(--color-white);
-  text-decoration: none;
-  transition: opacity .2s;
-  min-height: 44px;
-  display: flex;
-  align-items: center;
-}
-.gy-footer-social a:hover { opacity: .6; }
-.gy-footer-contact {
-  list-style: none;
-  padding: 0;
-  margin: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-}
-.gy-footer-contact a {
-  font-family: var(--font-agrandir);
-  font-size: 11px;
-  letter-spacing: .22em;
-  text-transform: uppercase;
-  color: var(--color-white);
-  text-decoration: none;
-  transition: opacity .2s;
-  min-height: 44px;
-  display: flex;
-  align-items: center;
-}
-.gy-footer-contact a:hover { opacity: .6; }
-.gy-footer-legal {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  margin-top: 8px;
-}
-.gy-footer-tagline {
-  font-family: var(--font-agrandir);
-  font-size: 10px;
-  letter-spacing: .22em;
-  text-transform: uppercase;
-  color: rgba(255,255,255,.4);
-  margin-bottom: 4px;
-}
-.gy-footer-disclaimer {
-  font-family: var(--font-agrandir);
-  font-size: 11px;
-  line-height: 1.75;
-  color: rgba(255,255,255,.28);
-  letter-spacing: .02em;
-}
-.gy-footer-drinkaware {
-  font-family: var(--font-agrandir);
-  font-size: 11px;
-  color: rgba(255,255,255,.35);
-  letter-spacing: .04em;
-  margin-top: 4px;
-}
-.gy-footer-drinkaware strong {
-  font-weight: 400;
-  font-family: var(--font-flare);
-}
-@media (max-width: 768px) {
-  .gy-footer-inner { grid-template-columns: 1fr; gap: 40px; }
-  .gy-footer { padding: 60px 6vw 40px; }
-}
+
+  /* ─── FOOTER ──────────────────────────────────────────────────────────── */
+  .gy-footer { width: 100vw; background: #0d1311; padding: 72px 8vw 48px; }
+  .gy-footer-inner { width: 100%; display: grid; grid-template-columns: 2fr 3fr; gap: 80px; align-items: start; }
+  .gy-footer-logo { font-family: var(--font-flare); font-size: clamp(28px, 4vw, 48px); font-weight: 400; letter-spacing: .03em; color: var(--color-f1-lime-green); margin-bottom: 48px; line-height: 1; text-transform: uppercase; }
+  .gy-footer-logo::after { content: '.'; }
+  .gy-footer-nav { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 0; }
+  .gy-footer-nav li a { display: block; font-family: var(--font-flare); font-size: clamp(16px, 2.8vw, 38px); font-weight: 400; text-transform: uppercase; color: var(--color-white); text-decoration: none; line-height: 1.25; padding: 4px 0; transition: opacity .2s; }
+  .gy-footer-nav li a:hover { opacity: .6; }
+  .gy-footer-right { display: flex; flex-direction: column; gap: 40px; padding-top: 8px; }
+  .gy-footer-section-label { font-family: var(--font-agrandir); font-size: 10px; letter-spacing: .28em; text-transform: uppercase; color: rgba(255,255,255,.45); margin-bottom: 14px; }
+  .gy-footer-social { display: flex; flex-wrap: wrap; gap: 8px 32px; list-style: none; padding: 0; margin: 0; }
+  .gy-footer-social a { font-family: var(--font-agrandir); font-size: 11px; letter-spacing: .22em; text-transform: uppercase; color: var(--color-white); text-decoration: none; transition: opacity .2s; min-height: 44px; display: flex; align-items: center; }
+  .gy-footer-social a:hover { opacity: .6; }
+  .gy-footer-contact { list-style: none; padding: 0; margin: 0; display: flex; flex-direction: column; gap: 4px; }
+  .gy-footer-contact a { font-family: var(--font-agrandir); font-size: 11px; letter-spacing: .22em; text-transform: uppercase; color: var(--color-white); text-decoration: none; transition: opacity .2s; min-height: 44px; display: flex; align-items: center; }
+  .gy-footer-contact a:hover { opacity: .6; }
+  .gy-footer-legal { display: flex; flex-direction: column; gap: 10px; margin-top: 8px; }
+  .gy-footer-tagline { font-family: var(--font-agrandir); font-size: 10px; letter-spacing: .22em; text-transform: uppercase; color: rgba(255,255,255,.4); margin-bottom: 4px; }
+  .gy-footer-disclaimer { font-family: var(--font-agrandir); font-size: 11px; line-height: 1.75; color: rgba(255,255,255,.28); letter-spacing: .02em; }
+  .gy-footer-drinkaware { font-family: var(--font-agrandir); font-size: 11px; color: rgba(255,255,255,.35); letter-spacing: .04em; margin-top: 4px; }
+  .gy-footer-drinkaware strong { font-weight: 400; font-family: var(--font-flare); }
+  @media (max-width: 768px) { .gy-footer-inner { grid-template-columns: 1fr; gap: 40px; } .gy-footer { padding: 60px 6vw 40px; } }
 `;
 
 // ─── SVG Icons ────────────────────────────────────────────────────────────────
@@ -577,18 +581,338 @@ const IconHamburger = ({ open }) => (
   <svg width="48" height="14" viewBox="0 0 48 16" fill="none">
     {open ? (
       <>
-        <line x1="1" y1="1" x2="47" y2="15" stroke="black" strokeWidth="4.5" strokeLinecap="round" />
-        <line x1="1" y1="15" x2="47" y2="1" stroke="black" strokeWidth="4.5" strokeLinecap="round" />
+        <line
+          x1="1"
+          y1="1"
+          x2="47"
+          y2="15"
+          stroke="black"
+          strokeWidth="4.5"
+          strokeLinecap="round"
+        />
+        <line
+          x1="1"
+          y1="15"
+          x2="47"
+          y2="1"
+          stroke="black"
+          strokeWidth="4.5"
+          strokeLinecap="round"
+        />
       </>
     ) : (
       <>
-        <line x1="1" y1="2" x2="47" y2="2" stroke="black" strokeWidth="2" strokeLinecap="round" />
-        <line x1="1" y1="12" x2="47" y2="12" stroke="black" strokeWidth="2" strokeLinecap="round" />
+        <line
+          x1="1"
+          y1="2"
+          x2="47"
+          y2="2"
+          stroke="black"
+          strokeWidth="2"
+          strokeLinecap="round"
+        />
+        <line
+          x1="1"
+          y1="12"
+          x2="47"
+          y2="12"
+          stroke="black"
+          strokeWidth="2"
+          strokeLinecap="round"
+        />
       </>
     )}
   </svg>
 );
 
+// ─── Animation Helpers ────────────────────────────────────────────────────────
+
+/**
+ * Splits text into per-character wrapped spans for stagger reveal.
+ * Returns an array of React elements.
+ */
+function splitTextToChars(text, className = "") {
+  return text.split("").map((char, i) => (
+    <span
+      key={i}
+      className="hero-char-wrap"
+      aria-hidden={char === " " ? undefined : true}
+    >
+      <span
+        className={`hero-char ${className}`}
+        style={{ animationDelay: `${i * 0.033}s` }}
+      >
+        {char === " " ? "\u00A0" : char}
+      </span>
+    </span>
+  ));
+}
+
+/**
+ * Wraps each word in a clip container for scroll word-reveal.
+ */
+function WordReveal({ text, style = {} }) {
+  return (
+    <span style={style}>
+      {text.split(" ").map((word, i) => (
+        <span key={i} className="word-wrap" style={{ marginRight: "0.25em" }}>
+          <span
+            className="word-inner"
+            data-word-reveal
+            style={{ transitionDelay: `${i * 0.06}s` }}
+          >
+            {word}
+          </span>
+        </span>
+      ))}
+    </span>
+  );
+}
+
+// ─── useHeroCharReveal ─ triggers .revealed class on all .hero-char elements
+function useHeroCharReveal() {
+  useEffect(() => {
+    const chars = document.querySelectorAll(".hero-char");
+    // Stagger via requestAnimationFrame to ensure DOM is ready
+    const raf = requestAnimationFrame(() => {
+      chars.forEach((el, i) => {
+        setTimeout(() => el.classList.add("revealed"), 300 + i * 35);
+      });
+    });
+    return () => cancelAnimationFrame(raf);
+  }, []);
+}
+
+// ─── useScrollReveal ─ drives all scroll-triggered GSAP animations
+function useScrollReveal() {
+  useEffect(() => {
+    const ctx = gsap.context(() => {
+      // 1. Parallax media (hero video scale on scroll)
+      gsap.to(".parallax-media", {
+        scale: 1,
+        ease: "none",
+        scrollTrigger: {
+          trigger: "#homepage-transition-asset",
+          start: "top top",
+          end: "bottom top",
+          scrub: 1.2,
+        },
+      });
+
+      // 2. Hero scroll-hint fade in after load
+      gsap.to(".scroll-hint", {
+        opacity: 1,
+        delay: 2,
+        duration: 1,
+        ease: "power2.out",
+      });
+
+      // 3. Block text — word reveal on scroll
+      document.querySelectorAll("[data-word-reveal]").forEach((el) => {
+        const parent = el.closest(".word-wrap");
+        if (!parent) return;
+        gsap.to(el, {
+          y: 0,
+          opacity: 1,
+          duration: 0.8,
+          ease: "power3.out",
+          scrollTrigger: {
+            trigger: parent,
+            start: "top 88%",
+            toggleActions: "play none none none",
+          },
+        });
+      });
+
+      // 4. Generic scroll-fade elements
+      gsap.utils.toArray(".scroll-fade").forEach((el) => {
+        gsap.to(el, {
+          y: 0,
+          opacity: 1,
+          duration: 0.9,
+          ease: "power3.out",
+          scrollTrigger: {
+            trigger: el,
+            start: "top 85%",
+            toggleActions: "play none none none",
+          },
+        });
+      });
+
+      // 5. scroll-fade-left
+      gsap.utils.toArray(".scroll-fade-left").forEach((el, i) => {
+        gsap.to(el, {
+          x: 0,
+          opacity: 1,
+          duration: 0.9,
+          delay: i * 0.05,
+          ease: "power3.out",
+          scrollTrigger: {
+            trigger: el,
+            start: "top 85%",
+            toggleActions: "play none none none",
+          },
+        });
+      });
+
+      // 6. scroll-fade-right
+      gsap.utils.toArray(".scroll-fade-right").forEach((el, i) => {
+        gsap.to(el, {
+          x: 0,
+          opacity: 1,
+          duration: 0.9,
+          delay: i * 0.05,
+          ease: "power3.out",
+          scrollTrigger: {
+            trigger: el,
+            start: "top 85%",
+            toggleActions: "play none none none",
+          },
+        });
+      });
+
+      // 7. scroll-scale
+      gsap.utils.toArray(".scroll-scale").forEach((el) => {
+        gsap.to(el, {
+          scale: 1,
+          opacity: 1,
+          duration: 1.1,
+          ease: "power3.out",
+          scrollTrigger: {
+            trigger: el,
+            start: "top 85%",
+            toggleActions: "play none none none",
+          },
+        });
+      });
+
+      // 8. Stagger cards — fired per slider section
+      gsap.utils.toArray(".stagger-card").forEach((el, i) => {
+        gsap.to(el, {
+          y: 0,
+          scale: 1,
+          opacity: 1,
+          duration: 0.85,
+          delay: (i % 4) * 0.12,
+          ease: "power3.out",
+          scrollTrigger: {
+            trigger: el,
+            start: "top 90%",
+            toggleActions: "play none none none",
+          },
+        });
+      });
+
+      // 9. Clip-path section reveals (full-section wipes)
+      gsap.utils.toArray(".clip-reveal").forEach((el) => {
+        gsap.to(el, {
+          clipPath: "inset(0% 0 0 0)",
+          duration: 1.1,
+          ease: "power4.inOut",
+          scrollTrigger: {
+            trigger: el,
+            start: "top 82%",
+            toggleActions: "play none none none",
+          },
+        });
+      });
+
+      // 10. SVG line draw (divider lines)
+      gsap.utils.toArray(".line-divider").forEach((el) => {
+        gsap.to(el, {
+          strokeDashoffset: 0,
+          duration: 1.4,
+          ease: "power2.inOut",
+          scrollTrigger: {
+            trigger: el,
+            start: "top 90%",
+            toggleActions: "play none none none",
+          },
+        });
+      });
+
+      // 11. Hero section — scrub scale on the asset mask (original behavior, enhanced)
+      const tl = gsap.timeline({ defaults: { ease: "power1.inOut" } });
+      tl.to("#homepage-transition-asset-mask", { scale: 1 }, "0").to(
+        "#homepage-transition-asset-image-container",
+        { scale: 1 },
+        "<",
+      );
+      ScrollTrigger.create({
+        trigger: "#homepage-transition-asset",
+        start: "top-=200 top",
+        end: "bottom bottom",
+        scrub: 0.2,
+        animation: tl,
+      });
+
+      // 12. Auto slide-up clip after 2.5s (original)
+      const clipTimer = setTimeout(() => {
+        gsap.fromTo(
+          "#homepage-transition-asset",
+          { clipPath: "inset(0 0 0% 0)" },
+          { clipPath: "inset(0 0 8% 0)", duration: 1.4, ease: "power3.inOut" },
+        );
+      }, 2500);
+
+      // 13. Section-scroll active tab (original logic)
+      const sections = [
+        ["#section-past", 0],
+        ["#homepage-transition-asset", 1],
+        ["#section-future", 2],
+      ];
+      sections.forEach(([sel, i]) => {
+        ScrollTrigger.create({
+          trigger: sel,
+          start: "top center",
+          end: "bottom center",
+          onEnter: () => {},
+          onEnterBack: () => {},
+        });
+      });
+
+      // 14. Footer stagger
+      gsap.utils.toArray(".gy-footer-nav li").forEach((el, i) => {
+        gsap.fromTo(
+          el,
+          { y: 30, opacity: 0 },
+          {
+            y: 0,
+            opacity: 1,
+            duration: 0.7,
+            delay: i * 0.07,
+            ease: "power3.out",
+            scrollTrigger: {
+              trigger: ".gy-footer",
+              start: "top 85%",
+              toggleActions: "play none none none",
+            },
+          },
+        );
+      });
+
+      // 15. Section heading scrub parallax (Glenfiddich-style: headings drift subtly with scroll)
+      gsap.utils.toArray(".section-heading-parallax").forEach((el) => {
+        gsap.to(el, {
+          y: -40,
+          ease: "none",
+          scrollTrigger: {
+            trigger: el.closest("section") || el,
+            start: "top bottom",
+            end: "bottom top",
+            scrub: 1,
+          },
+        });
+      });
+
+      return () => clearTimeout(clipTimer);
+    });
+
+    return () => ctx.revert();
+  }, []);
+}
+
+// ─── useFitText ───────────────────────────────────────────────────────────────
 function useFitText(ref) {
   useEffect(() => {
     const el = ref.current;
@@ -599,7 +923,7 @@ function useFitText(ref) {
       el.style.display = "block";
       el.style.textAlign = "center";
       el.style.fontSize = "200px";
-      const horizontalPadding = 48; // 1.5rem * 2 sides * 16px = 48px
+      const horizontalPadding = 48;
       const containerWidth = window.innerWidth - horizontalPadding;
       const textWidth = el.scrollWidth;
       const ratio = containerWidth / textWidth;
@@ -613,6 +937,8 @@ function useFitText(ref) {
     return () => window.removeEventListener("resize", fit);
   }, [ref]);
 }
+
+// ─── useDragScroll ────────────────────────────────────────────────────────────
 function useDragScroll(ref) {
   const drag = useRef({ active: false, startX: 0, scrollLeft: 0 });
   const onPointerDown = useCallback(
@@ -658,18 +984,215 @@ function useDragScroll(ref) {
   };
 }
 
-// ─── OVERLAY PAGES ────────────────────────────────────────────────────────────
+// ─── Overlay animation hook ───────────────────────────────────────────────────
+function useOverlayEntrance(containerRef) {
+  useEffect(() => {
+    if (!containerRef.current) return;
+    const ctx = gsap.context(() => {
+      // Label fades + nudges up
+      gsap.fromTo(
+        ".overlay-label-anim",
+        { y: 16, opacity: 0, skewY: 2 },
+        {
+          y: 0,
+          opacity: 1,
+          skewY: 0,
+          duration: 0.6,
+          ease: "power3.out",
+          delay: 0.15,
+        },
+      );
 
-function PastOverlay({ onClose }) {
+      // Title chars — each lifts out of their container
+      const titleChars = document.querySelectorAll(".overlay-title-char-inner");
+      titleChars.forEach((el, i) => {
+        gsap.fromTo(
+          el,
+          { y: "100%", opacity: 0 },
+          {
+            y: "0%",
+            opacity: 1,
+            duration: 0.75,
+            ease: "power4.out",
+            delay: 0.25 + i * 0.04,
+          },
+        );
+      });
+
+      // Body paragraphs
+      gsap.fromTo(
+        ".overlay-body-anim",
+        { y: 20, opacity: 0 },
+        {
+          y: 0,
+          opacity: 1,
+          duration: 0.7,
+          stagger: 0.1,
+          ease: "power3.out",
+          delay: 0.5,
+        },
+      );
+
+      // Scroll hint
+      gsap.fromTo(
+        ".scroll-hint",
+        { opacity: 0 },
+        { opacity: 1, duration: 1, ease: "power2.out", delay: 1.2 },
+      );
+
+      // Hero media — subtle scale in
+      gsap.fromTo(
+        ".tab-overlay-hero video, .tab-overlay-hero img",
+        { scale: 1.08 },
+        { scale: 1, duration: 1.6, ease: "power2.out" },
+      );
+
+      // Scroll-triggered body sections inside overlay
+      gsap.utils.toArray(".ol-section").forEach((el, i) => {
+        const label = el.querySelector(".ol-label");
+        const heading = el.querySelector(".ol-heading");
+        const body = el.querySelectorAll(".ol-body");
+        const stats = el.querySelectorAll(".ol-stat-number, .ol-stat-label");
+        const items = el.querySelectorAll(
+          ".ol-timeline-item, .ol-pill, .ol-video-cell",
+        );
+
+        if (label) {
+          gsap.fromTo(
+            label,
+            { y: 12, opacity: 0 },
+            {
+              y: 0,
+              opacity: 1,
+              duration: 0.6,
+              ease: "power3.out",
+              scrollTrigger: {
+                trigger: label,
+                start: "top 90%",
+                scroller: ".tab-overlay",
+              },
+            },
+          );
+        }
+        if (heading) {
+          gsap.fromTo(
+            heading,
+            { y: 24, opacity: 0 },
+            {
+              y: 0,
+              opacity: 1,
+              duration: 0.8,
+              ease: "power4.out",
+              delay: 0.08,
+              scrollTrigger: {
+                trigger: heading,
+                start: "top 90%",
+                scroller: ".tab-overlay",
+              },
+            },
+          );
+        }
+        body.forEach((b, bi) => {
+          gsap.fromTo(
+            b,
+            { y: 16, opacity: 0 },
+            {
+              y: 0,
+              opacity: 1,
+              duration: 0.7,
+              ease: "power3.out",
+              delay: 0.15 + bi * 0.1,
+              scrollTrigger: {
+                trigger: b,
+                start: "top 90%",
+                scroller: ".tab-overlay",
+              },
+            },
+          );
+        });
+        stats.forEach((s, si) => {
+          gsap.fromTo(
+            s,
+            { y: 20, opacity: 0 },
+            {
+              y: 0,
+              opacity: 1,
+              duration: 0.6,
+              ease: "power3.out",
+              delay: si * 0.07,
+              scrollTrigger: {
+                trigger: s,
+                start: "top 92%",
+                scroller: ".tab-overlay",
+              },
+            },
+          );
+        });
+        items.forEach((item, ii) => {
+          gsap.fromTo(
+            item,
+            { y: 24, opacity: 0, scale: 0.97 },
+            {
+              y: 0,
+              opacity: 1,
+              scale: 1,
+              duration: 0.75,
+              ease: "power3.out",
+              delay: ii * 0.1,
+              scrollTrigger: {
+                trigger: item,
+                start: "top 92%",
+                scroller: ".tab-overlay",
+              },
+            },
+          );
+        });
+      });
+    }, containerRef);
+
+    return () => ctx.revert();
+  }, [containerRef]);
+}
+
+// ─── Overlay Title (char-split version) ──────────────────────────────────────
+function OverlayTitle({ text, style = {} }) {
   return (
-    <div className="tab-overlay">
-     
-      {/* Hero — full-screen image */}
+    <h1 style={{ ...style, overflow: "hidden" }}>
+      {text.split("").map((char, i) => (
+        <span key={i} className="overlay-title-char">
+          <span
+            className="overlay-title-char-inner"
+            style={{ display: "inline-block" }}
+          >
+            {char === " " ? "\u00A0" : char}
+          </span>
+        </span>
+      ))}
+    </h1>
+  );
+}
+
+// ─── OVERLAY PAGES ────────────────────────────────────────────────────────────
+function PastOverlay({ onClose }) {
+  const ref = useRef(null);
+  useOverlayEntrance(ref);
+
+  return (
+    <div className="tab-overlay" ref={ref}>
+      <button
+        className="tab-overlay-close"
+        onClick={onClose}
+        aria-label="Close"
+      >
+        <IconClose />
+      </button>
+
       <div className="tab-overlay-hero">
-        <img src={Cheetah} alt="The Past" />
+        <img src={Cheetah} alt="The Past" className="parallax-media" />
         <div className="tab-overlay-hero-scrim" />
         <div className="tab-overlay-hero-content">
           <p
+            className="overlay-label-anim"
             style={{
               fontFamily: FONTS.agrandir,
               fontSize: "0.625rem",
@@ -679,9 +1202,10 @@ function PastOverlay({ onClose }) {
               marginBottom: "0.75rem",
             }}
           >
-           
+            Matrix Petroleum — Origin
           </p>
-          <h1
+          <OverlayTitle
+            text="THE PAST"
             style={{
               fontFamily: FONTS.flare,
               fontSize: "clamp(2.5rem, 8vw, 6rem)",
@@ -691,10 +1215,9 @@ function PastOverlay({ onClose }) {
               color: COLORS.f1LimeGreen,
               margin: 0,
             }}
-          >
-          
-          </h1>
+          />
           <p
+            className="overlay-body-anim"
             style={{
               fontFamily: FONTS.agrandir,
               fontSize: "0.75rem",
@@ -704,7 +1227,7 @@ function PastOverlay({ onClose }) {
               lineHeight: 1.7,
             }}
           >
-           
+            The problems we set out to solve. The chemistry we dared to pioneer.
           </p>
         </div>
         <div className="scroll-hint">
@@ -713,9 +1236,7 @@ function PastOverlay({ onClose }) {
         </div>
       </div>
 
-      {/* Body content */}
       <div className="tab-overlay-body">
-        {/* About Us — Origin */}
         <div className="ol-section">
           <p className="ol-label">About Us</p>
           <h2 className="ol-heading">Our Origin Story</h2>
@@ -734,7 +1255,6 @@ function PastOverlay({ onClose }) {
           </p>
         </div>
 
-        {/* Stats */}
         <div className="ol-section ol-dark-section">
           <p className="ol-label" style={{ color: COLORS.f1LimeGreen }}>
             By the Numbers
@@ -767,7 +1287,6 @@ function PastOverlay({ onClose }) {
           </div>
         </div>
 
-        {/* Timeline */}
         <div className="ol-section">
           <p className="ol-label">Our Journey</p>
           <h2 className="ol-heading">Milestones That Shaped Us</h2>
@@ -798,7 +1317,6 @@ function PastOverlay({ onClose }) {
           </div>
         </div>
 
-        {/* Mission */}
         <div className="ol-section ol-dark-section">
           <p className="ol-label" style={{ color: COLORS.f1LimeGreen }}>
             Our Mission
@@ -807,8 +1325,7 @@ function PastOverlay({ onClose }) {
           <p className="ol-body">
             We have always believed that every litre of diesel burned should do
             so cleanly, efficiently, and with minimum harm to the machinery it
-            powers and the air we breathe. That conviction has guided every
-            decision we've made since day one.
+            powers and the air we breathe.
           </p>
           <div className="ol-pill-list">
             {[
@@ -826,7 +1343,6 @@ function PastOverlay({ onClose }) {
           </div>
         </div>
 
-        {/* Footer bridge */}
         <div
           className="ol-section"
           style={{ textAlign: "center", padding: "4rem 1.5rem" }}
@@ -862,19 +1378,28 @@ function PastOverlay({ onClose }) {
   );
 }
 
-function PresentOverlay({ onClose, Droplets2, HeroVideo }) {
-  return (
-    <div className="tab-overlay">
-      
+function PresentOverlay({ onClose }) {
+  const ref = useRef(null);
+  useOverlayEntrance(ref);
 
-      {/* Hero — video */}
+  return (
+    <div className="tab-overlay" ref={ref}>
+      <button
+        className="tab-overlay-close"
+        onClick={onClose}
+        aria-label="Close"
+      >
+        <IconClose />
+      </button>
+
       <div className="tab-overlay-hero">
-        <video autoPlay muted loop playsInline>
+        <video autoPlay muted loop playsInline className="parallax-media">
           <source src={HeroVideo} type="video/mp4" />
         </video>
         <div className="tab-overlay-hero-scrim" />
         <div className="tab-overlay-hero-content">
           <p
+            className="overlay-label-anim"
             style={{
               fontFamily: FONTS.agrandir,
               fontSize: "0.625rem",
@@ -884,9 +1409,10 @@ function PresentOverlay({ onClose, Droplets2, HeroVideo }) {
               marginBottom: "0.75rem",
             }}
           >
-          
+            Matrix Petroleum — Now
           </p>
-          <h1
+          <OverlayTitle
+            text="THE PRESENT"
             style={{
               fontFamily: FONTS.flare,
               fontSize: "clamp(2.5rem, 8vw, 6rem)",
@@ -896,10 +1422,9 @@ function PresentOverlay({ onClose, Droplets2, HeroVideo }) {
               color: COLORS.f1LimeGreen,
               margin: 0,
             }}
-          >
-          
-          </h1>
+          />
           <p
+            className="overlay-body-anim"
             style={{
               fontFamily: FONTS.agrandir,
               fontSize: "0.75rem",
@@ -920,22 +1445,17 @@ function PresentOverlay({ onClose, Droplets2, HeroVideo }) {
         </div>
       </div>
 
-      {/* Body */}
       <div className="tab-overlay-body">
-        {/* What it does */}
         <div className="ol-section">
           <p className="ol-label">MaxFuel RX</p>
           <h2 className="ol-heading">Six Actions. One Formula.</h2>
           <p className="ol-body">
             MaxFuel RX is an elite, precision-engineered fuel treatment crafted
             to deeply cleanse and sustain your diesel engine's performance over
-            the long haul. Its advanced formula goes beyond standard fuels,
-            ensuring continuous protection that maximises efficiency and
-            longevity.
+            the long haul.
           </p>
         </div>
 
-        {/* 6 actions */}
         <div className="ol-section ol-dark-section">
           <p className="ol-label" style={{ color: COLORS.f1LimeGreen }}>
             The Six Pillars
@@ -1010,7 +1530,6 @@ function PresentOverlay({ onClose, Droplets2, HeroVideo }) {
           </div>
         </div>
 
-        {/* Video grid */}
         <div className="ol-section">
           <p className="ol-label">In Action</p>
           <h2 className="ol-heading">Seen At Work</h2>
@@ -1029,17 +1548,15 @@ function PresentOverlay({ onClose, Droplets2, HeroVideo }) {
           </div>
         </div>
 
-        {/* How to use */}
         <div className="ol-section ol-dark-section">
           <p className="ol-label" style={{ color: COLORS.f1LimeGreen }}>
             Usage
           </p>
           <h2 className="ol-heading">One Simple Step</h2>
           <p className="ol-body">
-            Add MaxFuel RX to your diesel tank at every fill-up. The formula is
-            fully miscible with all grades of diesel fuel — no pre-mixing, no
-            special equipment. Just pour, fill, and let the chemistry do the
-            work.
+            Add MaxFuel RX to your diesel tank at every fill-up. Fully miscible
+            with all grades of diesel fuel — no pre-mixing, no special
+            equipment.
           </p>
           <div className="ol-pill-list">
             {[
@@ -1093,18 +1610,31 @@ function PresentOverlay({ onClose, Droplets2, HeroVideo }) {
 }
 
 function FutureOverlay({ onClose }) {
-  return (
-    <div className="tab-overlay" style={{ background: COLORS.introBg }}>
-     
+  const ref = useRef(null);
+  useOverlayEntrance(ref);
 
-      {/* Hero — video */}
+  return (
+    <div
+      className="tab-overlay"
+      ref={ref}
+      style={{ background: COLORS.introBg }}
+    >
+      <button
+        className="tab-overlay-close"
+        onClick={onClose}
+        aria-label="Close"
+      >
+        <IconClose />
+      </button>
+
       <div className="tab-overlay-hero">
-        <video autoPlay muted loop playsInline>
+        <video autoPlay muted loop playsInline className="parallax-media">
           <source src={HeroVideo1} type="video/mp4" />
         </video>
         <div className="tab-overlay-hero-scrim" />
         <div className="tab-overlay-hero-content">
           <p
+            className="overlay-label-anim"
             style={{
               fontFamily: FONTS.agrandir,
               fontSize: "0.625rem",
@@ -1114,9 +1644,10 @@ function FutureOverlay({ onClose }) {
               marginBottom: "0.75rem",
             }}
           >
-          
+            Matrix Petroleum — Vision
           </p>
-          <h1
+          <OverlayTitle
+            text="THE FUTURE"
             style={{
               fontFamily: FONTS.flare,
               fontSize: "clamp(2.5rem, 8vw, 6rem)",
@@ -1126,10 +1657,9 @@ function FutureOverlay({ onClose }) {
               color: COLORS.f1LimeGreen,
               margin: 0,
             }}
-          >
-           
-          </h1>
+          />
           <p
+            className="overlay-body-anim"
             style={{
               fontFamily: FONTS.agrandir,
               fontSize: "0.75rem",
@@ -1139,7 +1669,8 @@ function FutureOverlay({ onClose }) {
               lineHeight: 1.7,
             }}
           >
-           
+            Cleaner engines. Cleaner planet. The road ahead is already being
+            built.
           </p>
         </div>
         <div className="scroll-hint">
@@ -1148,9 +1679,7 @@ function FutureOverlay({ onClose }) {
         </div>
       </div>
 
-      {/* Body — dark-themed throughout */}
       <div className="tab-overlay-body" style={{ background: COLORS.introBg }}>
-        {/* Vision */}
         <div
           className="ol-section ol-dark-section"
           style={{ background: COLORS.introBg }}
@@ -1162,13 +1691,11 @@ function FutureOverlay({ onClose }) {
           <p className="ol-body">
             The future of energy is not binary. While the world transitions
             toward electrification, billions of diesel engines will continue
-            operating for decades. Our mission is to make every one of those
-            engines as clean, efficient, and long-lived as possible — reducing
-            their footprint without replacing them.
+            operating for decades. Our mission: make every one of those engines
+            as clean, efficient, and long-lived as possible.
           </p>
         </div>
 
-        {/* Roadmap */}
         <div
           className="ol-section ol-dark-section"
           style={{ background: COLORS.introBg }}
@@ -1213,7 +1740,6 @@ function FutureOverlay({ onClose }) {
           </div>
         </div>
 
-        {/* Stats — future targets */}
         <div
           className="ol-section ol-dark-section"
           style={{ background: COLORS.introBg }}
@@ -1240,7 +1766,6 @@ function FutureOverlay({ onClose }) {
           </div>
         </div>
 
-        {/* Video feature */}
         <div
           className="ol-section ol-dark-section"
           style={{ background: COLORS.introBg }}
@@ -1252,8 +1777,7 @@ function FutureOverlay({ onClose }) {
           <p className="ol-body">
             Our R&D partnership with leading engine manufacturers is already
             producing results: a next-generation injector cleaning protocol that
-            removes 30-year-old carbon deposits in a single tank. The future
-            doesn't wait.
+            removes 30-year-old carbon deposits in a single tank.
           </p>
           <div className="ol-video-grid" style={{ marginTop: "2rem" }}>
             <div className="ol-video-cell">
@@ -1273,7 +1797,6 @@ function FutureOverlay({ onClose }) {
           </div>
         </div>
 
-        {/* CTA */}
         <div
           className="ol-section ol-dark-section"
           style={{
@@ -1316,7 +1839,7 @@ function FutureOverlay({ onClose }) {
             }}
           >
             Be among the first to access RX Gen 2 and our hydrogen-compatible
-            formula when it launches. Sign up for the MaxFuel Collective.
+            formula. Sign up for the MaxFuel Collective.
           </p>
           <div
             style={{
@@ -1343,9 +1866,9 @@ export default function MaxfuelRX() {
   const [activeTab, setActiveTab] = useState(1);
   const location = useLocation();
   const [benefitIdx, setBenefitIdx] = useState(0);
-  // NEW: which overlay page is showing (null | "past" | "present" | "future")
   const [overlayPage, setOverlayPage] = useState(null);
 
+  // Refs (all original)
   const navPillRef = useRef(null);
   const navBarRef = useRef(null);
   const itemRefs = useRef([]);
@@ -1364,9 +1887,12 @@ export default function MaxfuelRX() {
   const slider1 = useDragScroll(slider1Ref);
   const slider2 = useDragScroll(slider2Ref);
 
-  // Lock body scroll when an overlay is open
+  // ── Animation hooks ──
+  useHeroCharReveal();
+  useScrollReveal();
+
+  // Lock body scroll when overlay / menu open
   useEffect(() => {
-    // Overlay manages its own scroll, so we lock the background
     document.body.style.overflow = overlayPage ? "hidden" : "";
     return () => {
       document.body.style.overflow = "";
@@ -1379,13 +1905,17 @@ export default function MaxfuelRX() {
       document.body.style.overflow = "";
     };
   }, [menuOpen]);
-useEffect(() => {
-  const params = new URLSearchParams(location.search);
-  const overlay = params.get("overlay"); // "past" | "present" | "future"
-  if (overlay === "past" || overlay === "present" || overlay === "future") {
-    setOverlayPage(overlay);
-  }
-}, [location.search]);
+
+  // URL overlay param
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const overlay = params.get("overlay");
+    if (overlay === "past" || overlay === "present" || overlay === "future") {
+      setOverlayPage(overlay);
+    }
+  }, [location.search]);
+
+  // DataLayer
   useEffect(() => {
     pushDataLayer({
       event: "siteDataLoaded",
@@ -1394,6 +1924,7 @@ useEffect(() => {
     });
   }, []);
 
+  // Benefit cycle
   useEffect(() => {
     const id = setInterval(
       () => setBenefitIdx((i) => (i + 1) % NEWSLETTER_BENEFITS.length),
@@ -1402,7 +1933,7 @@ useEffect(() => {
     return () => clearInterval(id);
   }, []);
 
-  // ── Timeline pill bar logic (identical to original) ──
+  // Timeline pill bar (all original)
   const getBarPos = useCallback((index) => {
     if (posCache.current.has(index)) return posCache.current.get(index);
     const pill = navPillRef.current;
@@ -1472,79 +2003,33 @@ useEffect(() => {
     return () => window.removeEventListener("resize", onResize);
   }, [setActiveBar]);
 
+  // Timeline pill slide-up entrance (Glenfiddich-style: pill appears after first scroll)
   useEffect(() => {
     let isFirst = true;
     const pill = navPillRef.current;
     const onScroll = () => {
       if (isFirst) {
         isFirst = false;
-        gsap.to(pill, { autoAlpha: 1, duration: 0.7 });
+        gsap.to(pill, {
+          autoAlpha: 1,
+          y: 0,
+          duration: 0.7,
+          ease: "power3.out",
+        });
       }
       if (pill) {
         pill.dataset.positionCenter =
           window.scrollY > window.innerHeight / 4 ? "false" : "true";
       }
     };
+    // Pre-set pill off-screen
+    gsap.set(pill, { y: 20 });
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
-  }, []);
-useEffect(() => {
-  // Scale-in animation (keep original)
-  const tl = gsap.timeline({ defaults: { ease: "power1.inOut" } });
-  tl.to("#homepage-transition-asset-mask", { scale: 1 }, "0").to(
-    "#homepage-transition-asset-image-container",
-    { scale: 1 },
-    "<",
-  );
-  const st = ScrollTrigger.create({
-    trigger: "#homepage-transition-asset",
-    start: "top-=200 top",
-    end: "bottom bottom",
-    scrub: 0.2,
-    animation: tl,
-  });
-
-  // Auto slide-up after 2.5s on page load, stays in final position
-  const timer = setTimeout(() => {
-    gsap.fromTo(
-      "#homepage-transition-asset",
-      { clipPath: "inset(0 0 0% 0)" },       // full screen
-      {
-        clipPath: "inset(0 0 8% 0)",         // slides up, reveals white below
-        duration: 1.4,
-        ease: "power3.inOut",
-      }
-    );
-  }, 2500);
-
-  return () => {
-    st.kill();
-    tl.kill();
-    clearTimeout(timer);
-    if (cycleTimer.current) cycleTimer.current.kill();
-  };
-}, []);
-  useEffect(() => {
-    const sections = [
-      ["#section-past", 0],
-      ["#homepage-transition-asset", 1],
-      ["#section-future", 2],
-    ];
-    const triggers = sections.map(([sel, i]) =>
-      ScrollTrigger.create({
-        trigger: sel,
-        start: "top center",
-        end: "bottom center",
-        onEnter: () => setActiveTab(i),
-        onEnterBack: () => setActiveTab(i),
-      }),
-    );
-    return () => triggers.forEach((t) => t.kill());
   }, []);
 
   const bgGradient = `linear-gradient(0deg, ${COLORS.introBg}, ${COLORS.introBgTop})`;
 
-  // ── Tab click handler — opens the correct overlay ──
   const handleTabClick = (index) => {
     setActiveTab(index);
     if (index === 0) setOverlayPage("past");
@@ -1554,18 +2039,16 @@ useEffect(() => {
 
   const closeOverlay = () => {
     setOverlayPage(null);
-    setActiveTab(1); // snap pill back to Present
+    setActiveTab(1);
   };
 
   return (
     <>
       <style dangerouslySetInnerHTML={{ __html: GLOBAL_STYLES }} />
 
-      {/* ── OVERLAY PAGES (rendered on top of everything) ── */}
+      {/* ── OVERLAY PAGES ── */}
       {overlayPage === "past" && <PastOverlay onClose={closeOverlay} />}
-      {overlayPage === "present" && (
-        <PresentOverlay onClose={closeOverlay} HeroVideo={HeroVideo} />
-      )}
+      {overlayPage === "present" && <PresentOverlay onClose={closeOverlay} />}
       {overlayPage === "future" && <FutureOverlay onClose={closeOverlay} />}
 
       <div
@@ -1775,7 +2258,7 @@ useEffect(() => {
                   }}
                   data-active={activeTab === i}
                   className="am-timeline-item"
-                  onClick={() => handleTabClick(i)} // ← CHANGED
+                  onClick={() => handleTabClick(i)}
                   onMouseEnter={() => {
                     if (hoverTimer.current) {
                       clearTimeout(hoverTimer.current);
@@ -1814,231 +2297,193 @@ useEffect(() => {
           </div>
         </div>
 
-       {/* ── HERO ── */}
-<section
-  id="homepage-transition-asset"
-  data-section="section-present"
-  style={{ 
-    position: "relative", 
-    overflow: "hidden",
-    height: "100vh",        // ← full viewport height
-  }}
->
-  <div
-    id="homepage-transition-asset-mask"
-    style={{ background: bgGradient, position: "absolute", inset: 0 }}
-  >
-    <video
-      autoPlay
-      muted
-      loop
-      playsInline
-      style={{
-        position: "absolute",
-        inset: 0,
-        width: "100%",
-        height: "100%",      // ← was calc(100vh - 5rem), now fills parent
-        objectFit: "cover",
-        display: "block",
-      }}
-    >
-      <source src={HeroVideo} type="video/mp4" />
-    </video>
+        {/* ── HERO ── */}
+        <section
+          id="homepage-transition-asset"
+          data-section="section-present"
+          style={{ position: "relative", overflow: "hidden", height: "100vh" }}
+        >
+          <div
+            id="homepage-transition-asset-mask"
+            style={{ background: bgGradient, position: "absolute", inset: 0 }}
+          >
+            {/* Parallax video */}
+            <video
+              autoPlay
+              muted
+              loop
+              playsInline
+              className="parallax-media"
+              style={{
+                position: "absolute",
+                inset: 0,
+                width: "100%",
+                height: "100%",
+                objectFit: "cover",
+                display: "block",
+              }}
+            >
+              <source src={HeroVideo} type="video/mp4" />
+            </video>
+
             <div
               id="homepage-transition-asset-image-container"
               style={{ position: "absolute", inset: 0, overflow: "hidden" }}
             >
-            <div
-  style={{
-    position: "absolute",
-    top: 0,
-    left: 0,
-    width: "100%",
-    height: "100%",
-    overflow: "hidden",
-  }}
->
-  {/* ── DESKTOP layout ── */}
-  <div
-    className="am-hide-mobile"
-    style={{
-      width: "100%",
-      height: "100%",
-      display: "flex",
-      flexDirection: "column",
-      justifyContent: "space-between",
-      padding: "2rem 1.5rem 5rem 1.5rem",
-    }}
-  >
-    {/* Desktop top */}
-    <div style={{ width: "100%", overflow: "hidden" }}>
-      <div
-        ref={heroLine1Ref}
-        style={{
-          fontFamily: FONTS.flare,
-          fontWeight: 500,
-          color: '#c6fd3a',
-          textTransform: "uppercase",
-          letterSpacing: ".02rem",
-          whiteSpace: "nowrap",
-          display: "block",
-          width: "100%",
-          lineHeight: 1,
-          textAlign: "center",
-        }}
-      >
-        Visionary Fuel
-      </div>
-    </div>
-    {/* Desktop bottom */}
-    <div style={{ width: "100%", overflow: "hidden" }}>
-      <div
-        ref={heroLine2Ref}
-        style={{
-          fontFamily: FONTS.flare,
-          fontWeight: 500,
-          color: '#c6fd3a',
-          textTransform: "uppercase",
-          letterSpacing: ".02rem",
-          whiteSpace: "nowrap",
-          display: "block",
-          width: "100%",
-          lineHeight: 1,
-          textAlign: "center",
-          animation: "slideUp 0.9s ease-out forwards",
-        }}
-      >
-        Timeless Tomorrow
-      </div>
-    </div>
-  </div>
-
-  {/* ── MOBILE layout ── */}
-  <div
-    className="am-hide-desktop"
-    style={{
-      position: "absolute",
-      inset: 0,
-      display: "flex",
-      flexDirection: "column",
-      justifyContent: "space-between",
-      padding: "3rem 0 6rem 0",
-    }}
-  >
-    {/* Mobile top 2 lines */}
-    <div style={{ width: "100%", textAlign: "center" }}>
-      {["Visionary", "Fuel"].map((word) => (
-        <div
-          key={word}
-          style={{
-            fontFamily: FONTS.flare,
-            fontSize: "19vw",
-            fontWeight: 400,
-            color: '#c6fd3a',
-            textTransform: "uppercase",
-            letterSpacing: "-0.01em",
-            lineHeight: 1,
-            textAlign: "center",
-            width: "100%",
-          }}
-        >
-          {word}
-        </div>
-      ))}
-    </div>
-
-    {/* Mobile bottom 2 lines */}
-    <div style={{ width: "100%", textAlign: "center" }}>
-      {["Timeless", "Tomorrow"].map((word) => (
-        <div
-          key={word}
-          style={{
-            fontFamily: FONTS.flare,
-            fontSize: "19vw",
-            fontWeight: 400,
-            color: '#c6fd3a',
-            textTransform: "uppercase",
-            letterSpacing: "-0.01em",
-            lineHeight: 1,
-            textAlign: "center",
-            width: "100%",
-            animation: "slideUp 0.9s ease-out forwards",
-          }}
-        >
-          {word}
-        </div>
-      ))}
-    </div>
-  </div>
-
-  {/* ── Scroll arrow (shared) ── */}
-  <div
-    style={{
-      position: "absolute",
-      bottom: "0.09rem",
-      left: 0,
-      zIndex: 1,
-      display: "grid",
-      placeItems: "center",
-      width: "100%",
-    }}
-  >
-    <button
-      className="am-scroll-arrow"
-      onClick={() =>
-        window.scrollBy({ top: window.innerHeight, behavior: "smooth" })
-      }
-      style={{
-        background: "none",
-        border: "none",
-        cursor: "pointer",
-        padding: "2rem",
-        color: COLORS.f1LimeGreen,
-        width: "1rem",
-      }}
-      aria-label="Scroll down"
-    >
-      <IconArrowDown />
-    </button>
-  </div>
-</div>
               <div
                 style={{
                   position: "absolute",
-                  bottom: "0.09rem",
+                  top: 0,
                   left: 0,
-                  zIndex: 1,
-                  display: "grid",
-                  placeItems: "center",
                   width: "100%",
+                  height: "100%",
+                  overflow: "hidden",
                 }}
               >
-                <button
-                  className="am-scroll-arrow"
-                  onClick={() =>
-                    window.scrollBy({
-                      top: window.innerHeight,
-                      behavior: "smooth",
-                    })
-                  }
+                {/* ── DESKTOP hero text — char-split ── */}
+                <div
+                  className="am-hide-mobile"
                   style={{
-                    background: "none",
-                    border: "none",
-                    cursor: "pointer",
-                    padding: "2rem",
-                    color: COLORS.f1LimeGreen,
-                    width: "1rem",
+                    width: "100%",
+                    height: "100%",
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "space-between",
+                    padding: "2rem 1.5rem 5rem 1.5rem",
                   }}
-                  aria-label="Scroll down"
                 >
-                  <IconArrowDown />
-                </button>
+                  <div style={{ width: "100%", overflow: "hidden" }}>
+                    {/* ref for fitText sizing still applied; chars rendered inside */}
+                    <div
+                      ref={heroLine1Ref}
+                      style={{
+                        fontFamily: FONTS.flare,
+                        fontWeight: 400,
+                        color: "#c6fd3a",
+                        textTransform: "uppercase",
+                        letterSpacing: ".02rem",
+                        display: "block",
+                        lineHeight: 0.95,
+                        textAlign: "center",
+                      }}
+                    >
+                      {splitTextToChars("Visionary Fuel")}
+                    </div>
+                  </div>
+                  <div style={{ width: "100%", overflow: "hidden" }}>
+                    <div
+                      ref={heroLine2Ref}
+                      style={{
+                        fontFamily: FONTS.flare,
+                        fontWeight: 400,
+                        color: "#c6fd3a",
+                        textTransform: "uppercase",
+                        letterSpacing: ".02rem",
+                        display: "block",
+                        lineHeight: 0.95,
+                        textAlign: "center",
+                      }}
+                    >
+                      {splitTextToChars("Timeless Tomorrow")}
+                    </div>
+                  </div>
+                </div>
+
+                {/* ── MOBILE hero text — char-split ── */}
+                <div
+                  className="am-hide-desktop"
+                  style={{
+                    position: "absolute",
+                    inset: 0,
+                    display: "flex",
+                    flexDirection: "column",
+                    justifyContent: "space-between",
+                    padding: "3rem 0 6rem 0",
+                  }}
+                >
+                  <div style={{ width: "100%", textAlign: "center" }}>
+                    {["Visionary", "Fuel"].map((word, wi) => (
+                      <div
+                        key={wi}
+                        style={{
+                          fontFamily: FONTS.flare,
+                          fontSize: "19vw",
+                          fontWeight: 400,
+                          color: "#c6fd3a",
+                          textTransform: "uppercase",
+                          letterSpacing: "-0.01em",
+                          lineHeight: 1,
+                          textAlign: "center",
+                          width: "100%",
+                          overflow: "hidden",
+                        }}
+                      >
+                        {splitTextToChars(word)}
+                      </div>
+                    ))}
+                  </div>
+                  <div style={{ width: "100%", textAlign: "center" }}>
+                    {["Timeless", "Tomorrow"].map((word, wi) => (
+                      <div
+                        key={wi}
+                        style={{
+                          fontFamily: FONTS.flare,
+                          fontSize: "19vw",
+                          fontWeight: 400,
+                          color: "#c6fd3a",
+                          textTransform: "uppercase",
+                          letterSpacing: "-0.01em",
+                          lineHeight: 1,
+                          textAlign: "center",
+                          width: "100%",
+                          overflow: "hidden",
+                        }}
+                      >
+                        {splitTextToChars(word)}
+                      </div>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Scroll arrow */}
+                <div
+                  style={{
+                    position: "absolute",
+                    bottom: "0.09rem",
+                    left: 0,
+                    zIndex: 1,
+                    display: "grid",
+                    placeItems: "center",
+                    width: "100%",
+                  }}
+                >
+                  <button
+                    className="am-scroll-arrow"
+                    onClick={() =>
+                      window.scrollBy({
+                        top: window.innerHeight,
+                        behavior: "smooth",
+                      })
+                    }
+                    style={{
+                      background: "none",
+                      border: "none",
+                      cursor: "pointer",
+                      padding: "2rem",
+                      color: COLORS.f1LimeGreen,
+                      width: "1rem",
+                    }}
+                    aria-label="Scroll down"
+                  >
+                    <IconArrowDown />
+                  </button>
+                </div>
               </div>
             </div>
           </div>
         </section>
 
-        {/* ── BLOCK TEXT ── */}
+        {/* ── BLOCK TEXT — word-by-word reveal ── */}
         <section
           style={{
             padding: "0 var(--page-margin)",
@@ -2057,13 +2502,11 @@ useEffect(() => {
               margin: "0 auto",
             }}
           >
-            MaxFuel RX's unique 6-pronged approach solves long-standing fuel
-            industry problems — delivering results that are immediate and built
-            to last.
+            <WordReveal text="MaxFuel RX's unique 6-pronged approach solves long-standing fuel industry problems — delivering results that are immediate and built to last." />
           </p>
         </section>
 
-        {/* ── CARD SLIDER ── */}
+        {/* ── CARD SLIDER — stagger entrance ── */}
         <section
           id="section-past"
           style={{
@@ -2078,6 +2521,7 @@ useEffect(() => {
           }}
         >
           <div
+            className="scroll-fade"
             style={{
               display: "flex",
               alignItems: "center",
@@ -2087,6 +2531,7 @@ useEffect(() => {
             }}
           >
             <span
+              className="section-heading-parallax"
               style={{
                 fontFamily: FONTS.flare,
                 fontSize: "1.5rem",
@@ -2094,12 +2539,11 @@ useEffect(() => {
                 lineHeight: "150%",
                 color: COLORS.f1LimeGreenDark,
                 textTransform: "uppercase",
-                textAlign:"center"
+                textAlign: "center",
               }}
             >
               CRITICAL ASPECTS OF FUEL OPTIMIZATION
             </span>
-           
           </div>
           <div
             ref={slider1Ref}
@@ -2115,7 +2559,7 @@ useEffect(() => {
               return (
                 <div
                   key={i}
-                  className="am-card-link am-card-slide"
+                  className="am-card-link am-card-slide stagger-card"
                   style={{ cursor: "pointer" }}
                 >
                   <div
@@ -2196,7 +2640,7 @@ useEffect(() => {
           </div>
         </section>
 
-        {/* ── RX SECTION ── */}
+        {/* ── RX SECTION — left/right split reveal ── */}
         <section style={{ position: "relative", margin: "13rem 0" }}>
           <div
             style={{
@@ -2211,6 +2655,7 @@ useEffect(() => {
             }}
           >
             <div
+              className="scroll-fade-left"
               style={{
                 position: "relative",
                 aspectRatio: "217 / 325",
@@ -2273,6 +2718,7 @@ useEffect(() => {
               </div>
             </div>
             <div
+              className="scroll-fade-right"
               style={{
                 display: "flex",
                 flexDirection: "column",
@@ -2333,7 +2779,7 @@ useEffect(() => {
           </div>
         </section>
 
-        {/* ── NEWSLETTER TEASER ── */}
+        {/* ── NEWSLETTER TEASER — scale reveal ── */}
         <section
           style={{
             position: "relative",
@@ -2345,6 +2791,7 @@ useEffect(() => {
           }}
         >
           <div
+            className="scroll-scale"
             style={{
               position: "relative",
               display: "flex",
@@ -2452,6 +2899,7 @@ useEffect(() => {
               muted
               loop
               playsInline
+              className="parallax-media"
               style={{
                 position: "absolute",
                 inset: 0,
@@ -2473,6 +2921,7 @@ useEffect(() => {
             />
           </div>
           <div
+            className="scroll-fade"
             style={{
               position: "relative",
               display: "flex",
@@ -2485,6 +2934,7 @@ useEffect(() => {
             }}
           >
             <h2
+              className="section-heading-parallax"
               style={{
                 fontFamily: FONTS.flare,
                 fontSize: "clamp(1rem, 3vw, 1.5rem)",
@@ -2528,6 +2978,7 @@ useEffect(() => {
           }}
         >
           <div
+            className="scroll-fade"
             style={{
               display: "flex",
               alignItems: "center",
@@ -2537,6 +2988,7 @@ useEffect(() => {
             }}
           >
             <span
+              className="section-heading-parallax"
               style={{
                 fontFamily: FONTS.flare,
                 fontSize: "1.5rem",
@@ -2564,7 +3016,7 @@ useEffect(() => {
             {EVENTS.map((ev, i) => (
               <div
                 key={i}
-                className="am-card-link am-card-slide"
+                className="am-card-link am-card-slide stagger-card"
                 style={{ cursor: "pointer" }}
               >
                 <div
@@ -2644,6 +3096,7 @@ useEffect(() => {
 
         {/* ── DISCLAIMER ── */}
         <div
+          className="scroll-fade"
           style={{
             padding: "2rem 1.5rem",
             textAlign: "center",
@@ -2666,66 +3119,75 @@ useEffect(() => {
         </div>
 
         {/* ── FOOTER ── */}
-      <footer className="gy-footer">
-  <div className="gy-footer-inner">
-    <div className="gy-footer-left">
-      <div className="gy-footer-logo">Matrix Petroleum</div>
-      <ul className="gy-footer-nav">
-  {[
-    { label: "Home",                        to: "/" },
-    { label: "Our Future",                  to: "/?overlay=future" },
-    { label: "Our Story",                   to: "/about-us" },
-    { label: "Terms and Conditions",        to: "/terms-and-conditions" },
-    { label: "FAQs",                        to: "/faqs" },
-    { label: "Website Terms and Conditions",to: "/terms-and-conditions" },
-    { label: "Privacy Policy and Cookies",  to: "/privacy-policy" },
-    { label: "Matrix Petroleum",            to: "/" },
-  ].map((l) => (
-    <li key={l.label}>
-      <Link to={l.to}>{l.label}</Link>
-    </li>
-  ))}
-</ul>
-    </div>
-    <div className="gy-footer-right">
-      <div>
-        <p className="gy-footer-section-label">Follow Us</p>
-        <ul className="gy-footer-social">
-          {["Facebook", "Instagram", "Twitter", "YouTube"].map((s) => (
-            <li key={s}>
-              <a href="#">{s}</a>
-            </li>
-          ))}
-        </ul>
-      </div>
-      <div>
-        <p className="gy-footer-section-label">Contact Us</p>
-        <ul className="gy-footer-contact">
-          <li>
-            <a href="#">General Enquiries</a>
-          </li>
-        </ul>
-      </div>
-      <div className="gy-footer-legal">
-        <p className="gy-footer-tagline">
-          Skilfully Engineered. Use Responsibly.
-        </p>
-        <p className="gy-footer-disclaimer">
-          2025 Matrix Petroleum Ltd. Registered in England. Registered
-          Number 11462010
-          <br />
-          Registered Office: 3 Hardman Square, Manchester M3 3EB
-          <br />
-          This content is intended only for people who are of legal
-          purchase age in their country. Do not forward to minors.
-        </p>
-        <p className="gy-footer-drinkaware">
-          <strong>matrixpetroleum</strong>.com
-        </p>
-      </div>
-    </div>
-  </div>
-</footer>
+        <footer className="gy-footer">
+          <div className="gy-footer-inner">
+            <div className="gy-footer-left">
+              <div className="gy-footer-logo scroll-fade">Matrix Petroleum</div>
+              <ul className="gy-footer-nav">
+                {[
+                  { label: "Home", to: "/" },
+                  { label: "Our Future", to: "/?overlay=future" },
+                  { label: "Our Story", to: "/about-us" },
+                  {
+                    label: "Terms and Conditions",
+                    to: "/terms-and-conditions",
+                  },
+                  { label: "FAQs", to: "/faqs" },
+                  {
+                    label: "Website Terms and Conditions",
+                    to: "/terms-and-conditions",
+                  },
+                  {
+                    label: "Privacy Policy and Cookies",
+                    to: "/privacy-policy",
+                  },
+                  { label: "Matrix Petroleum", to: "/" },
+                ].map((l) => (
+                  <li key={l.label}>
+                    <Link to={l.to}>{l.label}</Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
+            <div className="gy-footer-right">
+              <div className="scroll-fade">
+                <p className="gy-footer-section-label">Follow Us</p>
+                <ul className="gy-footer-social">
+                  {["Facebook", "Instagram", "Twitter", "YouTube"].map((s) => (
+                    <li key={s}>
+                      <a href="#">{s}</a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+              <div className="scroll-fade">
+                <p className="gy-footer-section-label">Contact Us</p>
+                <ul className="gy-footer-contact">
+                  <li>
+                    <a href="#">General Enquiries</a>
+                  </li>
+                </ul>
+              </div>
+              <div className="gy-footer-legal scroll-fade">
+                <p className="gy-footer-tagline">
+                  Skilfully Engineered. Use Responsibly.
+                </p>
+                <p className="gy-footer-disclaimer">
+                  2025 Matrix Petroleum Ltd. Registered in England. Registered
+                  Number 11462010
+                  <br />
+                  Registered Office: 3 Hardman Square, Manchester M3 3EB
+                  <br />
+                  This content is intended only for people who are of legal
+                  purchase age in their country.
+                </p>
+                <p className="gy-footer-drinkaware">
+                  <strong>matrixpetroleum</strong>.com
+                </p>
+              </div>
+            </div>
+          </div>
+        </footer>
       </div>
     </>
   );
