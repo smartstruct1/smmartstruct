@@ -627,17 +627,24 @@ function useFitText(ref) {
     if (!el) return;
     const fit = () => {
       if (window.innerWidth <= 767) return;
-      el.style.fontSize = "100px";
       el.style.whiteSpace = "nowrap";
-      const newSize = Math.floor(100 * (window.innerWidth / el.scrollWidth));
-      el.style.fontSize = newSize + "px";
+      el.style.display = "block";
+      el.style.textAlign = "center";
+      el.style.fontSize = "200px";
+      const horizontalPadding = 48; // 1.5rem * 2 sides * 16px = 48px
+      const containerWidth = window.innerWidth - horizontalPadding;
+      const textWidth = el.scrollWidth;
+      const ratio = containerWidth / textWidth;
+      el.style.fontSize = Math.floor(200 * ratio) + "px";
     };
-    fit();
+    document.fonts.ready.then(() => {
+      fit();
+      setTimeout(fit, 50);
+    });
     window.addEventListener("resize", fit);
     return () => window.removeEventListener("resize", fit);
   }, [ref]);
 }
-
 function useDragScroll(ref) {
   const drag = useRef({ active: false, startX: 0, scrollLeft: 0 });
   const onPointerDown = useCallback(
@@ -1513,28 +1520,42 @@ useEffect(() => {
     window.addEventListener("scroll", onScroll, { passive: true });
     return () => window.removeEventListener("scroll", onScroll);
   }, []);
+useEffect(() => {
+  // Scale-in animation (keep original)
+  const tl = gsap.timeline({ defaults: { ease: "power1.inOut" } });
+  tl.to("#homepage-transition-asset-mask", { scale: 1 }, "0").to(
+    "#homepage-transition-asset-image-container",
+    { scale: 1 },
+    "<",
+  );
+  const st = ScrollTrigger.create({
+    trigger: "#homepage-transition-asset",
+    start: "top-=200 top",
+    end: "bottom bottom",
+    scrub: 0.2,
+    animation: tl,
+  });
 
-  useEffect(() => {
-    const tl = gsap.timeline({ defaults: { ease: "power1.inOut" } });
-    tl.to("#homepage-transition-asset-mask", { scale: 1 }, "0").to(
-      "#homepage-transition-asset-image-container",
-      { scale: 1 },
-      "<",
+  // Auto slide-up after 2.5s on page load, stays in final position
+  const timer = setTimeout(() => {
+    gsap.fromTo(
+      "#homepage-transition-asset",
+      { clipPath: "inset(0 0 0% 0)" },       // full screen
+      {
+        clipPath: "inset(0 0 8% 0)",         // slides up, reveals white below
+        duration: 1.4,
+        ease: "power3.inOut",
+      }
     );
-    const st = ScrollTrigger.create({
-      trigger: "#homepage-transition-asset",
-      start: "top-=200 top",
-      end: "bottom bottom",
-      scrub: 0.2,
-      animation: tl,
-    });
-    return () => {
-      st.kill();
-      tl.kill();
-      if (cycleTimer.current) cycleTimer.current.kill();
-    };
-  }, []);
+  }, 2500);
 
+  return () => {
+    st.kill();
+    tl.kill();
+    clearTimeout(timer);
+    if (cycleTimer.current) cycleTimer.current.kill();
+  };
+}, []);
   useEffect(() => {
     const sections = [
       ["#section-past", 0],
@@ -1825,119 +1846,194 @@ useEffect(() => {
           </div>
         </div>
 
-        {/* ── HERO ── */}
-        <section
-          id="homepage-transition-asset"
-          data-section="section-present"
-          style={{ position: "relative", overflow: "hidden" }}
-        >
-          <div
-            id="homepage-transition-asset-mask"
-            style={{ background: bgGradient, position: "absolute", inset: 0 }}
-          >
-            <video
-              autoPlay
-              muted
-              loop
-              playsInline
-              style={{
-                position: "absolute",
-                inset: 0,
-                width: "100%",
-                height: "calc(100vh - 5rem)",
-                objectFit: "cover",
-                display: "block",
-              }}
-            >
-              <source src={HeroVideo} type="video/mp4" />
-            </video>
+       {/* ── HERO ── */}
+<section
+  id="homepage-transition-asset"
+  data-section="section-present"
+  style={{ 
+    position: "relative", 
+    overflow: "hidden",
+    height: "100vh",        // ← full viewport height
+  }}
+>
+  <div
+    id="homepage-transition-asset-mask"
+    style={{ background: bgGradient, position: "absolute", inset: 0 }}
+  >
+    <video
+      autoPlay
+      muted
+      loop
+      playsInline
+      style={{
+        position: "absolute",
+        inset: 0,
+        width: "100%",
+        height: "100%",      // ← was calc(100vh - 5rem), now fills parent
+        objectFit: "cover",
+        display: "block",
+      }}
+    >
+      <source src={HeroVideo} type="video/mp4" />
+    </video>
             <div
               id="homepage-transition-asset-image-container"
               style={{ position: "absolute", inset: 0, overflow: "hidden" }}
             >
-              <div
-                style={{
-                  position: "absolute",
-                  top: 0,
-                  left: 0,
-                  width: "100%",
-                  height: "100%",
-                  display: "flex",
-                  flexDirection: "column",
-                  justifyContent: "space-between",
-                  padding: "2rem 0",
-                  overflow: "hidden",
-                }}
-              >
-                <div
-                  style={{
-                    position: "absolute",
-                    top: 0,
-                    left: 0,
-                    width: "100%",
-                    height: "100%",
-                    display: "flex",
-                    flexDirection: "column",
-                    justifyContent: "space-between",
-                    padding: "2.5rem 1.5rem 4rem",
-                  }}
-                >
-                  <div
-                    style={{
-                      width: "100%",
-                      overflow: "hidden",
-                      lineHeight: 0.92,
-                    }}
-                  >
-                    <div
-                      ref={heroLine1Ref}
-                      className="hero-fit-text"
-                      style={{
-                        fontFamily: FONTS.flare,
-                        fontSize: "clamp(40px,8vw,120px)",
-                        fontWeight: 600,
-                        color: COLORS.f1LimeGreen,
-                        textTransform: "uppercase",
-                        letterSpacing: "0.02em",
-                        whiteSpace: "nowrap",
-                        display: "inline-block",
-                        width: "100%",
-                        textAlign: "center",
-                      }}
-                    >
-                      Visionary Fuel
-                    </div>
-                  </div>
-                  <div
-                    style={{
-                      width: "100%",
-                      overflow: "hidden",
-                      lineHeight: 0.92,
-                    }}
-                  >
-                    <div
-                      ref={heroLine2Ref}
-                      className="hero-fit-text"
-                      style={{
-                
-                        fontFamily: FONTS.flare,
-                        fontSize: "clamp(40px,8vw,120px)",
-                        fontWeight: 600,
-                        color: COLORS.f1LimeGreen,
-                        textTransform: "uppercase",
-                        letterSpacing: "0.02em",
-                        whiteSpace: "nowrap",
-                        display: "inline-block",
-                        width: "100%",
-                        textAlign: "center",
-                        animation: "slideUp 0.9s ease-out forwards",
-                      }}
-                    >
-                      Timeless Tomorrow
-                    </div>
-                  </div>
-                </div>
-              </div>
+            <div
+  style={{
+    position: "absolute",
+    top: 0,
+    left: 0,
+    width: "100%",
+    height: "100%",
+    overflow: "hidden",
+  }}
+>
+  {/* ── DESKTOP layout ── */}
+  <div
+    className="am-hide-mobile"
+    style={{
+      width: "100%",
+      height: "100%",
+      display: "flex",
+      flexDirection: "column",
+      justifyContent: "space-between",
+      padding: "2rem 1.5rem 5rem 1.5rem",
+    }}
+  >
+    {/* Desktop top */}
+    <div style={{ width: "100%", overflow: "hidden" }}>
+      <div
+        ref={heroLine1Ref}
+        style={{
+          fontFamily: FONTS.flare,
+          fontWeight: 500,
+          color: '#c6fd3a',
+          textTransform: "uppercase",
+          letterSpacing: ".02rem",
+          whiteSpace: "nowrap",
+          display: "block",
+          width: "100%",
+          lineHeight: 1,
+          textAlign: "center",
+        }}
+      >
+        Visionary Fuel
+      </div>
+    </div>
+    {/* Desktop bottom */}
+    <div style={{ width: "100%", overflow: "hidden" }}>
+      <div
+        ref={heroLine2Ref}
+        style={{
+          fontFamily: FONTS.flare,
+          fontWeight: 500,
+          color: '#c6fd3a',
+          textTransform: "uppercase",
+          letterSpacing: ".02rem",
+          whiteSpace: "nowrap",
+          display: "block",
+          width: "100%",
+          lineHeight: 1,
+          textAlign: "center",
+          animation: "slideUp 0.9s ease-out forwards",
+        }}
+      >
+        Timeless Tomorrow
+      </div>
+    </div>
+  </div>
+
+  {/* ── MOBILE layout ── */}
+  <div
+    className="am-hide-desktop"
+    style={{
+      position: "absolute",
+      inset: 0,
+      display: "flex",
+      flexDirection: "column",
+      justifyContent: "space-between",
+      padding: "3rem 0 6rem 0",
+    }}
+  >
+    {/* Mobile top 2 lines */}
+    <div style={{ width: "100%", textAlign: "center" }}>
+      {["Visionary", "Fuel"].map((word) => (
+        <div
+          key={word}
+          style={{
+            fontFamily: FONTS.flare,
+            fontSize: "19vw",
+            fontWeight: 400,
+            color: '#c6fd3a',
+            textTransform: "uppercase",
+            letterSpacing: "-0.01em",
+            lineHeight: 1,
+            textAlign: "center",
+            width: "100%",
+          }}
+        >
+          {word}
+        </div>
+      ))}
+    </div>
+
+    {/* Mobile bottom 2 lines */}
+    <div style={{ width: "100%", textAlign: "center" }}>
+      {["Timeless", "Tomorrow"].map((word) => (
+        <div
+          key={word}
+          style={{
+            fontFamily: FONTS.flare,
+            fontSize: "19vw",
+            fontWeight: 400,
+            color: '#c6fd3a',
+            textTransform: "uppercase",
+            letterSpacing: "-0.01em",
+            lineHeight: 1,
+            textAlign: "center",
+            width: "100%",
+            animation: "slideUp 0.9s ease-out forwards",
+          }}
+        >
+          {word}
+        </div>
+      ))}
+    </div>
+  </div>
+
+  {/* ── Scroll arrow (shared) ── */}
+  <div
+    style={{
+      position: "absolute",
+      bottom: "0.09rem",
+      left: 0,
+      zIndex: 1,
+      display: "grid",
+      placeItems: "center",
+      width: "100%",
+    }}
+  >
+    <button
+      className="am-scroll-arrow"
+      onClick={() =>
+        window.scrollBy({ top: window.innerHeight, behavior: "smooth" })
+      }
+      style={{
+        background: "none",
+        border: "none",
+        cursor: "pointer",
+        padding: "2rem",
+        color: COLORS.f1LimeGreen,
+        width: "1rem",
+      }}
+      aria-label="Scroll down"
+    >
+      <IconArrowDown />
+    </button>
+  </div>
+</div>
               <div
                 style={{
                   position: "absolute",
