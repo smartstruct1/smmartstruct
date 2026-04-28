@@ -3,7 +3,7 @@ import { gsap } from "gsap";
 import { Link } from "react-router-dom";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import HeroVideo from "./assets/beerlines2.mp4";
-import TermsAndConditions from './TermsAndConditions';
+import TermsAndConditions from "./TermsAndConditions";
 gsap.registerPlugin(ScrollTrigger);
 
 // ─── Constants ────────────────────────────────────────────────────────────────
@@ -288,12 +288,25 @@ const GLOBAL_STYLES = `
   }
   .gy-footer-drinkaware strong { font-weight: 400; font-family: var(--font-flare); }
 
-  @media (max-width: 768px) {
-    .gy-footer-inner { grid-template-columns: 1fr; gap: 40px; }
-    .gy-footer { padding: 60px 6vw 40px; }
-    .contact-grid { grid-template-columns: 1fr !important; }
-    .offices-grid { grid-template-columns: 1fr !important; }
+@media (max-width: 768px) {
+  .gy-footer-inner { grid-template-columns: 1fr; gap: 40px; }
+  .gy-footer { padding: 60px 6vw 40px; }
+  .contact-grid { grid-template-columns: 1fr !important; gap: 3rem !important; }
+  .offices-grid { grid-template-columns: 1fr !important; }
+  .form-name-row { grid-template-columns: 1fr !important; gap: 1.5rem !important; }
+  .form-email-row { grid-template-columns: 1fr !important; gap: 1.5rem !important; }
+  .form-inner { padding: 2rem 1.25rem !important; }
+  .contact-section { padding: 6rem 1.5rem !important; }
+  .offices-section { padding: 6rem 1.5rem !important; }
+  .faq-section { padding: 6rem 1.5rem !important; }
+  .cta-section { padding: 8rem 1.5rem !important; }
+  .office-card-inner {
+    border-left: none !important;
+    padding-left: 0 !important;
+    border-top: 1px solid rgba(255,255,255,0.08) !important;
+    padding-top: 2.5rem !important;
   }
+}
 `;
 
 // ─── Icons ────────────────────────────────────────────────────────────────────
@@ -630,13 +643,12 @@ export default function ContactUs() {
             }}
           />
 
-         
           {/* bottom-anchored text block — matches About Us hero */}
           <div
             style={{
               position: "relative",
               zIndex: 3,
-              padding: "30rem 8vw 8vh",
+              padding: "clamp(8rem, 40vh, 30rem) 6vw 8vh",
             }}
           >
             <p
@@ -709,7 +721,7 @@ export default function ContactUs() {
         </section>
 
         {/* ── CONTACT FORM + SIDEBAR ── */}
-        <section style={{ padding: "10rem 8vw" }}>
+       <section className="contact-section" style={{ padding: "10rem 8vw" }}>
           <div
             className="contact-grid reveal-up"
             style={{
@@ -841,15 +853,16 @@ export default function ContactUs() {
             </div>
 
             {/* Form */}
-            <div
-              style={{
-                background: COLORS.grey100,
-                padding: "3.5rem",
-                borderRadius: "0.1875rem",
-                position: "relative",
-                minHeight: "26rem",
-              }}
-            >
+          <div
+  className="form-inner"
+  style={{
+    background: COLORS.grey100,
+    padding: "3.5rem",
+    borderRadius: "0.1875rem",
+    position: "relative",
+    minHeight: "26rem",
+  }}
+>
               {!submitted ? (
                 <>
                   <p
@@ -866,13 +879,14 @@ export default function ContactUs() {
                   </p>
 
                   <div
-                    style={{
-                      display: "grid",
-                      gridTemplateColumns: "1fr 1fr",
-                      gap: "2rem",
-                      marginBottom: "2.5rem",
-                    }}
-                  >
+  className="form-name-row"
+  style={{
+    display: "grid",
+    gridTemplateColumns: "1fr 1fr",
+    gap: "2rem",
+    marginBottom: "2.5rem",
+  }}
+>
                     <div>
                       <label
                         style={{
@@ -920,14 +934,14 @@ export default function ContactUs() {
                   </div>
 
                   <div
-                    style={{
-                      display: "grid",
-                      gridTemplateColumns: "1fr 1fr",
-                      gap: "2rem",
-                      marginBottom: "2.5rem",
-                    }}
-                  >
-                    <div>
+  className="form-email-row"
+  style={{
+    display: "grid",
+    gridTemplateColumns: "1fr 1fr",
+    gap: "2rem",
+    marginBottom: "2.5rem",
+  }}
+> <div>
                       <label
                         style={{
                           display: "block",
@@ -1184,9 +1198,10 @@ export default function ContactUs() {
         </section>
 
         {/* ── OFFICES ── */}
-        <section
-          style={{ background: COLORS.f1GreenDark, padding: "10rem 8vw" }}
-        >
+       <section
+  className="offices-section"
+  style={{ background: COLORS.f1GreenDark, padding: "10rem 8vw" }}
+>
           <div className="reveal-up" style={{ marginBottom: "5rem" }}>
             <p
               style={{
@@ -1225,10 +1240,10 @@ export default function ContactUs() {
             }}
           >
             {OFFICES.map((office, i) => (
-              <div
-                key={i}
-                className="office-card"
-                style={{
+  <div
+    key={i}
+    className={`office-card${i > 0 ? " office-card-inner" : ""}`}
+    style={{
                   padding: "2.5rem 2.5rem 2.5rem 0",
                   borderLeft:
                     i > 0 ? `1px solid rgba(255,255,255,0.08)` : "none",
@@ -1291,7 +1306,7 @@ export default function ContactUs() {
         </section>
 
         {/* ── FAQ ── */}
-        <section style={{ padding: "10rem 8vw" }}>
+        <section className="faq-section" style={{ padding: "10rem 8vw" }}>
           <div className="reveal-up" style={{ marginBottom: "5rem" }}>
             <p
               style={{
@@ -1370,16 +1385,16 @@ export default function ContactUs() {
         </section>
 
         {/* ── FINAL CTA — matches About Us CTA banner ── */}
-        <section
-          style={{
-            position: "relative",
-            background: `linear-gradient(to bottom, ${COLORS.introBgTop}, ${COLORS.introBg})`,
-            padding: "12rem 8vw",
+       <section
+  className="cta-section"
+  style={{
+    position: "relative",
+    background: `linear-gradient(to bottom, ${COLORS.introBgTop}, ${COLORS.introBg})`,
+    padding: "12rem 8vw",
             textAlign: "center",
             overflow: "hidden",
           }}
         >
-         
           <div
             className="reveal-up"
             style={{ position: "relative", zIndex: 1 }}
@@ -1510,22 +1525,31 @@ export default function ContactUs() {
           <div className="gy-footer-inner">
             <div className="gy-footer-left">
               <div className="gy-footer-logo">Matrix Petroleum</div>
-             <ul className="gy-footer-nav">
-  {[
-    { label: "Home",                        to: "/" },
-    { label: "Our Future",                  to: "/?overlay=future" },
-    { label: "Our Story",                   to: "/about-us" },
-    { label: "Terms and Conditions",        to: "/terms-and-conditions" },
-    { label: "FAQs",                        to: "/faqs" },
-    { label: "Website Terms and Conditions",to: "/terms-and-conditions" },
-    { label: "Privacy Policy and Cookies",  to: "/privacy-policy" },
-    { label: "Matrix Petroleum",            to: "/" },
-  ].map((l) => (
-    <li key={l.label}>
-      <Link to={l.to}>{l.label}</Link>
-    </li>
-  ))}
-</ul>
+              <ul className="gy-footer-nav">
+                {[
+                  { label: "Home", to: "/" },
+                  { label: "Our Future", to: "/?overlay=future" },
+                  { label: "Our Story", to: "/about-us" },
+                  {
+                    label: "Terms and Conditions",
+                    to: "/terms-and-conditions",
+                  },
+                  { label: "FAQs", to: "/faqs" },
+                  {
+                    label: "Website Terms and Conditions",
+                    to: "/terms-and-conditions",
+                  },
+                  {
+                    label: "Privacy Policy and Cookies",
+                    to: "/privacy-policy",
+                  },
+                  { label: "Matrix Petroleum", to: "/" },
+                ].map((l) => (
+                  <li key={l.label}>
+                    <Link to={l.to}>{l.label}</Link>
+                  </li>
+                ))}
+              </ul>
             </div>
             <div className="gy-footer-right">
               <div>
