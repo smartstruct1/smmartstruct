@@ -160,7 +160,7 @@ const GLOBAL_STYLES = `
 
   .am-scroll-arrow { animation: bounce 2s infinite; }
   .am-scroll-arrow:hover { animation-play-state: paused; }
-
+.gy-hero-overlay { position: absolute; inset: 0; background: rgba(6,14,10,0.6); z-index: 1; pointer-events: none; }
   .am-btn {
     display: inline-flex; align-items: center; justify-content: center;
     height: 2.125rem; padding: 0.75rem 2rem 0.69rem;
@@ -378,6 +378,7 @@ const GLOBAL_STYLES = `
   letter-spacing: .04em;
   margin-top: 4px;
 }
+  
 .gy-footer-drinkaware strong {
   font-weight: 400;
   font-family: var(--font-flare);
