@@ -183,7 +183,10 @@ const GLOBAL_STYLES = `
     0%,100% { background-position: 0% 50%; }
     50%     { background-position: 100% 50%; }
   }
-
+button:focus,
+button:focus-visible {
+  outline: none;
+}
   /* ─── HERO CHAR SPLIT ─────────────────────────────────────────────────── */
   .hero-char-wrap {
     display: inline-block;
@@ -2367,7 +2370,7 @@ export default function MaxfuelRX() {
                         textAlign: "center",
                       }}
                     >
-                      {splitTextToChars("Visionary Fuel")}
+                     Visionary Fuel
                     </div>
                   </div>
                   <div style={{ width: "100%", overflow: "hidden" }}>
@@ -2384,7 +2387,7 @@ export default function MaxfuelRX() {
                         textAlign: "center",
                       }}
                     >
-                      {splitTextToChars("Timeless Tomorrow")}
+                     Timeless Tomorrow
                     </div>
                   </div>
                 </div>
@@ -2839,7 +2842,7 @@ export default function MaxfuelRX() {
                 className="am-benefit"
                 style={{
                   fontFamily: FONTS.agrandir,
-                  fontSize: "0.875rem",
+                  fontSize: "1.8rem",
                   letterSpacing: "0.0438rem",
                   textTransform: "uppercase",
                   color: COLORS.f1LimeGreenDark,

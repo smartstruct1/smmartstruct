@@ -19,7 +19,7 @@ import FlaresFont from "./assets/fonts/a81f89e159e0486f-s.p.woff";
 import AgrandirsFont from "./assets/fonts/abff1420e55a5ceb-s.p.woff2";
 import cloudsImg1 from "./assets/clouds.webp";
 import cloudsImg2 from "./assets/clouds.webp";
-import TermsAndConditions from './TermsAndConditions';
+import TermsAndConditions from "./TermsAndConditions";
 const easeSnappy = "cubic-bezier(0.87, 0, 0.13, 1)";
 const easeSmooth = "cubic-bezier(0.45, 0.02, 0.09, 0.98)";
 const f1Shadow = "0 0 5.2px 0 rgb(0 0 0/8%), 0 3.335px 3.335px 0 rgb(0 0 0/7%)";
@@ -498,88 +498,178 @@ function DistributionSection() {
 
       {/* LAYER 3 — UI overlay: no backgrounds, floats over map */}
       <div
-  style={{
-    position: "absolute",
-    inset: 0,
-    zIndex: 3,
-    display: "flex",
-    flexDirection: "column",
-    padding: "44px 0 48px",
-  }}
->
-  {/* Tab nav — horizontal scroll on mobile */}
-  <div
-    style={{
-      display: "flex",
-      flexDirection: "row",
-      gap: "0",
-      overflowX: "auto",
-      padding: "0 clamp(20px,4vw,52px)",
-      marginBottom: "auto",
-      WebkitOverflowScrolling: "touch",
-      scrollbarWidth: "none",
-    }}
-  >
-    {DISTRIBUTION_PANELS.map((p, i) => (
-      <button
-        key={p.id}
-        onClick={() => setActiveIdx(i)}
         style={{
-          background: "none",
-          border: "none",
-          borderBottom: activeIdx === i ? `2px solid ${COLORS.f1LimeGreen}` : "2px solid transparent",
-          padding: "12px 16px",
-          cursor: "pointer",
-          color: activeIdx === i ? COLORS.white : "rgba(255,255,255,0.35)",
-          fontFamily: FONTS.agrandir,
-          fontSize: "clamp(10px,1vw,13px)",
-          letterSpacing: ".22em",
-          textTransform: "uppercase",
-          textAlign: "left",
-          transition: "color .3s ease",
-          whiteSpace: "nowrap",
-          flexShrink: 0,
+          position: "absolute",
+          inset: 0,
+          zIndex: 3,
+          display: "flex",
+          flexDirection: "column",
+          padding: "44px 0 48px",
         }}
       >
-        {p.label}
-      </button>
-    ))}
-  </div>
-
-  {/* Stats + body — bottom of section */}
-  <div
-    style={{
-      marginTop: "auto",
-      padding: "0 clamp(20px,6vw,52px) 0 clamp(20px,6vw,52px)",
-      maxWidth: "480px",
-      alignSelf: "flex-end",
-      width: "100%",
-    }}
-  >
-    <div style={{ width: "100%", height: "1px", background: COLORS.f1LimeGreen, marginBottom: "20px", opacity: 0.8 }} />
-    <div style={{ display: "grid", gridTemplateColumns: "1fr 1fr", gap: "14px 20px", marginBottom: "20px" }}>
-      {panel.stats.map((s, i) => (
-        <div key={i}>
-          <div style={{ fontFamily: FONTS.flare, fontSize: "clamp(20px,2.4vw,38px)", fontWeight: 400, color: COLORS.f1LimeGreen, lineHeight: 1, letterSpacing: ".02em" }}>
-            {s.value}{s.unit && <span style={{ fontSize: "clamp(10px,1vw,13px)", marginLeft: "4px" }}>{s.unit}</span>}
-          </div>
-          <div style={{ fontFamily: FONTS.agrandir, fontSize: "9px", letterSpacing: ".2em", textTransform: "uppercase", color: "rgba(255,255,255,0.45)", marginTop: "5px", lineHeight: 1.4 }}>
-            {s.label}
-          </div>
+        {/* Tab nav — horizontal scroll on mobile */}
+        <div
+          style={{
+            display: "flex",
+            flexDirection: "row",
+            gap: "0",
+            overflowX: "auto",
+            padding: "0 clamp(20px,4vw,52px)",
+            marginBottom: "auto",
+            WebkitOverflowScrolling: "touch",
+            scrollbarWidth: "none",
+          }}
+        >
+          {DISTRIBUTION_PANELS.map((p, i) => (
+            <button
+              key={p.id}
+              onClick={() => setActiveIdx(i)}
+              style={{
+                background: "none",
+                border: "none",
+                borderBottom:
+                  activeIdx === i
+                    ? `2px solid ${COLORS.f1LimeGreen}`
+                    : "2px solid transparent",
+                padding: "12px 16px",
+                cursor: "pointer",
+                color:
+                  activeIdx === i ? COLORS.white : "rgba(255,255,255,0.35)",
+                fontFamily: FONTS.agrandir,
+                fontSize: "clamp(10px,1vw,13px)",
+                letterSpacing: ".22em",
+                textTransform: "uppercase",
+                textAlign: "left",
+                transition: "color .3s ease",
+                whiteSpace: "nowrap",
+                flexShrink: 0,
+              }}
+            >
+              {p.label}
+            </button>
+          ))}
         </div>
-      ))}
-    </div>
-    {panel.quote ? (
-      <>
-        <p style={{ fontFamily: FONTS.caslon, fontSize: "clamp(11px,0.95vw,13px)", lineHeight: 1.8, color: COLORS.white, letterSpacing: ".02em", margin: "0 0 14px" }}>{panel.quote.text}</p>
-        <p style={{ fontFamily: FONTS.agrandir, fontSize: "11px", color: "rgba(255,255,255,0.55)", letterSpacing: ".08em", margin: "0 0 2px" }}>{panel.quote.author}</p>
-        <p style={{ fontFamily: FONTS.agrandir, fontSize: "11px", color: "rgba(255,255,255,0.3)", letterSpacing: ".08em", margin: 0 }}>{panel.quote.role}</p>
-      </>
-    ) : (
-      <p style={{ fontFamily: FONTS.caslon, fontSize: "clamp(11px,0.95vw,13px)", lineHeight: 1.8, color: COLORS.white, letterSpacing: ".02em", margin: 0 }}>{panel.body}</p>
-    )}
-  </div>
-</div>
+
+        {/* Stats + body — bottom of section */}
+        <div
+          style={{
+            marginTop: "auto",
+            padding: "0 clamp(20px,6vw,52px) 0 clamp(20px,6vw,52px)",
+            maxWidth: "480px",
+            alignSelf: "flex-end",
+            width: "100%",
+          }}
+        >
+          <div
+            style={{
+              width: "100%",
+              height: "1px",
+              background: COLORS.f1LimeGreen,
+              marginBottom: "20px",
+              opacity: 0.8,
+            }}
+          />
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: "1fr 1fr",
+              gap: "14px 20px",
+              marginBottom: "20px",
+            }}
+          >
+            {panel.stats.map((s, i) => (
+              <div key={i}>
+                <div
+                  style={{
+                    fontFamily: FONTS.flare,
+                    fontSize: "clamp(20px,2.4vw,38px)",
+                    fontWeight: 400,
+                    color: COLORS.f1LimeGreen,
+                    lineHeight: 1,
+                    letterSpacing: ".02em",
+                  }}
+                >
+                  {s.value}
+                  {s.unit && (
+                    <span
+                      style={{
+                        fontSize: "clamp(10px,1vw,13px)",
+                        marginLeft: "4px",
+                      }}
+                    >
+                      {s.unit}
+                    </span>
+                  )}
+                </div>
+                <div
+                  style={{
+                    fontFamily: FONTS.agrandir,
+                    fontSize: "9px",
+                    letterSpacing: ".2em",
+                    textTransform: "uppercase",
+                    color: "rgba(255,255,255,0.45)",
+                    marginTop: "5px",
+                    lineHeight: 1.4,
+                  }}
+                >
+                  {s.label}
+                </div>
+              </div>
+            ))}
+          </div>
+          {panel.quote ? (
+            <>
+              <p
+                style={{
+                  fontFamily: FONTS.caslon,
+                  fontSize: "clamp(11px,0.95vw,13px)",
+                  lineHeight: 1.8,
+                  color: COLORS.white,
+                  letterSpacing: ".02em",
+                  margin: "0 0 14px",
+                }}
+              >
+                {panel.quote.text}
+              </p>
+              <p
+                style={{
+                  fontFamily: FONTS.agrandir,
+                  fontSize: "11px",
+                  color: "rgba(255,255,255,0.55)",
+                  letterSpacing: ".08em",
+                  margin: "0 0 2px",
+                }}
+              >
+                {panel.quote.author}
+              </p>
+              <p
+                style={{
+                  fontFamily: FONTS.agrandir,
+                  fontSize: "11px",
+                  color: "rgba(255,255,255,0.3)",
+                  letterSpacing: ".08em",
+                  margin: 0,
+                }}
+              >
+                {panel.quote.role}
+              </p>
+            </>
+          ) : (
+            <p
+              style={{
+                fontFamily: FONTS.caslon,
+                fontSize: "clamp(11px,0.95vw,13px)",
+                lineHeight: 1.8,
+                color: COLORS.white,
+                letterSpacing: ".02em",
+                margin: 0,
+              }}
+            >
+              {panel.body}
+            </p>
+          )}
+        </div>
+      </div>
 
       <style>{`
         @keyframes distCloudDrift {
@@ -619,23 +709,23 @@ function ChannelsSection({ visible }) {
         Distribution Channels
       </span>
       <div
-  style={{
-    display: "grid",
-    gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
-    gap: "0",
-    border: `1px solid rgba(198,253,58,0.15)`,
-  }}
->
+        style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
+          gap: "0",
+          border: `1px solid rgba(198,253,58,0.15)`,
+        }}
+      >
         {CHANNELS.map((ch, i) => (
-         <div
-  key={ch.key}
-  className={`dist-channel-card gy-reveal${visible ? " in" : ""}`}
-  style={{
-    padding: "48px 40px",
-    borderBottom: `1px solid rgba(198,253,58,0.12)`,
-    transitionDelay: `${i * 0.1}s`,
-  }}
->
+          <div
+            key={ch.key}
+            className={`dist-channel-card gy-reveal${visible ? " in" : ""}`}
+            style={{
+              padding: "48px 40px",
+              borderBottom: `1px solid rgba(198,253,58,0.12)`,
+              transitionDelay: `${i * 0.1}s`,
+            }}
+          >
             <p
               style={{
                 fontFamily: FONTS.agrandir,
@@ -709,22 +799,22 @@ function PartnerTiersSection({ visible }) {
         Partner Tiers
       </span>
       <div
-  style={{
-    display: "grid",
-    gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
-    gap: "0",
-  }}
->
+        style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fit, minmax(280px, 1fr))",
+          gap: "0",
+        }}
+      >
         {PARTNER_TIERS.map((t, i) => (
           <div
             key={t.tier}
             className={`gy-reveal${visible ? " in" : ""}`}
-           style={{
-  padding: "44px 40px",
-  borderTop: `1px solid rgba(255,255,255,0.08)`,
-  borderBottom: `1px solid rgba(255,255,255,0.08)`,
-  transitionDelay: `${i * 0.12}s`,
-}}
+            style={{
+              padding: "44px 40px",
+              borderTop: `1px solid rgba(255,255,255,0.08)`,
+              borderBottom: `1px solid rgba(255,255,255,0.08)`,
+              transitionDelay: `${i * 0.12}s`,
+            }}
           >
             <div
               style={{
@@ -838,23 +928,23 @@ function HowItWorksSection({ visible }) {
         Becoming A Distributor
       </span>
       <div
-  style={{
-    display: "grid",
-    gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
-    gap: "0",
-    borderTop: `1px solid rgba(198,253,58,0.12)`,
-  }}
->
-  {steps.map((s, i) => (
-    <div
-      key={s.num}
-      className={`gy-reveal gy-from-left${visible ? " in" : ""}`}
-      style={{
-        padding: "40px 32px",
-        borderBottom: `1px solid rgba(198,253,58,0.12)`,
-        transitionDelay: `${i * 0.12}s`,
-      }}
-    >
+        style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fit, minmax(200px, 1fr))",
+          gap: "0",
+          borderTop: `1px solid rgba(198,253,58,0.12)`,
+        }}
+      >
+        {steps.map((s, i) => (
+          <div
+            key={s.num}
+            className={`gy-reveal gy-from-left${visible ? " in" : ""}`}
+            style={{
+              padding: "40px 32px",
+              borderBottom: `1px solid rgba(198,253,58,0.12)`,
+              transitionDelay: `${i * 0.12}s`,
+            }}
+          >
             <span
               style={{
                 fontFamily: FONTS.flare,
@@ -919,22 +1009,22 @@ function StatsBanner() {
       }}
     >
       <div
-  style={{
-    display: "grid",
-    gridTemplateColumns: "repeat(auto-fit, minmax(140px, 1fr))",
-    gap: 0,
-  }}
->
-  {stats.map((s, i) => (
-    <div
-      key={i}
-      style={{
-        padding: "36px 16px",
-        borderRight: "1px solid rgba(0,0,0,0.12)",
-        borderBottom: "1px solid rgba(0,0,0,0.12)",
-        textAlign: "center",
-      }}
-    >
+        style={{
+          display: "grid",
+          gridTemplateColumns: "repeat(auto-fit, minmax(140px, 1fr))",
+          gap: 0,
+        }}
+      >
+        {stats.map((s, i) => (
+          <div
+            key={i}
+            style={{
+              padding: "36px 16px",
+              borderRight: "1px solid rgba(0,0,0,0.12)",
+              borderBottom: "1px solid rgba(0,0,0,0.12)",
+              textAlign: "center",
+            }}
+          >
             <div
               style={{
                 fontFamily: FONTS.flare,
@@ -969,16 +1059,23 @@ function StatsBanner() {
 // ── IMAGE PANELS ─────────────────────────────────────────────────────────────
 function ImagePanels() {
   return (
-   <section
-  style={{
-    display: "grid",
-    gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))",
-    minHeight: "480px",
-    background: "#070c1a",
-    overflow: "hidden",
-  }}
->
-      <div style={{ background: "#0b1a10", position: "relative", overflow: "hidden", minHeight: "260px" }}>
+    <section
+      style={{
+        display: "grid",
+        gridTemplateColumns: "repeat(auto-fit, minmax(260px, 1fr))",
+        minHeight: "480px",
+        background: "#070c1a",
+        overflow: "hidden",
+      }}
+    >
+      <div
+        style={{
+          background: "#0b1a10",
+          position: "relative",
+          overflow: "hidden",
+          minHeight: "260px",
+        }}
+      >
         <img
           src={engineImage}
           alt="Engine"
@@ -1021,7 +1118,7 @@ function ImagePanels() {
           background: "#061209",
           position: "relative",
           overflow: "hidden",
-           minHeight: "260px"
+          minHeight: "260px",
         }}
       >
         <img
@@ -1066,7 +1163,7 @@ function ImagePanels() {
           background: "#0d1e12",
           position: "relative",
           overflow: "hidden",
-           minHeight: "260px"
+          minHeight: "260px",
         }}
       >
         <img
@@ -1427,6 +1524,11 @@ export default function DistributionPage() {
           --gold: #c6fd3a; --gold-pale: #d8fe6a;
           --white: #fff; --muted: rgba(255,255,255,0.45);
         }
+
+        button:focus,
+button:focus-visible {
+  outline: none;
+}
         .gy-root { background: var(--navy); color: var(--white); font-family: var(--font-agrandir); font-weight: 400; overflow-x: hidden; min-height: 100vh; }
         .gy-skip-link { position: absolute; top: -100px; left: 0; z-index: 9999; background: var(--gold); color: var(--navy); padding: 10px 20px; font-size: 12px; letter-spacing: .15em; text-transform: uppercase; text-decoration: none; font-family: var(--font-agrandir); transition: top .2s; }
         .gy-skip-link:focus { top: 0; }
@@ -1639,21 +1741,30 @@ export default function DistributionPage() {
             <div>
               <div className="gy-footer-logo">Matrix Petroleum</div>
               <ul className="gy-footer-nav">
-  {[
-    { label: "Home",                        to: "/" },
-    { label: "Our Future",                  to: "/?overlay=future" },
-    { label: "Our Story",                   to: "/about-us" },
-    { label: "Terms and Conditions",        to: "/terms-and-conditions" },
-    { label: "FAQs",                        to: "/faqs" },
-    { label: "Website Terms and Conditions",to: "/terms-and-conditions" },
-    { label: "Privacy Policy and Cookies",  to: "/privacy-policy" },
-    { label: "Matrix Petroleum",            to: "/" },
-  ].map((l) => (
-    <li key={l.label}>
-      <Link to={l.to}>{l.label}</Link>
-    </li>
-  ))}
-</ul>
+                {[
+                  { label: "Home", to: "/" },
+                  { label: "Our Future", to: "/?overlay=future" },
+                  { label: "Our Story", to: "/about-us" },
+                  {
+                    label: "Terms and Conditions",
+                    to: "/terms-and-conditions",
+                  },
+                  { label: "FAQs", to: "/faqs" },
+                  {
+                    label: "Website Terms and Conditions",
+                    to: "/terms-and-conditions",
+                  },
+                  {
+                    label: "Privacy Policy and Cookies",
+                    to: "/privacy-policy",
+                  },
+                  { label: "Matrix Petroleum", to: "/" },
+                ].map((l) => (
+                  <li key={l.label}>
+                    <Link to={l.to}>{l.label}</Link>
+                  </li>
+                ))}
+              </ul>
             </div>
             <div className="gy-footer-right">
               <div>

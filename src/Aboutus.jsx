@@ -191,7 +191,10 @@ const GLOBAL_STYLES = `
   .am-footer-link:hover { opacity: 0.6; }
   .am-nav-item-link { transition: opacity 0.15s var(--easing-smooth); }
   .am-nav-item-link:hover { opacity: 0.6; }
-
+button:focus,
+button:focus-visible {
+  outline: none;
+}
   .reveal-up {
     opacity: 0;
     transform: translateY(2.5rem);

@@ -119,7 +119,10 @@ const GLOBAL_STYLES = `
     60%  { transform: scale(1.03) translateY(0); }
     100% { opacity: 1; transform: scale(1) translateY(0); }
   }
-
+button:focus,
+button:focus-visible {
+  outline: none;
+}
   .am-btn {
     display: inline-flex; align-items: center; justify-content: center;
     height: 2.125rem; padding: 0.75rem 2rem 0.69rem;
