@@ -765,14 +765,17 @@ export default function AboutUs() {
         </div>
 
         {/* ── HERO ── */}
-        <section
-          className="gy-hero"
-          style={{
-            position: "relative",
-            overflow: "hidden",
-            minHeight: "100vh",
-          }}
-        >
+      <section
+  className="gy-hero"
+  style={{
+    position: "relative",
+    overflow: "hidden",
+    minHeight: "100vh",
+    display: "flex",
+    alignItems: "flex-end",
+    justifyContent: "flex-start",
+  }}
+>
           <video
             ref={heroVideoRef}
             className="gy-hero-video"
@@ -804,7 +807,7 @@ export default function AboutUs() {
             style={{
               position: "relative",
               zIndex: 3,
-              padding: "clamp(6rem, 25vh, 20rem) 6vw 8vh",
+             padding: "0 8vw 8vh",
             }}
           >
             <p

@@ -580,12 +580,16 @@ export default function ContactUs() {
 
         {/* ── HERO — bottom-anchored like About Us ── */}
         <section
-          style={{
-            position: "relative",
-            overflow: "hidden",
-            minHeight: "100vh",
-          }}
-        >
+  className="gy-hero"
+  style={{
+    position: "relative",
+    overflow: "hidden",
+    minHeight: "100vh",
+    display: "flex",
+    alignItems: "flex-end",
+    justifyContent: "flex-start",
+  }}
+>
           <video
             autoPlay
             muted
@@ -618,7 +622,7 @@ export default function ContactUs() {
             style={{
               position: "relative",
               zIndex: 3,
-             padding: "clamp(6rem, 25vh, 20rem) 6vw 8vh",
+             padding: "0 8vw 8vh",
             }}
           >
             <p
@@ -641,7 +645,7 @@ export default function ContactUs() {
                 opacity: 0,
                 fontFamily: FONTS.flare,
                 fontSize: "clamp(40px, 8vw, 120px)",
-                fontWeight: 400,
+                fontWeight: 300,
                 letterSpacing: ".02em",
                 color: COLORS.white,
                 lineHeight: 0.95,
