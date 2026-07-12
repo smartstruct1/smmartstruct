@@ -357,9 +357,6 @@ const GLOBAL_STYLES = `
   html { scroll-behavior: smooth; }
   body, html { margin: 0; padding: 0; overflow-x: hidden; max-width: 100vw; }
 
-  /* Buttons only ever show a ring when reached via keyboard (Tab).
-     A mouse click or a tap never draws a border unless one is set
-     explicitly in that button's own styling. */
   button {
     -webkit-tap-highlight-color: transparent;
     outline: none;
