@@ -751,7 +751,18 @@ const GLOBAL_STYLES = `
     font-family: ${FONTS.body}; font-size: 0.9375rem; line-height: 1.7;
     color: rgba(28,35,44,0.68); max-width: 40ch; margin: 0 0 2.25rem;
   }
-
+.ss-card-blurb {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+.ss-card-title-clamp {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
   .ss-hero-graphic-wrap {
     position: relative; height: 28rem; display: flex; align-items: center; justify-content: center;
   }
@@ -793,12 +804,12 @@ const GLOBAL_STYLES = `
   .ss-hero-right-col { display: flex; flex-direction: column; align-items: flex-end; gap: 1rem; }
   .ss-hero-nav-arrows { display: flex; gap: 0.6rem; }
   .ss-hero-arrow-btn {
-    width: 2.75rem; height: 2.75rem; border-radius: 50%;
-    display: flex; align-items: center; justify-content: center;
-    background: rgba(28,35,44,0.06); border: 1px solid rgba(28,35,44,0.22); color: ${COLORS.graphite};
-    color: #fff; cursor: pointer; backdrop-filter: blur(6px);
-    transition: background 0.2s ease, transform 0.2s ease, border-color 0.2s ease;
-  }
+  width: 4rem; height: 4rem; border-radius: 50%;
+  display: flex; align-items: center; justify-content: center;
+  background: rgba(28,35,44,0.06); border: 1px solid rgba(28,35,44,0.22); color: ${COLORS.graphite};
+  cursor: pointer; backdrop-filter: blur(6px);
+  transition: background 0.2s ease, transform 0.2s ease, border-color 0.2s ease;
+}
   .ss-hero-arrow-btn:hover { background: rgba(244,118,33,0.18); border-color: ${COLORS.cyan}; transform: scale(1.06); }
 
   .ss-hero-thumbs { display: flex; gap: 0.75rem; }
@@ -1967,7 +1978,7 @@ const aboutReveal = useReveal();
                 onClick={prevHeroSlide}
                 aria-label="Previous slide"
               >
-                <ArrowLeft size={16} />
+                <ArrowLeft size={24} />
               </button>
               <button
                 className="ss-hero-arrow-btn"
@@ -2076,18 +2087,20 @@ const aboutReveal = useReveal();
                   className="ss-card"
                   onClick={() => openCategory(svc.category)}
                 >
-                  <TiltCard className="ss-card-inner"
-                    style={{
-                      position: "relative",
-                      border: `1px solid ${COLORS.inkLine}`,
-                      borderRadius: "2px",
-                      display: "flex",
-                      flexDirection: "column",
-                      background: COLORS.inkElevated,
-                      height: "23rem",
-                      overflow: "hidden",
-                    }}
-                  >
+                 <TiltCard
+  className="ss-card-inner"
+  style={{
+    position: "relative",
+    border: `1px solid ${COLORS.inkLine}`,
+    borderRadius: "2px",
+    display: "flex",
+    flexDirection: "column",
+    background: COLORS.inkElevated,
+    height: "23rem",
+    overflow: "hidden",   
+  }}
+  onClick={() => openCategory(svc.category)}
+>
                     <div
                       className="ss-media-box"
                       style={{
@@ -2150,7 +2163,7 @@ const aboutReveal = useReveal();
                             fontSize: "1.375rem",
                             lineHeight: 1.15,
                             textTransform: "uppercase",
-                            color: "#fff",
+                            color: "#ee6103",
                             margin: "1.25rem 0 0.75rem",
                           }}
                         >
@@ -2161,7 +2174,7 @@ const aboutReveal = useReveal();
                             fontFamily: FONTS.body,
                             fontSize: "0.8125rem",
                             lineHeight: 1.6,
-                            color: "rgba(255,255,255,0.6)",
+                            color: "rgb(0, 48, 3)",
                             margin: 0,
                           }}
                         >
