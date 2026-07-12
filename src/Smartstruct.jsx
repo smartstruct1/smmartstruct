@@ -392,7 +392,12 @@ const GLOBAL_STYLES = `
     0%, 100% { opacity: 0.55; }
     50% { opacity: 0.9; }
   }
-
+    .ss-cta-blob { position: absolute; border-radius: 50%; filter: blur(70px); opacity: 0.35; pointer-events: none; animation: heroGlowPulse 6s ease-in-out infinite; }
+.ss-marquee { overflow: hidden; white-space: nowrap; border-top: 1px solid ${COLORS.paperLine}; border-bottom: 1px solid ${COLORS.paperLine}; background: ${COLORS.paper}; padding: 0.9rem 0; }
+.ss-marquee-track { display: inline-flex; gap: 3rem; animation: marqueeScroll 22s linear infinite; }
+.ss-marquee-item { font-family: ${FONTS.mono}; font-size: 0.75rem; letter-spacing: 0.14em; text-transform: uppercase; color: ${COLORS.muted}; display: inline-flex; align-items: center; gap: 0.75rem; }
+.ss-marquee-item::after { content: '◆'; color: ${COLORS.cyan}; font-size: 0.5rem; }
+@keyframes marqueeScroll { from { transform: translateX(0); } to { transform: translateX(-50%); } }
  .ss-blueprint-bg {
   background-color: ${COLORS.ink};
 }
@@ -629,7 +634,8 @@ const GLOBAL_STYLES = `
     .ss-hide-desktop { display: block !important; }
   }
 
-
+.ss-reveal { opacity: 0; transform: translateY(28px); transition: opacity 0.8s cubic-bezier(.16,1,.3,1), transform 0.8s cubic-bezier(.16,1,.3,1); }
+.ss-reveal.is-in { opacity: 1; transform: translateY(0); }
   .ss-hero-full {
     position: relative;
     height: 100vh;
@@ -680,7 +686,7 @@ const GLOBAL_STYLES = `
   .ss-hero-title {
     font-family: ${FONTS.display}; font-weight: 600;
     font-size: clamp(2.5rem, 7.5vw, 5.75rem); line-height: 1.02;
-    letter-spacing: 0.01em; text-transform: uppercase; color: ${COLORS.amber};
+    letter-spacing: 0.01em; text-transform: uppercase; color: #1c232c;
     margin: 1.25rem auto 0; max-width: 22ch;
   }
   .ss-hero-subtitle {
@@ -1100,7 +1106,30 @@ const GLOBAL_STYLES = `
     .ss-cf-center { order: -1; }
   }
 `;
-
+function TiltCard({ children, style, className, onClick }) {
+  const ref = useRef(null);
+  const onMove = (e) => {
+    const el = ref.current;
+    if (!el) return;
+    const r = el.getBoundingClientRect();
+    const x = (e.clientX - r.left) / r.width - 0.5;
+    const y = (e.clientY - r.top) / r.height - 0.5;
+    el.style.transform = `perspective(900px) rotateX(${(-y * 6).toFixed(2)}deg) rotateY(${(x * 8).toFixed(2)}deg) translateY(-4px)`;
+  };
+  const onLeave = () => { if (ref.current) ref.current.style.transform = ""; };
+  return (
+    <div
+      ref={ref}
+      className={className}
+      style={{ ...style, transition: "transform 0.35s cubic-bezier(.16,1,.3,1)" }}
+      onMouseMove={onMove}
+      onMouseLeave={onLeave}
+      onClick={onClick}
+    >
+      {children}
+    </div>
+  );
+}
 const HamburgerIcon = ({ open }) => (
   <svg width="18" height="14" viewBox="0 0 18 14" fill="none">
     {open ? (
@@ -1223,7 +1252,40 @@ const InstagramIcon = ({
     <line x1="17.5" y1="6.5" x2="17.51" y2="6.5" />
   </svg>
 );
-
+function CountUp({ value, duration = 1400 }) {
+  const ref = useRef(null);
+  const [display, setDisplay] = useState("0");
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const match = String(value).match(/^([\d.]+)(.*)$/);
+    if (!match) { setDisplay(value); return; }
+    const target = parseFloat(match[1]);
+    const suffix = match[2];
+    let started = false;
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting && !started) {
+          started = true;
+          const start = performance.now();
+          const step = (now) => {
+            const p = Math.min(1, (now - start) / duration);
+            const eased = 1 - Math.pow(1 - p, 3);
+            const cur = target * eased;
+            setDisplay((Number.isInteger(target) ? Math.round(cur) : cur.toFixed(1)) + suffix);
+            if (p < 1) requestAnimationFrame(step);
+          };
+          requestAnimationFrame(step);
+          io.unobserve(el);
+        }
+      },
+      { threshold: 0.4 },
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, [value, duration]);
+  return <div ref={ref} className="ss-stat-num">{display}</div>;
+}
 const LinkedinIcon = ({
   size = 17,
   strokeWidth = 1.6,
@@ -1289,7 +1351,25 @@ function useDragScroll(ref) {
     onPointerLeave: onPointerUp,
   };
 }
-
+function useReveal() {
+  const ref = useRef(null);
+  useEffect(() => {
+    const el = ref.current;
+    if (!el) return;
+    const io = new IntersectionObserver(
+      ([entry]) => {
+        if (entry.isIntersecting) {
+          el.classList.add("is-in");
+          io.unobserve(el);
+        }
+      },
+      { threshold: 0.15 },
+    );
+    io.observe(el);
+    return () => io.disconnect();
+  }, []);
+  return ref;
+}
 // ─── Category overlay (full-screen page per tab) ───────────────────────────
 function CategoryOverlay({ categoryIndex, onClose }) {
   const category = CATEGORIES[categoryIndex];
@@ -1469,6 +1549,22 @@ function CategoryOverlay({ categoryIndex, onClose }) {
     </div>
   );
 }
+function Marquee() {
+  const items = [
+    "Structural Engineering", "Roads & Transport", "Wastewater Treatment",
+    "Water Supply", "IT & Web Services", "ECSA Registered", "SANS Compliant",
+  ];
+  const loop = [...items, ...items];
+  return (
+    <div className="ss-marquee">
+      <div className="ss-marquee-track">
+        {loop.map((t, i) => (
+          <span key={i} className="ss-marquee-item">{t}</span>
+        ))}
+      </div>
+    </div>
+  );
+}
 
 // ─── Main component ─────────────────────────────────────────────────────────
 export default function SmartStructSite() {
@@ -1485,6 +1581,9 @@ export default function SmartStructSite() {
   const sliderRef = useRef(null);
   const slider = useDragScroll(sliderRef);
   const [cookieModalOpen, setCookieModalOpen] = useState(false);
+  const processReveal = useReveal();
+const lifecycleReveal = useReveal();
+const aboutReveal = useReveal();
   const [cookiePrefs, setCookiePrefs] = useState(() => {
     if (typeof window !== "undefined") {
       const saved = localStorage.getItem("ss-cookie-prefs");
@@ -1914,7 +2013,7 @@ export default function SmartStructSite() {
             <ArrowDown size={16} />
           </a>
         </section>
-
+          <Marquee />
        <SadcMapFilter />
 
         {/* ── SERVICES SLIDER ── */}
@@ -1977,8 +2076,7 @@ export default function SmartStructSite() {
                   className="ss-card"
                   onClick={() => openCategory(svc.category)}
                 >
-                  <div
-                    className="ss-card-inner"
+                  <TiltCard className="ss-card-inner"
                     style={{
                       position: "relative",
                       border: `1px solid ${COLORS.inkLine}`,
@@ -2071,23 +2169,24 @@ export default function SmartStructSite() {
                         </p>
                       </div>
                       <div
-                        style={{
-                          display: "flex",
-                          alignItems: "center",
-                          gap: "0.4rem",
-                          fontFamily: FONTS.mono,
-                          fontSize: "0.6875rem",
-                          letterSpacing: "0.06em",
-                          textTransform: "uppercase",
-                          color: COLORS.cyan,
-                          marginTop: "1rem",
-                        }}
-                      >
-                        View details
-                        <ArrowUpRight size={13} className="ss-card-arrow" />
-                      </div>
+  style={{
+    display: "flex",
+    alignItems: "center",
+    gap: "0.4rem",
+    fontFamily: FONTS.mono,
+    fontSize: "0.6875rem",
+    letterSpacing: "0.06em",
+    textTransform: "uppercase",
+    color: COLORS.cyanDim,   
+    fontWeight: 600,
+    marginTop: "1rem",
+  }}
+>
+  View details
+  <ArrowUpRight size={13} className="ss-card-arrow" />
+</div>
                     </div>
-                  </div>
+                  </TiltCard>
                 </div>
               );
             })}
@@ -2273,7 +2372,7 @@ export default function SmartStructSite() {
             >
               {STATS.map((s) => (
                 <div key={s.label}>
-                  <div className="ss-stat-num">{s.num}</div>
+                  <CountUp value={s.num} />
                   <div className="ss-stat-label">{s.label}</div>
                 </div>
               ))}
@@ -2463,6 +2562,8 @@ export default function SmartStructSite() {
             textAlign: "center",
           }}
         >
+          <div className="ss-cta-blob" style={{ width: "20rem", height: "20rem", top: "-6rem", left: "-6rem", background: COLORS.cyan }} />
+<div className="ss-cta-blob" style={{ width: "22rem", height: "22rem", bottom: "-8rem", right: "-6rem", background: COLORS.amber }} />
           <p className="ss-eyebrow" style={{ textAlign: "center" }}>
             SmartStruct
           </p>
