@@ -1,0 +1,449 @@
+@import url("https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap");
+
+/* Matches the host site's token set: ink background, orange accent
+   (referred to as "cyan" in the main stylesheet for historical reasons),
+   deep green secondary accent, Jost display face, IBM Plex Mono utility face. */
+.sadc-section {
+  --ink: "#FAF6EF";
+  --ink-elevated: "#F2EAD9";
+  --graphite: "#1c232c";
+  --ink-line: "rgba(11,107,58,0.16)";
+  --accent: "#f4761f";
+  --accent-soft: "rgba(244, 118, 33, 0.16)";
+  --green: "#0b6b3a";
+  --muted: "#8b96a1";
+  --white: "#ffffff";
+
+  background: var(--ink);
+  color: var(--white);
+  font-family: "Jost", "Gill Sans", "Segoe UI", sans-serif;
+  padding: 5rem 1.5rem;
+}
+
+.sadc-inner {
+  max-width: 1180px;
+  margin: 0 auto;
+}
+
+/* ── Header ── */
+
+.sadc-header {
+  display: flex;
+  align-items: flex-end;
+  justify-content: space-between;
+  gap: 1.5rem;
+  margin-bottom: 2.5rem;
+  flex-wrap: wrap;
+}
+
+.sadc-eyebrow {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 0.6875rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin: 0 0 0.75rem;
+}
+
+.sadc-title {
+  font-family: "Jost", sans-serif;
+  font-weight: 700;
+  font-size: clamp(1.85rem, 3.4vw, 2.75rem);
+  line-height: 1.05;
+  text-transform: uppercase;
+  margin: 0 0 0.65rem;
+  color: var(--white);
+}
+
+.sadc-sub {
+  margin: 0;
+  color: rgba(255, 255, 255, 0.62);
+  font-size: 0.9375rem;
+  line-height: 1.6;
+  max-width: 46ch;
+}
+
+.sadc-clear {
+  background: transparent;
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  color: rgba(255, 255, 255, 0.75);
+  border-radius: 2px;
+  padding: 0.6rem 1.1rem;
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 0.6875rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  cursor: pointer;
+  transition:
+    border-color 0.15s ease,
+    color 0.15s ease;
+}
+
+.sadc-clear:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* ── Layout ── */
+
+.sadc-layout {
+  display: grid;
+  grid-template-columns: minmax(0, 1.65fr) minmax(260px, 1fr);
+  gap: 1.75rem;
+  align-items: start;
+}
+
+@media (max-width: 820px) {
+  .sadc-layout {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ── Map ── */
+
+.sadc-map-wrap {
+  position: relative;
+  background: var(--ink-elevated);
+  border: 1px solid var(--ink-line);
+  border-radius: 2px;
+  padding: 0.5rem;
+  overflow: hidden;
+}
+
+.sadc-svg {
+  width: 100%;
+  height: auto;
+  display: block;
+}
+
+.sadc-path {
+  cursor: pointer;
+  stroke: var(--ink);
+  stroke-width: 1.6;
+  stroke-linejoin: round;
+  transition:
+    fill 0.18s ease,
+    filter 0.18s ease;
+}
+
+.sadc-path--idle {
+  fill: var(--graphite);
+}
+
+.sadc-path--idle:hover {
+  fill: #262f3b;
+  filter: drop-shadow(0 0 6px rgba(244, 118, 33, 0.35));
+}
+
+.sadc-path--active {
+  fill: var(--accent);
+  filter: drop-shadow(0 0 10px rgba(244, 118, 33, 0.55));
+}
+
+.sadc-path--hq.sadc-path--idle {
+  fill: #26362c;
+}
+
+.sadc-path--hq.sadc-path--idle:hover {
+  fill: #2f4636;
+}
+
+.sadc-label {
+  font-family: "Jost", sans-serif;
+  font-size: 15px;
+  font-weight: 500;
+  fill: rgba(255, 255, 255, 0.8);
+  text-anchor: middle;
+  pointer-events: none;
+  paint-order: stroke;
+  stroke: var(--ink);
+  stroke-width: 3px;
+  stroke-linejoin: round;
+}
+
+.sadc-label--active {
+  fill: var(--ink);
+  font-weight: 600;
+  stroke: rgba(244, 118, 33, 0.55);
+}
+
+.sadc-hq-marker circle {
+  fill: var(--accent);
+  stroke: var(--ink);
+  stroke-width: 1;
+}
+
+.sadc-hq-marker text {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 0.05em;
+  fill: var(--accent);
+  text-anchor: middle;
+  pointer-events: none;
+  paint-order: stroke;
+  stroke: var(--ink);
+  stroke-width: 2.5px;
+}
+
+/* ── Tooltip ── */
+
+.sadc-tooltip {
+  position: absolute;
+  pointer-events: none;
+  background: var(--ink);
+  border: 1px solid var(--ink-line);
+  border-radius: 2px;
+  padding: 0.6rem 0.8rem;
+  min-width: 170px;
+  box-shadow: 0 12px 28px rgba(0, 0, 0, 0.45);
+  z-index: 10;
+}
+
+.sadc-tt-name {
+  font-family: "Jost", sans-serif;
+  font-weight: 600;
+  font-size: 0.9375rem;
+  color: var(--white);
+  margin-bottom: 0.4rem;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+.sadc-tt-hq {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 0.5625rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--accent);
+  border: 1px solid rgba(244, 118, 33, 0.4);
+  border-radius: 2px;
+  padding: 0.1rem 0.35rem;
+}
+
+.sadc-tt-disciplines {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 0.6875rem;
+  letter-spacing: 0.03em;
+  color: var(--muted);
+}
+
+/* ── Side panel ── */
+
+.sadc-panel {
+  background: var(--ink-elevated);
+  border: 1px solid var(--ink-line);
+  border-radius: 2px;
+  padding: 1.1rem;
+  max-height: 640px;
+  display: flex;
+  flex-direction: column;
+}
+
+.sadc-panel-head {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 0.6875rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--muted);
+  margin: 0 0 0.6rem;
+}
+
+.sadc-panel-head--isles {
+  margin-top: 1rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--ink-line);
+}
+
+.sadc-chip-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  overflow-y: auto;
+}
+
+.sadc-chip {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 2px;
+  padding: 0.55rem 0.7rem;
+  cursor: pointer;
+  color: var(--white);
+  font-family: "Jost", sans-serif;
+  font-size: 0.875rem;
+  text-align: left;
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease;
+}
+
+.sadc-chip:hover {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+.sadc-chip--active {
+  background: var(--accent-soft);
+  border-color: rgba(244, 118, 33, 0.4);
+}
+
+.sadc-chip-name {
+  font-weight: 500;
+}
+
+.sadc-chip-hq {
+  font-family: "IBM Plex Mono", monospace;
+  font-size: 0.5625rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--accent);
+  border: 1px solid rgba(244, 118, 33, 0.4);
+  border-radius: 2px;
+  padding: 0.1rem 0.35rem;
+}
+
+/* ── Isle cards ── */
+
+.sadc-isles-row {
+  display: flex;
+  gap: 0.6rem;
+}
+
+.sadc-isle-card {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.3rem;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--ink-line);
+  border-radius: 2px;
+  padding: 0.7rem 0.4rem;
+  cursor: pointer;
+  color: var(--white);
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease;
+}
+
+.sadc-isle-card:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.sadc-isle-card--active {
+  background: var(--accent-soft);
+  border-color: rgba(244, 118, 33, 0.45);
+}
+
+.sadc-isle-svg {
+  width: 34px;
+  height: 34px;
+}
+
+.sadc-isle-svg path {
+  fill: var(--graphite);
+}
+
+.sadc-isle-card:hover .sadc-isle-svg path {
+  fill: #262f3b;
+}
+
+.sadc-isle-card--active .sadc-isle-svg path {
+  fill: var(--accent);
+}
+
+.sadc-isle-name {
+  font-size: 0.7rem;
+  font-weight: 500;
+  text-align: center;
+  line-height: 1.15;
+}
+
+/* ── Selection bar ── */
+
+.sadc-results {
+  margin-top: 1.5rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1.5rem;
+  background: var(--ink-elevated);
+  border: 1px solid rgba(244, 118, 33, 0.35);
+  border-radius: 2px;
+  padding: 1.15rem 1.4rem;
+  flex-wrap: wrap;
+}
+
+.sadc-results-label {
+  margin: 0 0 0.25rem;
+  color: var(--muted);
+  font-size: 0.6875rem;
+  font-family: "IBM Plex Mono", monospace;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+}
+
+.sadc-results-count {
+  margin: 0;
+  font-family: "Jost", sans-serif;
+  font-weight: 600;
+  font-size: 1.15rem;
+  color: var(--white);
+  text-transform: uppercase;
+}
+
+.sadc-results-hq {
+  margin-left: 0.6rem;
+  font-family: "IBM Plex Mono", monospace;
+  font-weight: 400;
+  font-size: 0.625rem;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--accent);
+  border: 1px solid rgba(244, 118, 33, 0.4);
+  border-radius: 2px;
+  padding: 0.1rem 0.4rem;
+  vertical-align: middle;
+}
+
+.sadc-results-disciplines {
+  font-family: "IBM Plex Mono", monospace;
+  font-weight: 400;
+  font-size: 0.75rem;
+  text-transform: none;
+  color: var(--muted);
+}
+
+.sadc-browse-btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  height: 2.375rem;
+  padding: 0 1.5rem;
+  background: var(--accent);
+  color: var(--ink);
+  border: none;
+  border-radius: 2px;
+  font-family: "IBM Plex Mono", monospace;
+  font-weight: 500;
+  font-size: 0.6875rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  cursor: pointer;
+  white-space: nowrap;
+  transition:
+    background-color 0.2s ease,
+    transform 0.1s ease;
+}
+
+.sadc-browse-btn:hover {
+  background: var(--white);
+}
+
+.sadc-browse-btn:active {
+  transform: scale(0.97);
+}
