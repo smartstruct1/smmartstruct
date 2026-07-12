@@ -1,15 +1,11 @@
 import { BrowserRouter, Routes, Route } from 'react-router-dom'
-import MaxFuelRX from './MaxFuelRX'
-import Maxfuel from './Maxfuel'
-import AboutUs from './Aboutus'
-import ContactUs from './Contactus'
-import TermsAndConditions from './TermsAndConditions';
+import Smartstruct from './Smartstruct'
 import PrivacyPolicy from './PrivacyPolicy'
 export default function App() {
   return (
     <BrowserRouter>
       <Routes>
-        <Route path="/" element={<MaxFuelRX
+        <Route path="/" element={<Smartstruct
           heroVideo="/hero-video.mp4"
           bottleImage="/bottle.png"
           noteImages={[
@@ -19,10 +15,7 @@ export default function App() {
             "/finish-shot.jpg",   
           ]}
         />} />
-        <Route path="/maxfuel" element={<Maxfuel />} />
-        <Route path="/about-us" element={<AboutUs />} />
-        <Route path="/contact-us" element={<ContactUs />} />
-        <Route path="/terms-and-conditions" element={<TermsAndConditions />} />
+       
         <Route path="/privacy-policy" element={<PrivacyPolicy />} />
       </Routes>
     </BrowserRouter>
