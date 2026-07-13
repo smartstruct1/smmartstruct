@@ -355,7 +355,23 @@ const GLOBAL_STYLES = `
   @import url('https://fonts.googleapis.com/css2?family=Jost:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500&display=swap');
   *, *::before, *::after { box-sizing: border-box; }
   html { scroll-behavior: smooth; }
-  body, html { margin: 0; padding: 0; overflow-x: hidden; max-width: 100vw; }
+html {
+  overflow-x: hidden;
+  overflow-y: scroll;
+  max-width: 100vw;
+  scrollbar-width: none;      
+  -ms-overflow-style: none;   
+}
+html::-webkit-scrollbar {
+  display: none;              
+}
+body {
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+  overflow-y: visible;
+  max-width: 100vw;
+}
 
   button {
     -webkit-tap-highlight-color: transparent;
@@ -1616,13 +1632,15 @@ const aboutReveal = useReveal();
     localStorage.setItem("ss-cookie-prefs", JSON.stringify(prefs));
     setCookieModalOpen(false);
   };
-  useEffect(() => {
-    document.body.style.overflow =
-      overlayCategory !== null || menuOpen ? "hidden" : "";
-    return () => {
-      document.body.style.overflow = "";
-    };
-  }, [overlayCategory, menuOpen]);
+ useEffect(() => {
+  const locked = overlayCategory !== null || menuOpen;
+  document.documentElement.style.overflow = locked ? "hidden" : "";
+  document.body.style.overflow = locked ? "hidden" : "";
+  return () => {
+    document.documentElement.style.overflow = "";
+    document.body.style.overflow = "";
+  };
+}, [overlayCategory, menuOpen]);
 
   useEffect(() => {
     const id = setInterval(
